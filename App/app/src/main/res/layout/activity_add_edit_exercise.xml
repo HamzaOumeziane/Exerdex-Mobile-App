@@ -132,5 +132,28 @@
         app:layout_constraintStart_toEndOf="@+id/newSetReps"
         app:layout_constraintTop_toTopOf="@+id/newSetReps" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/finalizeExerciseBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="Finalize Addition"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/baseline_check_24_wh" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/cancelExerciseBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="Cancel Exercise"
+        android:layout_marginStart="20dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/finalizeExerciseBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/baseline_cancel_24_wh" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
