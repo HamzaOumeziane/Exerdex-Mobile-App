@@ -10,7 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var toolbar: Toolbar
+    val test:Exercise = Exercise(name = "Test", category = MuscleCategory.ABS, setList = listOf())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
