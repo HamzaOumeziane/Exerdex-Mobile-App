@@ -14,4 +14,8 @@ data class Set(
     val setOrder: Int,
     val weight: Float,
     val reps: Int
-)
+){
+    override fun toString(): String {
+        return "Set $setOrder : $weight : lbs x $reps reps"
+    }
+}
