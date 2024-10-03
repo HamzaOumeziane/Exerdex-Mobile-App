@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Primary Colors -->
+    <color name="primary_blue">#1E90FF</color>
+    <color name="primary_red">#FF4500</color>
+    <color name="primary_yellow">#FFD700</color>
+
+    <!-- Secondary Colors -->
+    <color name="secondary_green">#32CD32</color>
+    <color name="secondary_purple">#9370DB</color>
+    <color name="secondary_orange">#FF8C00</color>
+
+    <!-- Dark Mode Background Colors -->
+    <color name="background_dark">#121212</color>
+    <color name="background_secondary_dark">#1F1F1F</color>
+
+    <!-- Accent Colors -->
+    <color name="accent_cyan">#00FFFF</color>
+    <color name="accent_pink">#FF1493</color>
+
+    <!-- Text Colors for Dark Mode -->
+    <color name="text_primary_light">#E0E0E0</color>
+    <color name="text_secondary_light">#B0B0B0</color>
+    <color name="text_dark">#212121</color>
 </resources>
