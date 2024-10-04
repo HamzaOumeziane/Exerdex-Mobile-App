@@ -75,12 +75,14 @@
         app:layout_constraintTop_toBottomOf="@+id/addSetBtn" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView2"
+        android:id="@+id/setsRecyclerView"
         android:layout_width="0dp"
-        android:layout_height="222dp"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/setsTitle"
+        app:layout_constraintHeight_percent="0.25"
         app:layout_constraintWidth_percent="1.0" />
 
     <Button
@@ -89,21 +91,8 @@
         android:layout_height="wrap_content"
         android:text="Add Set"
         app:layout_constraintEnd_toEndOf="@+id/exerciseDescInput"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView2"
+        app:layout_constraintTop_toBottomOf="@+id/setsRecyclerView"
         android:background="@color/background_dark" />
-
-    <EditText
-        android:id="@+id/newSetReps"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="12"
-        android:inputType="number"
-        android:textColor="@color/text_primary_light"
-        android:textColorHint="@color/text_secondary_light"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/addSetBtn"
-        app:layout_constraintStart_toStartOf="@+id/setsTitle" />
 
     <EditText
         android:id="@+id/newSetWeight"
@@ -116,8 +105,21 @@
         android:textColorHint="@color/text_secondary_light"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/addSetBtn"
+        app:layout_constraintStart_toStartOf="@+id/setsTitle" />
+
+    <EditText
+        android:id="@+id/newSetReps"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="12"
+        android:inputType="number|numberDecimal"
+        android:textColor="@color/text_primary_light"
+        android:textColorHint="@color/text_secondary_light"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/addSetBtn"
         app:layout_constraintEnd_toStartOf="@+id/addSetBtn"
-        app:layout_constraintStart_toEndOf="@+id/newSetReps" />
+        app:layout_constraintStart_toEndOf="@+id/newSetWeight" />
 
     <TextView
         android:id="@+id/repsXWeight"
@@ -127,10 +129,10 @@
         android:textColor="@color/text_primary_light"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/newSetWeight"
-        app:layout_constraintEnd_toStartOf="@+id/newSetWeight"
-        app:layout_constraintStart_toEndOf="@+id/newSetReps"
-        app:layout_constraintTop_toTopOf="@+id/newSetReps" />
+        app:layout_constraintBottom_toBottomOf="@+id/newSetReps"
+        app:layout_constraintEnd_toStartOf="@+id/newSetReps"
+        app:layout_constraintStart_toEndOf="@+id/newSetWeight"
+        app:layout_constraintTop_toTopOf="@+id/newSetWeight" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/finalizeExerciseBtn"

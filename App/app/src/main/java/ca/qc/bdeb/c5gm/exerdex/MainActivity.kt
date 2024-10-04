@@ -1,6 +1,7 @@
 package ca.qc.bdeb.c5gm.exerdex
 
 import android.content.Context
+import android.content.Intent
 import android.icu.text.Transliterator.Position
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
     val layout: ConstraintLayout
@@ -97,6 +99,11 @@ class MainActivity : AppCompatActivity() {
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+
+        val floatingBtn: FloatingActionButton = findViewById(R.id.floatingActionBtn)
+        floatingBtn.setOnClickListener{
+            addExercise()
+        }
 
         recyclerView = findViewById(R.id.recyclerView)
         val exercisesList: List<Exercise> = setUpExercises()
@@ -184,5 +191,14 @@ class MainActivity : AppCompatActivity() {
                 )
             )
         )
+    }
+
+    private fun addExercise(){
+        // A remplir
+        createExercise()
+    }
+    private fun createExercise(){
+        val intent = Intent(this,AddEditExerciseActivity::class.java)
+        startActivity(intent)
     }
 }
