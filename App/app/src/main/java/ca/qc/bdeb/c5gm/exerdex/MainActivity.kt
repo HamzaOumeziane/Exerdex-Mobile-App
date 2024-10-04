@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val layout: ConstraintLayout
     val exercise: TextView
     val sets: TextView
@@ -39,7 +39,11 @@ class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
     }
 }
 
-class ExerciseListAdaptor(val ctx: Context, val activity: MainActivity, var data: List<Exercise>): RecyclerView.Adapter<ItemExerciseHolder>() {
+class ExerciseListAdaptor(
+    val ctx: Context,
+    val activity: MainActivity,
+    var data: MutableList<Exercise>
+) : RecyclerView.Adapter<ItemExerciseHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemExerciseHolder {
         val view = LayoutInflater.from(ctx).inflate(R.layout.exercise_item, parent, false)
@@ -62,16 +66,17 @@ class ExerciseListAdaptor(val ctx: Context, val activity: MainActivity, var data
         holder.edit.setImageResource(R.drawable.baseline_edit_24)
         holder.cancel.setImageResource(R.drawable.baseline_cancel_24)
 
-        holder.check.setOnClickListener{
+        holder.check.setOnClickListener {
 
         }
 
         holder.edit.setOnClickListener {
-
+            // open to the exercise
         }
 
         holder.cancel.setOnClickListener {
-
+            data.removeAt(holder.adapterPosition)
+            notifyItemRemoved(holder.adapterPosition)
         }
     }
 
@@ -83,7 +88,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var adapteur: ExerciseListAdaptor
 
     //val test:Exercise = Exercise(name = "Test", category = MuscleCategory.ABS, setList = listOf())
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,16 +105,15 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         val floatingBtn: FloatingActionButton = findViewById(R.id.floatingActionBtn)
-        floatingBtn.setOnClickListener{
+        floatingBtn.setOnClickListener {
             addExercise()
         }
 
         recyclerView = findViewById(R.id.recyclerView)
-        val exercisesList: List<Exercise> = setUpExercises()
+        val exercisesList: MutableList<Exercise> = setUpExercises()
         adapteur = ExerciseListAdaptor(applicationContext, this, exercisesList)
         recyclerView.adapter = adapteur
     }
-
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -118,8 +121,8 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun setUpExercises(): List<Exercise>{
-        return listOf(
+    private fun setUpExercises(): MutableList<Exercise> {
+        return mutableListOf(
             Exercise(
                 name = "Bench Press",
                 description = "A compound exercise targeting the chest, triceps, and shoulders.",
@@ -193,12 +196,13 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun addExercise(){
+    private fun addExercise() {
         // A remplir
         createExercise()
     }
-    private fun createExercise(){
-        val intent = Intent(this,AddEditExerciseActivity::class.java)
+
+    private fun createExercise() {
+        val intent = Intent(this, AddEditExerciseActivity::class.java)
         startActivity(intent)
     }
 }
