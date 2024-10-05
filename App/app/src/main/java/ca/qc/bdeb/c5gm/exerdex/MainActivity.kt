@@ -88,6 +88,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var recyclerView: RecyclerView
     lateinit var adapteur: ExerciseListAdaptor
+    val exercisesList: MutableList<Exercise> = setUpExercises()
 
     //val test:Exercise = Exercise(name = "Test", category = MuscleCategory.ABS, setList = listOf())
 
@@ -112,7 +113,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         recyclerView = findViewById(R.id.recyclerView)
-        val exercisesList: MutableList<Exercise> = setUpExercises()
         adapteur = ExerciseListAdaptor(applicationContext, this, exercisesList)
         recyclerView.adapter = adapteur
     }
@@ -125,16 +125,16 @@ class MainActivity : AppCompatActivity() {
     private fun handleIncomingIntent(intent: Intent) {
         if (intent.hasExtra("exercise")) {
             val newExercise: Exercise? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                // For Android TIRAMISU (API 33) and above
                 intent.getParcelableExtra("exercise", Exercise::class.java)
             } else {
-                // For Android versions below TIRAMISU
                 @Suppress("DEPRECATION")
                 intent.getParcelableExtra("exercise")
             }
 
             newExercise?.let {
-                Toast.makeText(this, "Exercise Added: ${it.toString()}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Exercise Added: ${it.name}", Toast.LENGTH_SHORT).show()
+                exercisesList.add(it)
+                adapteur.notifyItemInserted(exercisesList.size-1)
             }
         }
     }

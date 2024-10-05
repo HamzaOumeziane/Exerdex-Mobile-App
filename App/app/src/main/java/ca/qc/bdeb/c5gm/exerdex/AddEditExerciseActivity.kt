@@ -55,8 +55,12 @@ class AddEditExerciseActivity : AppCompatActivity() {
             addNewSet()
         }
         val finalizeExerciseBtn: FloatingActionButton = findViewById(R.id.finalizeExerciseBtn)
+        val cancelExerciseBtn: FloatingActionButton = findViewById(R.id.cancelExerciseBtn)
         finalizeExerciseBtn.setOnClickListener{
             finalizeExercise()
+        }
+        cancelExerciseBtn.setOnClickListener{
+            cancelExercise()
         }
     }
 
@@ -96,6 +100,11 @@ class AddEditExerciseActivity : AppCompatActivity() {
     }
 
     private fun finalizeExercise(){
+        if (exerciseTitleView.text.toString().isBlank() or setsList.isEmpty()){
+            Toast.makeText(this,"Make sure to enter a title and at least one set!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val newExercise: Exercise = Exercise(exerciseTitleView.text.toString(),
             exerciseDescriptionView.text.toString(),
             selectedCategory,
@@ -105,6 +114,12 @@ class AddEditExerciseActivity : AppCompatActivity() {
         intent.putExtra("exercise",newExercise)
         startActivity(intent)
     }
+
+    private fun cancelExercise(){
+        val intent = Intent(this,MainActivity::class.java)
+        startActivity(intent)
+    }
+
     private fun initializeCategorySpinnner(){
         val categoryEnum: MuscleCategory
         val spinner: Spinner = findViewById(R.id.muscleCategorySpinner)
