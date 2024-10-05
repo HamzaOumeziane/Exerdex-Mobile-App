@@ -1,12 +1,17 @@
 package ca.qc.bdeb.c5gm.exerdex
 
 import android.content.Context
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -15,16 +20,17 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class AddEditExerciseActivity : AppCompatActivity() {
     lateinit var repsTextView: TextView
     lateinit var weightTextView: TextView
     private lateinit var setsRecyclerView: RecyclerView
     private lateinit var setListAdapter: SetListAdaptor
-    private var setsList: MutableList<Set> = mutableListOf(
-        Set(1,185f,5),
-        Set(2,165f,12)
-    )
+    private lateinit var exerciseTitleView: TextView
+    private lateinit var exerciseDescriptionView: TextView
+    private lateinit var selectedCategory: MuscleCategory
+    private var setsList: MutableList<Set> = mutableListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -37,14 +43,20 @@ class AddEditExerciseActivity : AppCompatActivity() {
 
         repsTextView = findViewById(R.id.newSetReps)
         weightTextView = findViewById(R.id.newSetWeight)
+        exerciseTitleView = findViewById(R.id.exerciseNameInput)
+        exerciseDescriptionView = findViewById(R.id.exerciseDescInput)
         setsRecyclerView = findViewById(R.id.setsRecyclerView)
         setListAdapter = SetListAdaptor(applicationContext, this, setsList)
-
         setsRecyclerView.adapter = setListAdapter
+        initializeCategorySpinnner()
 
         val addSetBtn: Button = findViewById(R.id.addSetBtn)
         addSetBtn.setOnClickListener{
             addNewSet()
+        }
+        val finalizeExerciseBtn: FloatingActionButton = findViewById(R.id.finalizeExerciseBtn)
+        finalizeExerciseBtn.setOnClickListener{
+            finalizeExercise()
         }
     }
 
@@ -81,6 +93,49 @@ class AddEditExerciseActivity : AppCompatActivity() {
 
         repsTextView.text=""
         weightTextView.text=""
+    }
+
+    private fun finalizeExercise(){
+        val newExercise: Exercise = Exercise(exerciseTitleView.text.toString(),
+            exerciseDescriptionView.text.toString(),
+            selectedCategory,
+            setsList
+            )
+        val intent = Intent(this,MainActivity::class.java)
+        intent.putExtra("exercise",newExercise)
+        startActivity(intent)
+    }
+    private fun initializeCategorySpinnner(){
+        val categoryEnum: MuscleCategory
+        val spinner: Spinner = findViewById(R.id.muscleCategorySpinner)
+        val categoryValues = MuscleCategory.values()
+        val categoryStrings = categoryValues.map { it.name.lowercase().replaceFirstChar { c -> c.uppercase() } }
+        val adapter = object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categoryStrings) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getView(position, convertView, parent) as TextView
+                view.setTextColor(Color.WHITE)
+                return view
+            }
+
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getDropDownView(position, convertView, parent) as TextView
+                view.setTextColor(Color.WHITE)
+                view.setBackgroundColor(Color.parseColor("#121212"))
+                return view
+            }
+        }
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                selectedCategory = MuscleCategory.valueOf(categoryStrings[position].uppercase())
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+
+            }
+        }
+        spinner.backgroundTintList = android.content.res.ColorStateList.valueOf(Color.WHITE)
     }
 }
 

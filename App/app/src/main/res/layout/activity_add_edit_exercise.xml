@@ -157,5 +157,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/baseline_cancel_24_wh" />
 
+    <Spinner
+        android:id="@+id/muscleCategorySpinner"
+        android:textColor="@color/text_primary_light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/exerciseDescInput"
+        app:layout_constraintTop_toBottomOf="@+id/exerciseDescInput" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

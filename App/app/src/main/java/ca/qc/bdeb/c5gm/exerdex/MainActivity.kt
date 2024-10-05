@@ -3,6 +3,7 @@ package ca.qc.bdeb.c5gm.exerdex
 import android.content.Context
 import android.content.Intent
 import android.icu.text.Transliterator.Position
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -111,7 +113,27 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapteur
     }
 
+    override fun onResume() {
+        super.onResume()
+        handleIncomingIntent(intent)
+    }
 
+    private fun handleIncomingIntent(intent: Intent) {
+        if (intent.hasExtra("exercise")) {
+            val newExercise: Exercise? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // For Android TIRAMISU (API 33) and above
+                intent.getParcelableExtra("exercise", Exercise::class.java)
+            } else {
+                // For Android versions below TIRAMISU
+                @Suppress("DEPRECATION")
+                intent.getParcelableExtra("exercise")
+            }
+
+            newExercise?.let {
+                Toast.makeText(this, "Exercise Added: ${it.toString()}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
