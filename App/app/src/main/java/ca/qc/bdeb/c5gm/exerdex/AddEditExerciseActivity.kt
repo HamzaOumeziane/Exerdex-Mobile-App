@@ -3,7 +3,9 @@ package ca.qc.bdeb.c5gm.exerdex
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +33,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
     private lateinit var exerciseDescriptionView: TextView
     private lateinit var selectedCategory: MuscleCategory
     private var setsList: MutableList<Set> = mutableListOf()
+    private var isEditing: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -61,6 +64,45 @@ class AddEditExerciseActivity : AppCompatActivity() {
         }
         cancelExerciseBtn.setOnClickListener{
             cancelExercise()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        handleIncomingIntent(intent)
+    }
+
+    private fun handleIncomingIntent(intent: Intent) {
+        var exerciseToEdit: Exercise? = Exercise("haha","haha",MuscleCategory.ABS, listOf())
+        if (intent.hasExtra("isEdit")) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                isEditing = intent.getBooleanExtra("isEdit", false)
+                if (isEditing){
+                    exerciseToEdit = intent.getParcelableExtra("exerciseToEdit", Exercise::class.java)
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                isEditing = intent.getBooleanExtra("isEdit", false)
+                if (isEditing){
+                    @Suppress("DEPRECATION")
+                    exerciseToEdit = intent.getParcelableExtra("exerciseToEdit")
+                }
+            }
+        }
+        if (isEditing && exerciseToEdit != null) {
+            exerciseTitleView.text = exerciseToEdit.name
+            exerciseDescriptionView.text = exerciseToEdit.description
+
+            val spinner: Spinner = findViewById(R.id.muscleCategorySpinner)
+            val categoryName = exerciseToEdit.category.name.lowercase().replaceFirstChar { it.uppercase() }
+            val position = (spinner.adapter as ArrayAdapter<String>).getPosition(categoryName)
+            if (position >= 0) {
+                spinner.setSelection(position)
+            }
+            setsList.clear()
+            setsList.addAll(exerciseToEdit.setList)
+            Log.d("SETS", setsList.toString())
+            setListAdapter.notifyDataSetChanged()
         }
     }
 
@@ -112,6 +154,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
             )
         val intent = Intent(this,MainActivity::class.java)
         intent.putExtra("exercise",newExercise)
+        intent.putExtra("isEdit",isEditing)
         startActivity(intent)
     }
 

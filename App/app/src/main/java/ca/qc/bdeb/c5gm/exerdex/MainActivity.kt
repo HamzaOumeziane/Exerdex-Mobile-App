@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+private var currentEdited: Int = -1
+
 class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val layout: ConstraintLayout
     val exercise: TextView
@@ -44,7 +46,8 @@ class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 class ExerciseListAdaptor(
     val ctx: Context,
     val activity: MainActivity,
-    var data: MutableList<Exercise>
+    var data: MutableList<Exercise>,
+    private val editExercise: (isEdit: Boolean, exerciseToEdit: Exercise?) -> Unit
 ) : RecyclerView.Adapter<ItemExerciseHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemExerciseHolder {
@@ -73,7 +76,8 @@ class ExerciseListAdaptor(
         }
 
         holder.edit.setOnClickListener {
-            // open to the exercise
+            currentEdited = position
+            editExercise(true, item)
         }
 
         holder.cancel.setOnClickListener {
@@ -109,11 +113,13 @@ class MainActivity : AppCompatActivity() {
 
         val floatingBtn: FloatingActionButton = findViewById(R.id.floatingActionBtn)
         floatingBtn.setOnClickListener {
-            addExercise()
+            addExercise(false, null)
         }
 
         recyclerView = findViewById(R.id.recyclerView)
-        adapteur = ExerciseListAdaptor(applicationContext, this, exercisesList)
+        adapteur = ExerciseListAdaptor(applicationContext, this, exercisesList) { isEdit, exercise ->
+            addExercise(isEdit, exercise)
+        }
         recyclerView.adapter = adapteur
     }
 
@@ -124,17 +130,23 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleIncomingIntent(intent: Intent) {
         if (intent.hasExtra("exercise")) {
-            val newExercise: Exercise? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                intent.getParcelableExtra("exercise", Exercise::class.java)
+            var newExercise:Exercise?
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                newExercise = intent.getParcelableExtra("exercise", Exercise::class.java)
             } else {
                 @Suppress("DEPRECATION")
-                intent.getParcelableExtra("exercise")
+                newExercise = intent.getParcelableExtra("exercise")
             }
-
+            val isEdit: Boolean = intent.getBooleanExtra("isEdit",false)
             newExercise?.let {
                 Toast.makeText(this, "Exercise Added: ${it.name}", Toast.LENGTH_SHORT).show()
-                exercisesList.add(it)
-                adapteur.notifyItemInserted(exercisesList.size-1)
+                if (isEdit){
+                    exercisesList.add(currentEdited,it)
+                    adapteur.notifyItemInserted(currentEdited)
+                } else {
+                    exercisesList.add(it)
+                    adapteur.notifyItemInserted(exercisesList.size-1)
+                }
             }
         }
     }
@@ -218,14 +230,14 @@ class MainActivity : AppCompatActivity() {
             )
         )
     }
-
-    private fun addExercise() {
-        // A remplir
-        createExercise()
-    }
-
-    private fun createExercise() {
+    fun addExercise(isEdit: Boolean, exerciseToEdit: Exercise?) {
         val intent = Intent(this, AddEditExerciseActivity::class.java)
+        intent.putExtra("isEdit",isEdit)
+        if (isEdit){
+            intent.putExtra("exerciseToEdit",exerciseToEdit)
+        }
         startActivity(intent)
     }
+
 }
+
