@@ -139,14 +139,17 @@ class MainActivity : AppCompatActivity() {
             }
             val isEdit: Boolean = intent.getBooleanExtra("isEdit",false)
             newExercise?.let {
-                Toast.makeText(this, "Exercise Added: ${it.name}", Toast.LENGTH_SHORT).show()
+                var actionDone: String = "Added"
                 if (isEdit){
-                    exercisesList.add(currentEdited,it)
-                    adapteur.notifyItemInserted(currentEdited)
+                    actionDone = "Edited"
+                    exercisesList[currentEdited] = it
+                    adapteur.notifyItemChanged(currentEdited)
+                    currentEdited = -1
                 } else {
                     exercisesList.add(it)
                     adapteur.notifyItemInserted(exercisesList.size-1)
                 }
+                Toast.makeText(this, "Exercise ${actionDone}: ${it.name}", Toast.LENGTH_SHORT).show()
             }
         }
     }
