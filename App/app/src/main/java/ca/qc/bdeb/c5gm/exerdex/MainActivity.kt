@@ -2,7 +2,6 @@ package ca.qc.bdeb.c5gm.exerdex
 
 import android.content.Context
 import android.content.Intent
-import android.icu.text.Transliterator.Position
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,8 +18,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.Adapter
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 private var currentEdited: Int = -1
@@ -66,7 +63,12 @@ class ExerciseListAdaptor(
         /*
         * Source : https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/join-to-string.html
         * */
-        holder.sets.text = item.setList.joinToString("\n") { it.toString() }
+        if (item.setList.size > 3){
+            holder.sets.text = (item.setList.joinToString("\n", "", "", 3) { it.toString() }) + " ${item.setList.size - 3} more"
+        }else{
+            holder.sets.text = item.setList.joinToString("\n") { it.toString() }
+        }
+
         holder.check.setImageResource(R.drawable.baseline_check_circle_24)
         holder.edit.setImageResource(R.drawable.baseline_edit_24)
         holder.cancel.setImageResource(R.drawable.baseline_cancel_24)
@@ -165,7 +167,10 @@ class MainActivity : AppCompatActivity() {
                 setList = listOf(
                     Set(setOrder = 1, weight = 135f, reps = 10),
                     Set(setOrder = 2, weight = 145f, reps = 8),
-                    Set(setOrder = 3, weight = 155f, reps = 6)
+                    Set(setOrder = 3, weight = 155f, reps = 6),
+                    Set(setOrder = 1, weight = 185f, reps = 10),
+                    Set(setOrder = 2, weight = 205f, reps = 8),
+                    Set(setOrder = 3, weight = 225f, reps = 6)
                 )
             ),
             Exercise(
@@ -214,6 +219,8 @@ class MainActivity : AppCompatActivity() {
                 category = MuscleCategory.BICEPS,
                 setList = listOf(
                     Set(setOrder = 1, weight = 25f, reps = 12),
+                    Set(setOrder = 2, weight = 30f, reps = 10),
+                    Set(setOrder = 3, weight = 35f, reps = 8),
                     Set(setOrder = 2, weight = 30f, reps = 10),
                     Set(setOrder = 3, weight = 35f, reps = 8)
                 )
