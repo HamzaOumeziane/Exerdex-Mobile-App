@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
 
     id("org.jetbrains.kotlin.plugin.parcelize")
+    id("com.google.devtools.ksp")
+
 }
 
 android {
@@ -47,4 +49,16 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.core.ktx)
+
+    val room_version = "2.6.1"
+
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
+
+
+
+
 }
