@@ -62,3 +62,8 @@ dependencies {
 
 
 }
+
+
+fun DependencyHandlerScope.ksp(compiler: Any) {
+
+}

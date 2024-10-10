@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -21,6 +22,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 private var currentEdited: Int = -1
+
+var exercisesList: MutableList<Exercise> = setUpExercises()
+var doneList: MutableList<Exercise> = setUpDone()
+lateinit var adapterDone: DoneListAdaptor
+lateinit var adapterExercise: ExerciseListAdaptor
 
 class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val layout: ConstraintLayout
@@ -40,10 +46,46 @@ class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 }
 
-class ExerciseListAdaptor(
+public class ItemDoneHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    val exercise: TextView
+    val comeback: ImageView
+
+    init{
+        exercise = itemView.findViewById(R.id.doneTextView)
+        comeback = itemView.findViewById(R.id.comebackImageView)
+    }
+}
+
+public class DoneListAdaptor(
     val ctx: Context,
     val activity: MainActivity,
-    var data: MutableList<Exercise>,
+) : RecyclerView.Adapter<ItemDoneHolder>(){
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemDoneHolder {
+        val view = LayoutInflater.from(ctx).inflate(R.layout.exercise_done_item, parent, false)
+        return ItemDoneHolder(view)
+    }
+
+    override fun getItemCount(): Int {
+        return doneList.size
+    }
+
+    override fun onBindViewHolder(holder: ItemDoneHolder, position: Int) {
+        val item = doneList[holder.adapterPosition]
+        holder.exercise.text = item.name
+
+        holder.comeback.setImageResource(R.drawable.baseline_loop_24)
+        holder.comeback.setOnClickListener {
+            exercisesList.add(item)
+            adapterExercise.notifyItemInserted(exercisesList.size - 1)
+            doneList.removeAt(holder.adapterPosition)
+            notifyItemRemoved(holder.adapterPosition)
+        }
+    }
+}
+
+public class ExerciseListAdaptor(
+    val ctx: Context,
+    val activity: MainActivity,
     private val editExercise: (isEdit: Boolean, exerciseToEdit: Exercise?) -> Unit
 ) : RecyclerView.Adapter<ItemExerciseHolder>() {
 
@@ -53,11 +95,11 @@ class ExerciseListAdaptor(
     }
 
     override fun getItemCount(): Int {
-        return data.size
+        return exercisesList.size
     }
 
     override fun onBindViewHolder(holder: ItemExerciseHolder, position: Int) {
-        val item = data[position]
+        val item = exercisesList[position]
 
         holder.exercise.text = item.name
         /*
@@ -68,33 +110,35 @@ class ExerciseListAdaptor(
         }else{
             holder.sets.text = item.setList.joinToString("\n") { it.toString() }
         }
-
         holder.check.setImageResource(R.drawable.baseline_check_circle_24)
         holder.edit.setImageResource(R.drawable.baseline_edit_24)
         holder.cancel.setImageResource(R.drawable.baseline_cancel_24)
 
         holder.check.setOnClickListener {
-
+            doneList.add(item)
+            adapterDone.notifyItemInserted(doneList.size - 1)
+            exercisesList.removeAt(holder.adapterPosition)
+            notifyItemRemoved(holder.adapterPosition)
         }
 
         holder.edit.setOnClickListener {
-            currentEdited = position
+            currentEdited = holder.adapterPosition
             editExercise(true, item)
         }
 
         holder.cancel.setOnClickListener {
-            data.removeAt(holder.adapterPosition)
+            exercisesList.removeAt(holder.adapterPosition)
             notifyItemRemoved(holder.adapterPosition)
         }
     }
-
 }
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var recyclerView: RecyclerView
-    lateinit var adapteur: ExerciseListAdaptor
-    val exercisesList: MutableList<Exercise> = setUpExercises()
+    lateinit var recyclerViewExercise: RecyclerView
+    lateinit var recyclerViewDone: RecyclerView
+
+
 
     //val test:Exercise = Exercise(name = "Test", category = MuscleCategory.ABS, setList = listOf())
 
@@ -118,11 +162,16 @@ class MainActivity : AppCompatActivity() {
             addExercise(false, null)
         }
 
-        recyclerView = findViewById(R.id.recyclerView)
-        adapteur = ExerciseListAdaptor(applicationContext, this, exercisesList) { isEdit, exercise ->
+
+        recyclerViewExercise = findViewById(R.id.recyclerView)
+        recyclerViewDone = findViewById(R.id.doneRecyclerView)
+        adapterExercise = ExerciseListAdaptor(applicationContext, this) { isEdit, exercise ->
             addExercise(isEdit, exercise)
         }
-        recyclerView.adapter = adapteur
+        adapterDone = DoneListAdaptor(applicationContext, this)
+        recyclerViewExercise.adapter = adapterExercise
+        recyclerViewDone.adapter = adapterDone
+
     }
 
     override fun onResume() {
@@ -143,13 +192,15 @@ class MainActivity : AppCompatActivity() {
             newExercise?.let {
                 var actionDone: String = "Added"
                 if (isEdit){
+                    exercisesList.add(currentEdited,it)
+                    adapterExercise.notifyItemInserted(currentEdited)
                     actionDone = "Edited"
                     exercisesList[currentEdited] = it
-                    adapteur.notifyItemChanged(currentEdited)
+                    adapterExercise.notifyItemChanged(currentEdited)
                     currentEdited = -1
                 } else {
                     exercisesList.add(it)
-                    adapteur.notifyItemInserted(exercisesList.size-1)
+                    adapterExercise.notifyItemInserted(exercisesList.size-1)
                 }
                 Toast.makeText(this, "Exercise ${actionDone}: ${it.name}", Toast.LENGTH_SHORT).show()
             }
@@ -161,85 +212,7 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun setUpExercises(): MutableList<Exercise> {
-        return mutableListOf(
-            Exercise(
-                name = "Bench Press",
-                description = "A compound exercise targeting the chest, triceps, and shoulders.",
-                category = MuscleCategory.CHEST,
-                setList = listOf(
-                    Set(setOrder = 1, weight = 135f, reps = 10),
-                    Set(setOrder = 2, weight = 145f, reps = 8),
-                    Set(setOrder = 3, weight = 155f, reps = 6),
-                    Set(setOrder = 1, weight = 185f, reps = 10),
-                    Set(setOrder = 2, weight = 205f, reps = 8),
-                    Set(setOrder = 3, weight = 225f, reps = 6)
-                )
-            ),
-            Exercise(
-                name = "Squat",
-                description = "A lower body compound exercise targeting the quadriceps, hamstrings, and glutes.",
-                category = MuscleCategory.QUADS,
-                setList = listOf(
-                    Set(setOrder = 1, weight = 185f, reps = 10),
-                    Set(setOrder = 2, weight = 205f, reps = 8),
-                    Set(setOrder = 3, weight = 225f, reps = 6)
-                )
-            ),
-            Exercise(
-                name = "Deadlift",
-                description = "A compound movement working the entire posterior chain.",
-                category = MuscleCategory.BACK,
-                setList = listOf(
-                    Set(setOrder = 1, weight = 225f, reps = 8),
-                    Set(setOrder = 2, weight = 245f, reps = 6),
-                    Set(setOrder = 3, weight = 265f, reps = 4)
-                )
-            ),
-            Exercise(
-                name = "Overhead Press",
-                description = "An upper body exercise focusing on the shoulders and triceps.",
-                category = MuscleCategory.SHOULDERS,
-                setList = listOf(
-                    Set(setOrder = 1, weight = 95f, reps = 10),
-                    Set(setOrder = 2, weight = 105f, reps = 8),
-                    Set(setOrder = 3, weight = 115f, reps = 6)
-                )
-            ),
-            Exercise(
-                name = "Barbell Row",
-                description = "An exercise to target the back, focusing on the lats and rhomboids.",
-                category = MuscleCategory.BACK,
-                setList = listOf(
-                    Set(setOrder = 1, weight = 135f, reps = 10),
-                    Set(setOrder = 2, weight = 145f, reps = 8),
-                    Set(setOrder = 3, weight = 155f, reps = 6)
-                )
-            ),
-            Exercise(
-                name = "Bicep Curl",
-                description = "An isolation exercise for the biceps.",
-                category = MuscleCategory.BICEPS,
-                setList = listOf(
-                    Set(setOrder = 1, weight = 25f, reps = 12),
-                    Set(setOrder = 2, weight = 30f, reps = 10),
-                    Set(setOrder = 3, weight = 35f, reps = 8),
-                    Set(setOrder = 2, weight = 30f, reps = 10),
-                    Set(setOrder = 3, weight = 35f, reps = 8)
-                )
-            ),
-            Exercise(
-                name = "Tricep Pushdown",
-                description = "An isolation exercise for the triceps using a cable machine.",
-                category = MuscleCategory.TRICEPS,
-                setList = listOf(
-                    Set(setOrder = 1, weight = 40f, reps = 12),
-                    Set(setOrder = 2, weight = 45f, reps = 10),
-                    Set(setOrder = 3, weight = 50f, reps = 8)
-                )
-            )
-        )
-    }
+
     fun addExercise(isEdit: Boolean, exerciseToEdit: Exercise?) {
         val intent = Intent(this, AddEditExerciseActivity::class.java)
         intent.putExtra("isEdit",isEdit)
@@ -249,5 +222,103 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+}
+
+private fun setUpDone(): MutableList<Exercise>{
+    return mutableListOf(
+        Exercise(
+            name = "Pull ups",
+            description = "An exercise for back and biceps",
+            category = MuscleCategory.BACK,
+            setList = listOf(
+                Set(setOrder = 1, weight = 135f, reps = 10),
+                Set(setOrder = 2, weight = 145f, reps = 8),
+                Set(setOrder = 3, weight = 155f, reps = 6),
+                Set(setOrder = 4, weight = 185f, reps = 10),
+                Set(setOrder = 5, weight = 205f, reps = 8),
+                Set(setOrder = 6, weight = 225f, reps = 6)
+            )
+        )
+    )
+}
+
+private fun setUpExercises(): MutableList<Exercise> {
+    return mutableListOf(
+        Exercise(
+            name = "Bench Press",
+            description = "A compound exercise targeting the chest, triceps, and shoulders.",
+            category = MuscleCategory.CHEST,
+            setList = listOf(
+                Set(setOrder = 1, weight = 135f, reps = 10),
+                Set(setOrder = 2, weight = 145f, reps = 8),
+                Set(setOrder = 3, weight = 155f, reps = 6),
+                Set(setOrder = 4, weight = 185f, reps = 10),
+                Set(setOrder = 5, weight = 205f, reps = 8),
+                Set(setOrder = 6, weight = 225f, reps = 6)
+            )
+        ),
+        Exercise(
+            name = "Squat",
+            description = "A lower body compound exercise targeting the quadriceps, hamstrings, and glutes.",
+            category = MuscleCategory.QUADS,
+            setList = listOf(
+                Set(setOrder = 1, weight = 185f, reps = 10),
+                Set(setOrder = 2, weight = 205f, reps = 8),
+                Set(setOrder = 3, weight = 225f, reps = 6)
+            )
+        ),
+        Exercise(
+            name = "Deadlift",
+            description = "A compound movement working the entire posterior chain.",
+            category = MuscleCategory.BACK,
+            setList = listOf(
+                Set(setOrder = 1, weight = 225f, reps = 8),
+                Set(setOrder = 2, weight = 245f, reps = 6),
+                Set(setOrder = 3, weight = 265f, reps = 4)
+            )
+        ),
+        Exercise(
+            name = "Overhead Press",
+            description = "An upper body exercise focusing on the shoulders and triceps.",
+            category = MuscleCategory.SHOULDERS,
+            setList = listOf(
+                Set(setOrder = 1, weight = 95f, reps = 10),
+                Set(setOrder = 2, weight = 105f, reps = 8),
+                Set(setOrder = 3, weight = 115f, reps = 6)
+            )
+        ),
+        Exercise(
+            name = "Barbell Row",
+            description = "An exercise to target the back, focusing on the lats and rhomboids.",
+            category = MuscleCategory.BACK,
+            setList = listOf(
+                Set(setOrder = 1, weight = 135f, reps = 10),
+                Set(setOrder = 2, weight = 145f, reps = 8),
+                Set(setOrder = 3, weight = 155f, reps = 6)
+            )
+        ),
+        Exercise(
+            name = "Bicep Curl",
+            description = "An isolation exercise for the biceps.",
+            category = MuscleCategory.BICEPS,
+            setList = listOf(
+                Set(setOrder = 1, weight = 25f, reps = 12),
+                Set(setOrder = 2, weight = 30f, reps = 10),
+                Set(setOrder = 3, weight = 35f, reps = 8),
+                Set(setOrder = 4, weight = 30f, reps = 10),
+                Set(setOrder = 5, weight = 35f, reps = 8)
+            )
+        ),
+        Exercise(
+            name = "Tricep Pushdown",
+            description = "An isolation exercise for the triceps using a cable machine.",
+            category = MuscleCategory.TRICEPS,
+            setList = listOf(
+                Set(setOrder = 1, weight = 40f, reps = 12),
+                Set(setOrder = 2, weight = 45f, reps = 10),
+                Set(setOrder = 3, weight = 50f, reps = 8)
+            )
+        )
+    )
 }
 
