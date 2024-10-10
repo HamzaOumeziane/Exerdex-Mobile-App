@@ -137,6 +137,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var recyclerViewExercise: RecyclerView
     lateinit var recyclerViewDone: RecyclerView
+    lateinit var deleteDone: Button
 
 
 
@@ -162,6 +163,11 @@ class MainActivity : AppCompatActivity() {
             addExercise(false, null)
         }
 
+        deleteDone = findViewById(R.id.deleteButton)
+        deleteDone.setOnClickListener {
+            doneList.clear()
+            adapterDone.notifyDataSetChanged()
+        }
 
         recyclerViewExercise = findViewById(R.id.recyclerView)
         recyclerViewDone = findViewById(R.id.doneRecyclerView)
