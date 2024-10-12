@@ -256,6 +256,8 @@ class MainActivity : AppCompatActivity() {
                         reloadDataFromDatabase()
                     }
                 }
+                intent.removeExtra("exercise") // Pour pas que les exercises se rajoutent lors
+                                                     // du changement d'orientation.
                 Toast.makeText(this, "Exercise ${actionDone}: ${it.name}", Toast.LENGTH_SHORT).show()
             }
         }
