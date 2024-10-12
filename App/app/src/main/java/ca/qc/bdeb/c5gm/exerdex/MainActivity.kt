@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -18,13 +19,15 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private var currentEdited: Int = -1
 
-var exercisesList: MutableList<Exercise> = setUpExercises()
-var doneList: MutableList<Exercise> = setUpDone()
 lateinit var adapterDone: DoneListAdaptor
 lateinit var adapterExercise: ExerciseListAdaptor
 
@@ -59,6 +62,9 @@ public class ItemDoneHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
 public class DoneListAdaptor(
     val ctx: Context,
     val activity: MainActivity,
+    val database: ExerciseDatabase,
+    val exercisesList: MutableList<Exercise>,
+    val doneList: MutableList<Exercise>,
 ) : RecyclerView.Adapter<ItemDoneHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemDoneHolder {
         val view = LayoutInflater.from(ctx).inflate(R.layout.exercise_done_item, parent, false)
@@ -75,6 +81,10 @@ public class DoneListAdaptor(
 
         holder.comeback.setImageResource(R.drawable.baseline_loop_24)
         holder.comeback.setOnClickListener {
+            item.isDone = false
+            activity.lifecycleScope.launch(Dispatchers.IO){
+                database.exerciseDao().updateAll(item)
+            }
             exercisesList.add(item)
             adapterExercise.notifyItemInserted(exercisesList.size - 1)
             doneList.removeAt(holder.adapterPosition)
@@ -83,10 +93,13 @@ public class DoneListAdaptor(
     }
 }
 
-public class ExerciseListAdaptor(
+class ExerciseListAdaptor(
     val ctx: Context,
     val activity: MainActivity,
-    private val editExercise: (isEdit: Boolean, exerciseToEdit: Exercise?) -> Unit
+    val database: ExerciseDatabase,
+    val exercisesList: MutableList<Exercise>,
+    val doneList: MutableList<Exercise>,
+    private val editExercise: (isEdit: Boolean, exerciseToEdit: Exercise?) -> Unit,
 ) : RecyclerView.Adapter<ItemExerciseHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemExerciseHolder {
@@ -115,6 +128,10 @@ public class ExerciseListAdaptor(
         holder.cancel.setImageResource(R.drawable.baseline_cancel_24)
 
         holder.check.setOnClickListener {
+            item.isDone=true
+            activity.lifecycleScope.launch(Dispatchers.IO){
+                database.exerciseDao().updateAll(item)
+            }
             doneList.add(item)
             adapterDone.notifyItemInserted(doneList.size - 1)
             exercisesList.removeAt(holder.adapterPosition)
@@ -127,6 +144,9 @@ public class ExerciseListAdaptor(
         }
 
         holder.cancel.setOnClickListener {
+            activity.lifecycleScope.launch(Dispatchers.IO){
+                database.exerciseDao().delete(item)
+            }
             exercisesList.removeAt(holder.adapterPosition)
             notifyItemRemoved(holder.adapterPosition)
         }
@@ -138,7 +158,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var recyclerViewExercise: RecyclerView
     lateinit var recyclerViewDone: RecyclerView
     lateinit var deleteDone: Button
-
+    lateinit var database: ExerciseDatabase
+    private val exercisesList: MutableList<Exercise> = mutableListOf()
+    private val doneList: MutableList<Exercise> = mutableListOf()
 
 
     //val test:Exercise = Exercise(name = "Test", category = MuscleCategory.ABS, setList = listOf())
@@ -154,6 +176,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        database = ExerciseDatabase.getExerciseDatabase(applicationContext)
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -165,18 +188,40 @@ class MainActivity : AppCompatActivity() {
 
         deleteDone = findViewById(R.id.deleteButton)
         deleteDone.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.IO){
+                database.exerciseDao().deleteAllExercisesDone()
+            }
             doneList.clear()
             adapterDone.notifyDataSetChanged()
         }
 
         recyclerViewExercise = findViewById(R.id.recyclerView)
         recyclerViewDone = findViewById(R.id.doneRecyclerView)
-        adapterExercise = ExerciseListAdaptor(applicationContext, this) { isEdit, exercise ->
+        adapterExercise = ExerciseListAdaptor(applicationContext, this, database,
+            exercisesList, doneList) { isEdit, exercise ->
             addExercise(isEdit, exercise)
         }
-        adapterDone = DoneListAdaptor(applicationContext, this)
+        adapterDone = DoneListAdaptor(applicationContext, this, database, exercisesList,
+            doneList)
         recyclerViewExercise.adapter = adapterExercise
         recyclerViewDone.adapter = adapterDone
+
+        lifecycleScope.launch(Dispatchers.IO){
+            val exercisesToDoFromDB = database.exerciseDao().loadExerciseByDone(false)
+            val exercisesDoneFromDB = database.exerciseDao().loadExerciseByDone(true)
+            Log.d("databaseLOGS","Table, on load undone: "+exercisesToDoFromDB)
+            Log.d("databaseLOGS","Table, on load done: "+exercisesDoneFromDB)
+
+
+            exercisesList.clear()
+            doneList.clear()
+            exercisesList.addAll(exercisesToDoFromDB)
+            doneList.addAll(exercisesDoneFromDB)
+            runOnUiThread {
+                adapterExercise.notifyDataSetChanged()
+                adapterDone.notifyDataSetChanged()
+            }
+        }
 
     }
 
@@ -198,15 +243,18 @@ class MainActivity : AppCompatActivity() {
             newExercise?.let {
                 var actionDone: String = "Added"
                 if (isEdit){
-                    exercisesList.add(currentEdited,it)
-                    adapterExercise.notifyItemInserted(currentEdited)
                     actionDone = "Edited"
-                    exercisesList[currentEdited] = it
-                    adapterExercise.notifyItemChanged(currentEdited)
-                    currentEdited = -1
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        database.exerciseDao().updateAll(it)
+                        // Reload data after update
+                        reloadDataFromDatabase()
+                    }
                 } else {
-                    exercisesList.add(it)
-                    adapterExercise.notifyItemInserted(exercisesList.size-1)
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        database.exerciseDao().insertAll(it)
+                        // Reload data after insertion
+                        reloadDataFromDatabase()
+                    }
                 }
                 Toast.makeText(this, "Exercise ${actionDone}: ${it.name}", Toast.LENGTH_SHORT).show()
             }
@@ -228,8 +276,25 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    private suspend fun reloadDataFromDatabase() {
+        val exercisesToDoFromDB = database.exerciseDao().loadExerciseByDone(false)
+        val exercisesDoneFromDB = database.exerciseDao().loadExerciseByDone(true)
+        Log.d("databaseLOGS","Table, on load undone: $exercisesToDoFromDB")
+        Log.d("databaseLOGS","Table, on load done: $exercisesDoneFromDB")
+        exercisesList.clear()
+        doneList.clear()
+        exercisesList.addAll(exercisesToDoFromDB)
+        doneList.addAll(exercisesDoneFromDB)
+        withContext(Dispatchers.Main) {
+            adapterExercise.notifyDataSetChanged()
+            adapterDone.notifyDataSetChanged()
+        }
+    }
 }
 
+
+
+/*
 private fun setUpDone(): MutableList<Exercise>{
     return mutableListOf(
         Exercise(
@@ -327,4 +392,4 @@ private fun setUpExercises(): MutableList<Exercise> {
         )
     )
 }
-
+*/

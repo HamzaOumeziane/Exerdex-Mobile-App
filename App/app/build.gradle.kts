@@ -50,20 +50,14 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.androidx.core.ktx)
 
-    val room_version = "2.6.1"
-
+    implementation(libs.gson)
+    implementation(libs.room.ktx)
     implementation(libs.androidx.room.runtime)
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
 
-
-
-
 }
 
 
-fun DependencyHandlerScope.ksp(compiler: Any) {
 
-}

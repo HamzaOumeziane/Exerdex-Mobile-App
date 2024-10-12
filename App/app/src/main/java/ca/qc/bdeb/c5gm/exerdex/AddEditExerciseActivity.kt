@@ -34,6 +34,8 @@ class AddEditExerciseActivity : AppCompatActivity() {
     private lateinit var selectedCategory: MuscleCategory
     private var setsList: MutableList<Set> = mutableListOf()
     private var isEditing: Boolean = false
+    private var exerciseBeingEditedId: Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -90,6 +92,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
             }
         }
         if (isEditing && exerciseToEdit != null) {
+            exerciseBeingEditedId = exerciseToEdit.exId
             exerciseTitleView.text = exerciseToEdit.name
             exerciseDescriptionView.text = exerciseToEdit.description
 
@@ -150,7 +153,8 @@ class AddEditExerciseActivity : AppCompatActivity() {
         val newExercise: Exercise = Exercise(exerciseTitleView.text.toString(),
             exerciseDescriptionView.text.toString(),
             selectedCategory,
-            setsList
+            setsList,
+            exId = exerciseBeingEditedId?: 0
             )
         val intent = Intent(this,MainActivity::class.java)
         intent.putExtra("exercise",newExercise)
