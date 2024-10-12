@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/rootConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_secondary_dark"
@@ -11,129 +11,153 @@
     <include
         layout="@layout/toolbar_add_exercise"
         android:id="@+id/toolbar"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-    <EditText
-        android:id="@+id/exerciseNameInput"
-        android:layout_width="0dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="80dp"
-        android:ems="10"
-        android:hint="Flat Barbell Bench Press"
-        android:inputType="text"
-        android:textColor="@color/text_primary_light"
-        android:textColorHint="@color/text_secondary_light"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.8" />
-
-    <EditText
-        android:id="@+id/exerciseDescInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:gravity="start|top"
-        android:hint="Notes: Do this first, warmup reardelts and rotator cuffs beforehand"
-        android:inputType="textMultiLine"
-        android:textColor="@color/text_primary_light"
-        android:textColorHint="@color/text_secondary_light"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/exerciseNameInput"
-        app:layout_constraintWidth_percent="0.9" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/setsTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Sets"
-        android:textColor="@color/text_primary_light"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/exerciseDescInput"
-        app:layout_constraintTop_toBottomOf="@+id/exerciseDescInput" />
-
-    <TextView
-        android:id="@+id/photoTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Photo"
-        android:textColor="@color/text_primary_light"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/setsTitle"
-        app:layout_constraintTop_toBottomOf="@+id/addSetBtn" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/setsRecyclerView"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/setsTitle"
-        app:layout_constraintHeight_percent="0.25"
-        app:layout_constraintWidth_percent="1.0" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <Button
-        android:id="@+id/addSetBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Set"
-        app:layout_constraintEnd_toEndOf="@+id/exerciseDescInput"
-        app:layout_constraintTop_toBottomOf="@+id/setsRecyclerView"
-        android:background="@color/background_dark" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/newSetWeight"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="185"
-        android:inputType="number"
-        android:textColor="@color/text_primary_light"
-        android:textColorHint="@color/text_secondary_light"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/addSetBtn"
-        app:layout_constraintStart_toStartOf="@+id/setsTitle" />
+            <EditText
+                android:id="@+id/exerciseNameInput"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="16dp"
+                android:ems="10"
+                android:hint="Flat Barbell Bench Press"
+                android:inputType="text"
+                android:textColor="@color/text_primary_light"
+                android:textColorHint="@color/text_secondary_light"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.8" />
 
-    <EditText
-        android:id="@+id/newSetReps"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="12"
-        android:inputType="number|numberDecimal"
-        android:textColor="@color/text_primary_light"
-        android:textColorHint="@color/text_secondary_light"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/addSetBtn"
-        app:layout_constraintEnd_toStartOf="@+id/addSetBtn"
-        app:layout_constraintStart_toEndOf="@+id/newSetWeight" />
+            <EditText
+                android:id="@+id/exerciseDescInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:gravity="start|top"
+                android:hint="Notes: Do this first, warmup rear delts and rotator cuffs beforehand"
+                android:inputType="textMultiLine"
+                android:textColor="@color/text_primary_light"
+                android:textColorHint="@color/text_secondary_light"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/exerciseNameInput"
+                app:layout_constraintWidth_percent="0.9" />
 
-    <TextView
-        android:id="@+id/repsXWeight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="x"
-        android:textColor="@color/text_primary_light"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/newSetReps"
-        app:layout_constraintEnd_toStartOf="@+id/newSetReps"
-        app:layout_constraintStart_toEndOf="@+id/newSetWeight"
-        app:layout_constraintTop_toTopOf="@+id/newSetWeight" />
+            <TextView
+                android:id="@+id/setsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Sets"
+                android:textColor="@color/text_primary_light"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@id/exerciseDescInput"
+                app:layout_constraintTop_toBottomOf="@id/exerciseDescInput" />
 
+            <EditText
+                android:id="@+id/newSetWeight"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="185"
+                android:inputType="number"
+                android:textColor="@color/text_primary_light"
+                android:textColorHint="@color/text_secondary_light"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/addSetBtn"
+                app:layout_constraintStart_toStartOf="@id/setsTitle" />
+
+            <EditText
+                android:id="@+id/newSetReps"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="12"
+                android:inputType="number|numberDecimal"
+                android:textColor="@color/text_primary_light"
+                android:textColorHint="@color/text_secondary_light"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/addSetBtn"
+                app:layout_constraintEnd_toStartOf="@id/addSetBtn"
+                app:layout_constraintStart_toEndOf="@id/newSetWeight" />
+
+            <TextView
+                android:id="@+id/repsXWeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="x"
+                android:textColor="@color/text_primary_light"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/newSetReps"
+                app:layout_constraintEnd_toStartOf="@id/newSetReps"
+                app:layout_constraintStart_toEndOf="@id/newSetWeight"
+                app:layout_constraintTop_toTopOf="@id/newSetWeight" />
+
+            <Button
+                android:id="@+id/addSetBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Set"
+                android:background="@color/background_dark"
+                app:layout_constraintEnd_toEndOf="@id/exerciseDescInput"
+                app:layout_constraintTop_toBottomOf="@id/setsRecyclerView" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/setsRecyclerView"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/setsTitle" />
+
+            <TextView
+                android:id="@+id/photoTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Photo"
+                android:textColor="@color/text_primary_light"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@id/setsTitle"
+                app:layout_constraintTop_toBottomOf="@id/addSetBtn" />
+
+            <Spinner
+                android:id="@+id/muscleCategorySpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary_light"
+                app:layout_constraintEnd_toEndOf="@id/exerciseDescInput"
+                app:layout_constraintTop_toBottomOf="@id/exerciseDescInput" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+<!--
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/finalizeExerciseBtn"
         android:layout_width="wrap_content"
@@ -153,16 +177,8 @@
         android:contentDescription="Cancel Exercise"
         android:layout_marginStart="20dp"
         android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="@+id/finalizeExerciseBtn"
+        app:layout_constraintBottom_toBottomOf="@id/finalizeExerciseBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/baseline_cancel_24_wh" />
-
-    <Spinner
-        android:id="@+id/muscleCategorySpinner"
-        android:textColor="@color/text_primary_light"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/exerciseDescInput"
-        app:layout_constraintTop_toBottomOf="@+id/exerciseDescInput" />
-
+-->
 </androidx.constraintlayout.widget.ConstraintLayout>

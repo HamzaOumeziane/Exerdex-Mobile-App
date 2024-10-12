@@ -7,6 +7,8 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -18,6 +20,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -46,6 +49,13 @@ class AddEditExerciseActivity : AppCompatActivity() {
             insets
         }
 
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.baseline_keyboard_return_24_wh)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
         repsTextView = findViewById(R.id.newSetReps)
         weightTextView = findViewById(R.id.newSetWeight)
         exerciseTitleView = findViewById(R.id.exerciseNameInput)
@@ -59,19 +69,25 @@ class AddEditExerciseActivity : AppCompatActivity() {
         addSetBtn.setOnClickListener{
             addNewSet()
         }
-        val finalizeExerciseBtn: FloatingActionButton = findViewById(R.id.finalizeExerciseBtn)
-        val cancelExerciseBtn: FloatingActionButton = findViewById(R.id.cancelExerciseBtn)
-        finalizeExerciseBtn.setOnClickListener{
-            finalizeExercise()
-        }
-        cancelExerciseBtn.setOnClickListener{
-            cancelExercise()
-        }
+//        TO REVIEW WITH HAMZA: Est-ce qu'on enleve les floating action buttons maintenant qu'il y a le toolbar qui fonctionne?
+//        val finalizeExerciseBtn: FloatingActionButton = findViewById(R.id.finalizeExerciseBtn)
+//        val cancelExerciseBtn: FloatingActionButton = findViewById(R.id.cancelExerciseBtn)
+//        finalizeExerciseBtn.setOnClickListener{
+//            finalizeExercise()
+//        }
+//        cancelExerciseBtn.setOnClickListener{
+//            cancelExercise()
+//        }
     }
 
     override fun onResume() {
         super.onResume()
         handleIncomingIntent(intent)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.add_edit_exercise_menu,menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
     private fun handleIncomingIntent(intent: Intent) {
@@ -165,6 +181,25 @@ class AddEditExerciseActivity : AppCompatActivity() {
     private fun cancelExercise(){
         val intent = Intent(this,MainActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                cancelExercise()
+                true
+            }
+            R.id.action_finish -> {
+                finalizeExercise()
+                true
+            }
+            R.id.action_cancel -> {
+                cancelExercise()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun initializeCategorySpinnner(){
