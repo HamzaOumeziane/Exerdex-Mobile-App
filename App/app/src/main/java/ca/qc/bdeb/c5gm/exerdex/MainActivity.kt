@@ -127,6 +127,8 @@ class ExerciseListAdaptor(
         holder.edit.setImageResource(R.drawable.baseline_edit_24)
         holder.cancel.setImageResource(R.drawable.baseline_cancel_24)
 
+
+
         holder.check.setOnClickListener {
             item.isDone=true
             activity.lifecycleScope.launch(Dispatchers.IO){
@@ -150,6 +152,9 @@ class ExerciseListAdaptor(
             exercisesList.removeAt(holder.adapterPosition)
             notifyItemRemoved(holder.adapterPosition)
         }
+        holder.itemView.setOnClickListener{
+            activity.setUpPopup(item)
+        }
     }
 }
 
@@ -159,6 +164,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var recyclerViewDone: RecyclerView
     lateinit var deleteDone: Button
     lateinit var database: ExerciseDatabase
+    lateinit var popupLayer: ConstraintLayout
     private val exercisesList: MutableList<Exercise> = mutableListOf()
     private val doneList: MutableList<Exercise> = mutableListOf()
 
@@ -184,6 +190,12 @@ class MainActivity : AppCompatActivity() {
         val floatingBtn: FloatingActionButton = findViewById(R.id.floatingActionBtn)
         floatingBtn.setOnClickListener {
             addExercise(false, null)
+        }
+
+        popupLayer = findViewById(R.id.popupLayer)
+        val closePopupBtn: ImageView = findViewById(R.id.closePopupImg)
+        closePopupBtn.setOnClickListener {
+            closePopup()
         }
 
         deleteDone = findViewById(R.id.deleteButton)
@@ -291,6 +303,31 @@ class MainActivity : AppCompatActivity() {
             adapterExercise.notifyDataSetChanged()
             adapterDone.notifyDataSetChanged()
         }
+    }
+
+    public fun setUpPopup(exerciseToDisplay:Exercise){
+        popupLayer.visibility = View.VISIBLE
+        val titleView: TextView = findViewById(R.id.popupExoTitle)
+        val typeView: TextView = findViewById(R.id.popupExoType)
+        val descView: TextView = findViewById(R.id.popupExoDesc)
+        val setsView: TextView = findViewById(R.id.popupExoSets)
+        val exoImage: ImageView = findViewById(R.id.popupExoImg)
+        titleView.text = exerciseToDisplay.name
+        descView.text = exerciseToDisplay.description
+        typeView.text = exerciseToDisplay.category.toString() + " Exercise"
+
+        val setsStringBuilder = StringBuilder()
+
+        exerciseToDisplay.setList.forEach{
+            setsStringBuilder.append(it.toString())
+        }
+
+        setsView.text = setsStringBuilder.toString()
+
+
+    }
+    private fun closePopup(){
+        popupLayer.visibility = View.GONE
     }
 }
 
