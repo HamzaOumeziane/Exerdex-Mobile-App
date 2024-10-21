@@ -103,6 +103,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
                 pictureTake.setImageResource(R.drawable.baseline_photo_camera_24)
                 manipulatePicture.setImageResource(R.drawable.baseline_add_circle_24)
                 pictureSet = false
+                uriPic = Uri.EMPTY
             }else{
                 showMenuImage()
             }
