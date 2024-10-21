@@ -2,6 +2,7 @@ package ca.qc.bdeb.c5gm.exerdex
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -316,13 +317,19 @@ class MainActivity : AppCompatActivity() {
         descView.text = exerciseToDisplay.description
         typeView.text = exerciseToDisplay.category.toString() + " Exercise"
 
+
         val setsStringBuilder = StringBuilder()
 
         exerciseToDisplay.setList.forEach{
-            setsStringBuilder.append(it.toString())
+            setsStringBuilder.append(it.toString() + "\n")
         }
 
         setsView.text = setsStringBuilder.toString()
+
+        if(!exerciseToDisplay.imageUri.isNullOrEmpty()){
+            val uri = Uri.parse(exerciseToDisplay.imageUri)
+            exoImage.setImageURI(uri)
+        }
 
 
     }

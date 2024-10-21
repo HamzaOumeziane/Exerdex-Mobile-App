@@ -101,7 +101,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
         manipulatePicture.setOnClickListener {
             if(pictureSet){
                 pictureTake.setImageResource(R.drawable.baseline_photo_camera_24)
-                manipulatePicture.setImageResource(R.drawable.baseline_add_circle_24) // Remettre l'icône de l'appareil photo
+                manipulatePicture.setImageResource(R.drawable.baseline_add_circle_24)
                 pictureSet = false
             }else{
                 showMenuImage()
