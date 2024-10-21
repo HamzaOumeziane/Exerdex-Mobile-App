@@ -28,6 +28,7 @@ data class Exercise(
     val category: MuscleCategory,
     val setList: List<Set>,
     var isDone: Boolean = false,
+    var imageUri: String? = null,
     @PrimaryKey(autoGenerate = true) val exId: Int = 0
 ) : Parcelable
 
@@ -62,7 +63,7 @@ interface ExerciseDao {
     suspend fun deleteAllExercisesDone()
 }
 
-@Database(entities = [Exercise::class],version = 1)
+@Database(entities = [Exercise::class],version = 2)
 @TypeConverters(Converters::class)
     abstract class ExerciseDatabase: RoomDatabase(){
         abstract fun exerciseDao(): ExerciseDao

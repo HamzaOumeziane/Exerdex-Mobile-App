@@ -1,10 +1,14 @@
 package ca.qc.bdeb.c5gm.exerdex
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.icu.text.SimpleDateFormat
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -19,13 +23,21 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.io.File
+import java.util.Date
+import java.util.Locale
 
 class AddEditExerciseActivity : AppCompatActivity() {
     lateinit var repsTextView: TextView
@@ -35,9 +47,17 @@ class AddEditExerciseActivity : AppCompatActivity() {
     private lateinit var exerciseTitleView: TextView
     private lateinit var exerciseDescriptionView: TextView
     private lateinit var selectedCategory: MuscleCategory
+    private lateinit var pictureTake: ImageView
+    private lateinit var manipulatePicture: ImageView
+    private lateinit var uriPic: Uri
+    private lateinit var picTaken: ActivityResultLauncher<Uri>
+    private lateinit var picSelected: ActivityResultLauncher<PickVisualMediaRequest>
+    private var pictureSet: Boolean = false
     private var setsList: MutableList<Set> = mutableListOf()
     private var isEditing: Boolean = false
     private var exerciseBeingEditedId: Int? = null
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +75,38 @@ class AddEditExerciseActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.baseline_keyboard_return_24_wh)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        pictureTake = findViewById(R.id.pictureTakeId)
+        manipulatePicture = findViewById(R.id.AddRemovePicButton)
+
+        picTaken = registerForActivityResult(ActivityResultContracts.TakePicture()){ success ->
+            if(success){
+                pictureTake.setImageURI(uriPic)
+                manipulatePicture.setImageResource(R.drawable.baseline_cancel_24_wh)
+                pictureSet = true
+            }else{
+                Toast.makeText(this, "Échec de la prise de photo.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        picSelected = registerForActivityResult(ActivityResultContracts.PickVisualMedia()){
+                uri: Uri? ->
+            if (uri != null){
+                pictureTake.setImageURI(uri)
+                manipulatePicture.setImageResource(R.drawable.baseline_cancel_24_wh)
+                pictureSet = true
+            }
+        }
+
+        manipulatePicture.setOnClickListener {
+            if(pictureSet){
+                pictureTake.setImageResource(R.drawable.baseline_photo_camera_24)
+                manipulatePicture.setImageResource(R.drawable.baseline_add_circle_24) // Remettre l'icône de l'appareil photo
+                pictureSet = false
+            }else{
+                showMenuImage()
+            }
+        }
 
         repsTextView = findViewById(R.id.newSetReps)
         weightTextView = findViewById(R.id.newSetWeight)
@@ -78,6 +130,48 @@ class AddEditExerciseActivity : AppCompatActivity() {
 //        cancelExerciseBtn.setOnClickListener{
 //            cancelExercise()
 //        }
+    }
+
+    private fun showMenuImage(){
+        /*
+        * Source : https://www.digitalocean.com/community/tutorials/android-alert-dialog-using-kotlin
+        * */
+        val options = arrayOf("Prendre une photo", "Choisir depuis la galerie")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Ajouter une image")
+
+        builder.setItems(options) { dialog, which ->
+            when (which) {
+                0 -> {
+                    takePic()
+                }
+                1 -> {
+                    selectPic()
+                }
+            }
+        }
+
+        builder.setNegativeButton("Annuler") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.show()
+    }
+
+    private fun takePic(){
+        uriPic = createUriPic()
+        picTaken.launch(uriPic)
+    }
+
+    private fun selectPic(){
+        picSelected.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+
+
+    private fun createUriPic(): Uri{
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val pictureFile: File = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "IMG_$timeStamp.jpg")
+        return FileProvider.getUriForFile(this, "ca.qc.bdeb.c5gm.photoapp", pictureFile)
     }
 
     override fun onResume() {
@@ -111,6 +205,13 @@ class AddEditExerciseActivity : AppCompatActivity() {
             exerciseBeingEditedId = exerciseToEdit.exId
             exerciseTitleView.text = exerciseToEdit.name
             exerciseDescriptionView.text = exerciseToEdit.description
+
+            if (!exerciseToEdit.imageUri.isNullOrEmpty()) {
+                uriPic = Uri.parse(exerciseToEdit.imageUri)
+                pictureTake.setImageURI(uriPic)
+                manipulatePicture.setImageResource(R.drawable.baseline_cancel_24_wh)
+                pictureSet = true
+            }
 
             val spinner: Spinner = findViewById(R.id.muscleCategorySpinner)
             val categoryName = exerciseToEdit.category.name.lowercase().replaceFirstChar { it.uppercase() }
@@ -170,6 +271,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
             exerciseDescriptionView.text.toString(),
             selectedCategory,
             setsList,
+            imageUri = if (pictureSet) uriPic.toString() else null,
             exId = exerciseBeingEditedId?: 0
             )
         val intent = Intent(this,MainActivity::class.java)

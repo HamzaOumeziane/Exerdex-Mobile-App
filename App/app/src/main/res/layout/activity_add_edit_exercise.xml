@@ -32,6 +32,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <ImageView
+                android:id="@+id/pictureTakeId"
+                android:layout_width="208dp"
+                android:layout_height="170dp"
+                android:layout_marginBottom="28dp"
+                android:src="@drawable/baseline_photo_camera_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
+
             <EditText
                 android:id="@+id/exerciseNameInput"
                 android:layout_width="0dp"
@@ -152,6 +163,18 @@
                 android:textColor="@color/text_primary_light"
                 app:layout_constraintEnd_toEndOf="@id/exerciseDescInput"
                 app:layout_constraintTop_toBottomOf="@id/exerciseDescInput" />
+
+            <ImageView
+                android:id="@+id/AddRemovePicButton"
+                android:layout_width="87dp"
+                android:layout_height="87dp"
+                android:layout_marginTop="44dp"
+                android:clickable="true"
+                android:focusable="auto"
+                android:src="@drawable/baseline_add_circle_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/pictureTakeId"
+                app:layout_constraintTop_toTopOf="@+id/pictureTakeId" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
