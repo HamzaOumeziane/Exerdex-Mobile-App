@@ -29,6 +29,7 @@ data class Exercise(
     val category: MuscleCategory,
     val setList: List<Set>,
     var isDone: Boolean = false,
+    var imageUri: String? = null,
     @PrimaryKey(autoGenerate = true) val exId: Int = 0
 ) : Parcelable
 
