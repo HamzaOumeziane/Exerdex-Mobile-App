@@ -13,9 +13,13 @@
         android:theme="@style/Theme.Exerdex"
         tools:targetApi="31">
         <activity
+            android:name=".ArchivedWorkouts"
+            android:exported="false"
+            android:launchMode="singleTop"/>
+        <activity
             android:name=".AddEditExerciseActivity"
-            android:launchMode="singleTop"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTop" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

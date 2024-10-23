@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -25,6 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.sql.Date
 
 private var currentEdited: Int = -1
 
@@ -165,6 +167,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var deleteDone: Button
     lateinit var database: ExerciseDatabase
     lateinit var popupLayer: ConstraintLayout
+    lateinit var newWorkoutName: TextView
     private val exercisesList: MutableList<Exercise> = mutableListOf()
     private val doneList: MutableList<Exercise> = mutableListOf()
 
@@ -192,19 +195,24 @@ class MainActivity : AppCompatActivity() {
             addExercise(false, null)
         }
 
+        newWorkoutName = findViewById(R.id.newWorkoutName)
+
         popupLayer = findViewById(R.id.popupLayer)
         val closePopupBtn: ImageView = findViewById(R.id.closePopupImg)
         closePopupBtn.setOnClickListener {
             closePopup()
         }
 
-        deleteDone = findViewById(R.id.deleteButton)
+        deleteDone = findViewById(R.id.archiveButton)
         deleteDone.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO){
-                database.exerciseDao().deleteAllExercisesDone()
+            if (doneList.isEmpty() || newWorkoutName.text.toString().length < 2){
+                Toast.makeText(this,"Enter a workout name and at least one done exercise",Toast.LENGTH_SHORT).show()
+            } else {
+                lifecycleScope.launch(Dispatchers.IO){
+                    addDoneToArchive()
+                    database.exerciseDao().deleteAllExercisesDone()
+                }
             }
-            doneList.clear()
-            adapterDone.notifyDataSetChanged()
         }
 
         recyclerViewExercise = findViewById(R.id.recyclerView)
@@ -242,6 +250,31 @@ class MainActivity : AppCompatActivity() {
         handleIncomingIntent(intent)
     }
 
+    private suspend fun addDoneToArchive(){
+        val setList: MutableList<String> = mutableListOf()
+        var totalWorkoutVolume: Int = 0
+        doneList.forEach { exercise: Exercise ->
+            Log.d("exerciseAddingLogs","Adding Exercise: ${exercise}")
+            val setsStringBuilder = StringBuilder()
+            setsStringBuilder.append(exercise.name)
+            val heaviestSet = exercise.setList.maxBy { it.weight }
+            setsStringBuilder.append(", heaviest set: ${heaviestSet.weight}x${heaviestSet.reps}")
+            setList.add(setsStringBuilder.toString())
+            val totalVolume = exercise.setList.sumOf { (it.weight * it.reps).toInt() }
+            totalWorkoutVolume += totalVolume
+        }
+
+        val workout:Workout = Workout(newWorkoutName.text.toString(), Date(System.currentTimeMillis()), setList
+            ,totalWorkoutVolume)
+        Log.d("exerciseAddingLogs","Workout Added: ${workout}")
+        database.workoutDao().insertAll(workout)
+        runOnUiThread {
+            doneList.clear()
+            adapterDone.notifyDataSetChanged()
+        }
+    }
+
+
     private fun handleIncomingIntent(intent: Intent) {
         if (intent.hasExtra("exercise")) {
             var newExercise:Exercise?
@@ -274,6 +307,18 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_history -> {
+                val intent = Intent(this, ArchivedWorkouts::class.java)
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
@@ -318,13 +363,14 @@ class MainActivity : AppCompatActivity() {
 
         val setsStringBuilder = StringBuilder()
 
-        exerciseToDisplay.setList.forEach{
-            setsStringBuilder.append(it.toString())
+        exerciseToDisplay.setList.forEachIndexed { index, item ->
+            setsStringBuilder.append(item.toString())
+            // Pour ne pas avoir de new line au dernier element
+            if (index < exerciseToDisplay.setList.size - 1) {
+                setsStringBuilder.append("\n")
+            }
         }
-
         setsView.text = setsStringBuilder.toString()
-
-
     }
     private fun closePopup(){
         popupLayer.visibility = View.GONE

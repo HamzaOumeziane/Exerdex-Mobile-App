@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_secondary_dark">
+
+    <TextView
+        android:id="@+id/workoutNameTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Workout"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/workoutDateTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="2024/10/21"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/workoutNameTxt"
+        app:layout_constraintStart_toEndOf="@+id/workoutNameTxt"
+        app:layout_constraintTop_toTopOf="@+id/workoutNameTxt" />
+
+    <TextView
+        android:id="@+id/workoutVolumeTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:text="18700lbs"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/workoutDateTxt"
+        app:layout_constraintStart_toEndOf="@+id/workoutDateTxt" />
+
+    <TextView
+        android:id="@+id/announcerTxtExercises"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Exercises:"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/workoutNameTxt"
+        app:layout_constraintTop_toBottomOf="@+id/workoutNameTxt" />
+
+    <TextView
+        android:id="@+id/exercisesSummaryTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bench Press, heaviest set: 205x6"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/announcerTxtExercises"
+        app:layout_constraintTop_toBottomOf="@+id/announcerTxtExercises" />
+
+    <ImageView
+        android:id="@+id/deleteImgBtn"
+        android:layout_width="46dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="-4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/baseline_delete_24_wh" />
+
+    <View
+        android:id="@+id/bottomBorder"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="@color/secondary_green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exercisesSummaryTxt" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

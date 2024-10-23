@@ -18,6 +18,7 @@ import androidx.room.Update
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.parcelize.Parcelize
+import java.sql.Date
 
 
 @Parcelize
@@ -46,6 +47,17 @@ data class Set(
     }
 }
 
+@Parcelize
+@Entity
+data class Workout(
+    val name: String,
+    val date: Date,
+    val exerciseList: List<String>, // Non une relation car ils sont utilisé pour affichage seulement
+    // et sont effacés de la table 'Exercise'. On ne peut plus les modifier après une finalisation workout.
+    val totalVolumne: Int,
+    @PrimaryKey(autoGenerate = true) val workoutId: Int = 0
+) : Parcelable
+
 @Dao
 interface ExerciseDao {
     @Query("SELECT * FROM Exercise WHERE isDone = :isDone")
@@ -62,10 +74,22 @@ interface ExerciseDao {
     suspend fun deleteAllExercisesDone()
 }
 
-@Database(entities = [Exercise::class],version = 1)
+@Dao
+interface WorkoutDao {
+    @Delete
+    suspend fun delete(workout: Workout)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(vararg workouts: Workout)
+    @Query("SELECT * FROM Workout")
+    suspend fun loadAllWorkouts(): MutableList<Workout>
+
+}
+
+@Database(entities = [Exercise::class, Workout::class],version = 4)
 @TypeConverters(Converters::class)
     abstract class ExerciseDatabase: RoomDatabase(){
         abstract fun exerciseDao(): ExerciseDao
+        abstract fun workoutDao(): WorkoutDao
 
         companion object {
             @Volatile
@@ -106,5 +130,30 @@ class Converters {
     @TypeConverter
     fun toMuscleCategory(categoryString: String): MuscleCategory {
         return MuscleCategory.valueOf(categoryString)
+    }
+
+    @TypeConverter
+    fun fromDate(date: Date): Long = date.time
+
+    @TypeConverter
+    fun toDate(timestamp: Long): Date = Date(timestamp)
+
+    @TypeConverter
+    fun fromExerciseList(exercises: List<Exercise>): String = gson.toJson(exercises)
+
+    @TypeConverter
+    fun toExerciseList(exercisesString: String): List<Exercise> {
+        val listType = object : TypeToken<List<Exercise>>() {}.type
+        return gson.fromJson(exercisesString, listType)
+    }
+    @TypeConverter
+    fun fromStringList(stringList: List<String>): String {
+        return gson.toJson(stringList)
+    }
+
+    @TypeConverter
+    fun toStringList(stringListString: String): List<String> {
+        val listType = object : TypeToken<List<String>>() {}.type
+        return gson.fromJson(stringListString, listType)
     }
 }

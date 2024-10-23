@@ -199,7 +199,6 @@ class AddEditExerciseActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun initializeCategorySpinnner(){
