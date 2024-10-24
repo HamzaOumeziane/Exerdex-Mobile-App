@@ -93,6 +93,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
                 uri: Uri? ->
             if (uri != null){
                 pictureTake.setImageURI(uri)
+                uriPic = uri
                 manipulatePicture.setImageResource(R.drawable.baseline_cancel_24_wh)
                 pictureSet = true
             }

@@ -117,6 +117,7 @@ class WorkoutListAdaptor(val ctx: Context, val activity: ArchivedWorkouts, var d
 
         holder.workoutName.text = item.name
         holder.workoutDate.text = item.date.toString()
+        holder.deleteBtn.setImageResource(R.drawable.baseline_delete_24_wh)
         holder.workoutVolume.text = item.totalVolumne.toString()+"lbs"
         val setsStringBuilder = StringBuilder()
 
