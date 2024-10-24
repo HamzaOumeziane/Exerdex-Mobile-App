@@ -89,13 +89,18 @@ class AddEditExerciseActivity : AppCompatActivity() {
             }
         }
 
-        picSelected = registerForActivityResult(ActivityResultContracts.PickVisualMedia()){
-                uri: Uri? ->
-            if (uri != null){
-                pictureTake.setImageURI(uri)
-                uriPic = uri
-                manipulatePicture.setImageResource(R.drawable.baseline_cancel_24_wh)
-                pictureSet = true
+        picSelected = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+            if (uri != null) {
+                // Save the selected image to a local file
+                val savedUri = saveSelectedImageToLocalFile(uri)
+                if (savedUri != null) {
+                    pictureTake.setImageURI(savedUri)
+                    uriPic = savedUri
+                    manipulatePicture.setImageResource(R.drawable.baseline_cancel_24_wh)
+                    pictureSet = true
+                } else {
+                    Toast.makeText(this, "Failed to save selected image.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -123,15 +128,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
         addSetBtn.setOnClickListener{
             addNewSet()
         }
-//        TO REVIEW WITH HAMZA: Est-ce qu'on enleve les floating action buttons maintenant qu'il y a le toolbar qui fonctionne?
-//        val finalizeExerciseBtn: FloatingActionButton = findViewById(R.id.finalizeExerciseBtn)
-//        val cancelExerciseBtn: FloatingActionButton = findViewById(R.id.cancelExerciseBtn)
-//        finalizeExerciseBtn.setOnClickListener{
-//            finalizeExercise()
-//        }
-//        cancelExerciseBtn.setOnClickListener{
-//            cancelExercise()
-//        }
+        handleIncomingIntent(intent)
     }
 
     private fun showMenuImage(){
@@ -176,9 +173,29 @@ class AddEditExerciseActivity : AppCompatActivity() {
         return FileProvider.getUriForFile(this, "ca.qc.bdeb.c5gm.photoapp", pictureFile)
     }
 
+    // source: ChatGPT 4o
+    private fun saveSelectedImageToLocalFile(selectedImageUri: Uri): Uri? {
+        try {
+            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val pictureFile = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "IMG_$timeStamp.jpg")
+            val inputStream = contentResolver.openInputStream(selectedImageUri) ?: return null
+            val outputStream = pictureFile.outputStream()
+
+            inputStream.use { input ->
+                outputStream.use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            return FileProvider.getUriForFile(this, "ca.qc.bdeb.c5gm.photoapp", pictureFile)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        handleIncomingIntent(intent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
