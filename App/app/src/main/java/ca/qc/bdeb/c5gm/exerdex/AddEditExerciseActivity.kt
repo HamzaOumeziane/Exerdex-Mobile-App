@@ -207,10 +207,6 @@ class AddEditExerciseActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.add_edit_exercise_menu,menu)
         return super.onCreateOptionsMenu(menu)

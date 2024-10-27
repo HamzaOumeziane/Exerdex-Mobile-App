@@ -278,7 +278,10 @@ class MainActivity : AppCompatActivity() {
 
         val workout:Workout = Workout(newWorkoutName.text.toString(), Date(System.currentTimeMillis()), setList
             ,totalWorkoutVolume)
-        newWorkoutName.text = ""
+
+        runOnUiThread {
+            newWorkoutName.text = ""
+        }
         Log.d("exerciseAddingLogs","Workout Added: ${workout}")
         database.workoutDao().insertAll(workout)
         runOnUiThread {
