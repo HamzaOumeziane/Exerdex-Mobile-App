@@ -360,7 +360,12 @@ class MainActivity : AppCompatActivity() {
         val setsView: TextView = findViewById(R.id.popupExoSets)
         val exoImage: ImageView = findViewById(R.id.popupExoImg)
         titleView.text = exerciseToDisplay.name
-        descView.text = exerciseToDisplay.description
+        if(exerciseToDisplay.description.isNullOrEmpty()){
+            descView.visibility = View.GONE
+        }else{
+            descView.text = exerciseToDisplay.description
+        }
+
         typeView.text = exerciseToDisplay.category.toString() + " Exercise"
 
 
