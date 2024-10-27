@@ -46,6 +46,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
     private lateinit var setListAdapter: SetListAdaptor
     private lateinit var exerciseTitleView: TextView
     private lateinit var exerciseDescriptionView: TextView
+    private lateinit var exerciseImportantView: ImageView
     private lateinit var selectedCategory: MuscleCategory
     private lateinit var pictureTake: ImageView
     private lateinit var manipulatePicture: ImageView
@@ -53,6 +54,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
     private lateinit var picTaken: ActivityResultLauncher<Uri>
     private lateinit var picSelected: ActivityResultLauncher<PickVisualMediaRequest>
     private var pictureSet: Boolean = false
+    private var exerciseImportant: Boolean = false
     private var setsList: MutableList<Set> = mutableListOf()
     private var isEditing: Boolean = false
     private var exerciseBeingEditedId: Int? = null
@@ -124,9 +126,20 @@ class AddEditExerciseActivity : AppCompatActivity() {
         setsRecyclerView.adapter = setListAdapter
         initializeCategorySpinnner()
 
+
         val addSetBtn: Button = findViewById(R.id.addSetBtn)
         addSetBtn.setOnClickListener{
             addNewSet()
+        }
+
+        exerciseImportantView = findViewById(R.id.importantExercise)
+        exerciseImportantView.setOnClickListener {
+            exerciseImportant = !exerciseImportant
+            if(exerciseImportant){
+                exerciseImportantView.setImageResource(R.drawable.baseline_label_important_24)
+            }else{
+                exerciseImportantView.setImageResource(R.drawable.baseline_label_important_outline_24)
+            }
         }
         handleIncomingIntent(intent)
     }
@@ -204,7 +217,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
     }
 
     private fun handleIncomingIntent(intent: Intent) {
-        var exerciseToEdit: Exercise? = Exercise("haha","haha",MuscleCategory.ABS, listOf())
+        var exerciseToEdit: Exercise? = Exercise("haha","haha",MuscleCategory.ABS, listOf(), isImportant = exerciseImportant)
         if (intent.hasExtra("isEdit")) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 isEditing = intent.getBooleanExtra("isEdit", false)
@@ -224,6 +237,13 @@ class AddEditExerciseActivity : AppCompatActivity() {
             exerciseBeingEditedId = exerciseToEdit.exId
             exerciseTitleView.text = exerciseToEdit.name
             exerciseDescriptionView.text = exerciseToEdit.description
+
+            exerciseImportant = exerciseToEdit.isImportant
+            if(exerciseImportant){
+                exerciseImportantView.setImageResource(R.drawable.baseline_label_important_24)
+            }else{
+                exerciseImportantView.setImageResource(R.drawable.baseline_label_important_outline_24)
+            }
 
             if (!exerciseToEdit.imageUri.isNullOrEmpty()) {
                 uriPic = Uri.parse(exerciseToEdit.imageUri)
@@ -290,6 +310,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
             exerciseDescriptionView.text.toString(),
             selectedCategory,
             setsList,
+            isImportant = exerciseImportant,
             imageUri = if (pictureSet) uriPic.toString() else null,
             exId = exerciseBeingEditedId?: 0
             )

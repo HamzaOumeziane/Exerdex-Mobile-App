@@ -55,6 +55,7 @@
                 android:textColorHint="@color/text_secondary_light"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.256"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.8" />
@@ -175,6 +176,15 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/pictureTakeId"
                 app:layout_constraintTop_toTopOf="@+id/pictureTakeId" />
+
+            <ImageView
+                android:id="@+id/importantExercise"
+                android:layout_width="41dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="12dp"
+                app:layout_constraintStart_toEndOf="@+id/exerciseNameInput"
+                app:layout_constraintTop_toTopOf="@+id/exerciseNameInput"
+                app:srcCompat="@drawable/baseline_label_important_outline_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -2,6 +2,7 @@ package ca.qc.bdeb.c5gm.exerdex
 
 import android.content.Context
 import android.content.Intent
+import android.media.Image
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -38,6 +39,7 @@ class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val layout: ConstraintLayout
     val exercise: TextView
     val category: TextView
+    val important: ImageView
     val sets: TextView
     val check: ImageView
     val edit: ImageView
@@ -47,6 +49,7 @@ class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         layout = itemView as ConstraintLayout
         exercise = itemView.findViewById(R.id.exerciseTextView)
         category = itemView.findViewById(R.id.categoryTextView)
+        important = itemView.findViewById(R.id.importantImageView)
         sets = itemView.findViewById(R.id.setsTextView)
         check = itemView.findViewById(R.id.checkView)
         edit = itemView.findViewById(R.id.editView)
@@ -118,6 +121,7 @@ class ExerciseListAdaptor(
 
     override fun onBindViewHolder(holder: ItemExerciseHolder, position: Int) {
         exercisesList.sortBy { it.category }
+
         Log.d("Sorting...",exercisesList.toString())
 
         val item = exercisesList[position]
@@ -130,6 +134,12 @@ class ExerciseListAdaptor(
         }
 
         holder.exercise.text = item.name
+
+        if(!item.isImportant){
+            holder.important.visibility = View.GONE
+        }else{
+            holder.important.setImageResource(R.drawable.baseline_star_24)
+        }
         /*
         * Source : https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/join-to-string.html
         * */
@@ -183,10 +193,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var newWorkoutName: TextView
     private val exercisesList: MutableList<Exercise> = mutableListOf()
     private val doneList: MutableList<Exercise> = mutableListOf()
-
-
-    //val test:Exercise = Exercise(name = "Test", category = MuscleCategory.ABS, setList = listOf())
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
