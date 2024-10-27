@@ -89,11 +89,8 @@ class DoneListAdaptor(
             item.isDone = false
             activity.lifecycleScope.launch(Dispatchers.IO){
                 database.exerciseDao().updateAll(item)
+                activity.reloadDataFromDatabase()
             }
-            exercisesList.add(item)
-            activity.adapterExercise.notifyItemInserted(exercisesList.size - 1)
-            doneList.removeAt(holder.adapterPosition)
-            notifyItemRemoved(holder.adapterPosition)
         }
     }
 }
@@ -155,11 +152,8 @@ class ExerciseListAdaptor(
             item.isDone=true
             activity.lifecycleScope.launch(Dispatchers.IO){
                 database.exerciseDao().updateAll(item)
+                activity.reloadDataFromDatabase()
             }
-            doneList.add(item)
-            activity.adapterDone.notifyItemInserted(doneList.size - 1)
-            exercisesList.removeAt(holder.adapterPosition)
-            notifyItemRemoved(holder.adapterPosition)
         }
 
         holder.edit.setOnClickListener {
@@ -354,7 +348,7 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private suspend fun reloadDataFromDatabase() {
+    suspend fun reloadDataFromDatabase() {
         val exercisesToDoFromDB = database.exerciseDao().loadExerciseByDone(false)
         val exercisesDoneFromDB = database.exerciseDao().loadExerciseByDone(true)
         Log.d("databaseLOGS","Table, on load undone: $exercisesToDoFromDB")
