@@ -32,9 +32,6 @@ import java.sql.Date
 
 private var currentEdited: Int = -1
 
-lateinit var adapterDone: DoneListAdaptor
-lateinit var adapterExercise: ExerciseListAdaptor
-
 class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val layout: ConstraintLayout
     val exercise: TextView
@@ -57,7 +54,7 @@ class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 }
 
-public class ItemDoneHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+class ItemDoneHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
     val exercise: TextView
     val comeback: ImageView
 
@@ -67,7 +64,7 @@ public class ItemDoneHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
     }
 }
 
-public class DoneListAdaptor(
+class DoneListAdaptor(
     val ctx: Context,
     val activity: MainActivity,
     val database: ExerciseDatabase,
@@ -94,7 +91,7 @@ public class DoneListAdaptor(
                 database.exerciseDao().updateAll(item)
             }
             exercisesList.add(item)
-            adapterExercise.notifyItemInserted(exercisesList.size - 1)
+            activity.adapterExercise.notifyItemInserted(exercisesList.size - 1)
             doneList.removeAt(holder.adapterPosition)
             notifyItemRemoved(holder.adapterPosition)
         }
@@ -160,7 +157,7 @@ class ExerciseListAdaptor(
                 database.exerciseDao().updateAll(item)
             }
             doneList.add(item)
-            adapterDone.notifyItemInserted(doneList.size - 1)
+            activity.adapterDone.notifyItemInserted(doneList.size - 1)
             exercisesList.removeAt(holder.adapterPosition)
             notifyItemRemoved(holder.adapterPosition)
         }
@@ -191,6 +188,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var database: ExerciseDatabase
     lateinit var popupLayer: ConstraintLayout
     lateinit var newWorkoutName: TextView
+    lateinit var adapterDone: DoneListAdaptor
+    lateinit var adapterExercise: ExerciseListAdaptor
     private val exercisesList: MutableList<Exercise> = mutableListOf()
     private val doneList: MutableList<Exercise> = mutableListOf()
 
