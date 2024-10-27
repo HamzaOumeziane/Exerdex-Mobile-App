@@ -86,7 +86,7 @@ interface WorkoutDao {
 
 }
 
-@Database(entities = [Exercise::class, Workout::class],version = 4)
+@Database(entities = [Exercise::class, Workout::class],version = 5)
 @TypeConverters(Converters::class)
     abstract class ExerciseDatabase: RoomDatabase(){
         abstract fun exerciseDao(): ExerciseDao

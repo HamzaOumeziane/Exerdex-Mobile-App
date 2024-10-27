@@ -24,14 +24,15 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintHeight_percent="0.25"
+        app:layout_constraintHeight_percent="0.4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleToDo"
-        app:layout_constraintWidth_percent="1.0" />
+        app:layout_constraintWidth_percent="0.4" />
 
     <TextView
         android:id="@+id/titleToDo"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.4"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="?attr/colorPrimary"
@@ -44,7 +45,7 @@
 
     <TextView
         android:id="@+id/titleDone"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="?attr/colorPrimary"
@@ -52,18 +53,19 @@
         android:text="Done"
         android:textColor="@android:color/white"
         android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintWidth_percent="0.4" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/doneRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintHeight_percent="0.25"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.4"
         app:layout_constraintTop_toBottomOf="@+id/titleDone"
-        app:layout_constraintWidth_percent="1.0" />
+        app:layout_constraintWidth_percent="0.4" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionBtn"
@@ -92,15 +94,15 @@
         android:id="@+id/newWorkoutName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:textColor="@color/text_primary_light"
-        android:textColorHint="@color/text_secondary_light"
+        android:layout_marginStart="16dp"
         android:ems="10"
+        android:hint="Morning Pushday"
         android:inputType="text"
         android:text=""
-        android:hint="Morning Pushday"
-        app:layout_constraintBottom_toTopOf="@+id/archiveButton"
-        app:layout_constraintStart_toStartOf="@+id/archiveButton" />
+        android:textColor="@color/text_primary_light"
+        android:textColorHint="@color/text_secondary_light"
+        app:layout_constraintBottom_toBottomOf="@+id/archiveButton"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/archiveButton"
@@ -109,7 +111,7 @@
         android:layout_marginStart="16dp"
         android:text="Finalize Workout"
         app:layout_constraintBottom_toBottomOf="@+id/floatingActionBtn"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/newWorkoutName" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/popupLayer"
