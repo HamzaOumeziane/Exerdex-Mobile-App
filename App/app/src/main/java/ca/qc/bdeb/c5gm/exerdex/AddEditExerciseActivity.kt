@@ -148,9 +148,9 @@ class AddEditExerciseActivity : AppCompatActivity() {
         /*
         * Source : https://www.digitalocean.com/community/tutorials/android-alert-dialog-using-kotlin
         * */
-        val options = arrayOf("Prendre une photo", "Choisir depuis la galerie")
+        val options = arrayOf(getString(R.string.take_a_photo), getString(R.string.choose_from_gallery))
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Ajouter une image")
+        builder.setTitle(getString(R.string.add_image))
 
         builder.setItems(options) { dialog, which ->
             when (which) {
@@ -163,7 +163,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
             }
         }
 
-        builder.setNegativeButton("Annuler") { dialog, _ ->
+        builder.setNegativeButton(R.string.cancel_word) { dialog, _ ->
             dialog.dismiss()
         }
 
@@ -266,7 +266,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
         val weightInput = weightTextView.text.toString()
 
         if (repsInput.isBlank() || weightInput.isBlank()) {
-            Toast.makeText(this, "Please enter both reps and weight.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_new_set_missing_error), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -277,7 +277,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
             reps = repsInput.toInt()
             weight = weightInput.toFloat()
         } catch (e: NumberFormatException) {
-            Toast.makeText(this, "Please enter valid numbers for reps and weight.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_new_set_invalid_input_error), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -298,7 +298,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
 
     private fun finalizeExercise(){
         if (exerciseTitleView.text.toString().isBlank() or setsList.isEmpty()){
-            Toast.makeText(this,"Make sure to enter a title and at least one set!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,getString(R.string.toast_new_exercise_missing_info_error), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -404,7 +404,7 @@ class SetListAdaptor(val ctx: Context, val activity: AddEditExerciseActivity, va
     override fun onBindViewHolder(holder: SetItemHolder, position: Int) {
         val item = data[position]
 
-        holder.setTitle.text = "Set ${position+1}:"
+        holder.setTitle.text = activity.getString(R.string.exo_set_word)+" ${position+1}:"
         holder.setContent.text = "${item.weight} x ${item.reps}"
         holder.cancelSetBtn.setOnClickListener {
             val pos = holder.adapterPosition

@@ -45,7 +45,7 @@
         android:id="@+id/announcerTxtExercises"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Exercises:"
+        android:text="@string/exercise_word_plural"
         android:textColor="@android:color/white"
         android:textSize="16sp"
         android:textStyle="bold"

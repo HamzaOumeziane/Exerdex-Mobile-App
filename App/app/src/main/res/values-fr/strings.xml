@@ -16,4 +16,9 @@
     <string name="workout_name_decl">Nom de l\'entrainement</string>
     <string name="finalize_workout">Terminer entrainement</string>
     <string name="set_word_plural">Séries</string>
+    <string name="add_image">Ajouter une image</string>
+    <string name="toast_new_set_missing_error">Assurez vous de rentrer le poids ainsi que le nombre de réps!</string>
+    <string name="toast_new_set_invalid_input_error">Assurez vous d\'entrer des nombres dans poids et réps</string>
+    <string name="toast_new_exercise_missing_info_error">Assurez voir d\'entrer un titre et au moins une série!</string>
+    <string name="toast_new_workout_missing_info_error">Entrer un nom d\'entrainement et au moins un exercice terminé.</string>
 </resources>

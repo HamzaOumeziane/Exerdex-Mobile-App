@@ -15,4 +15,9 @@
     <string name="workout_name_decl">Workout name</string>
     <string name="finalize_workout">Finalize Workout</string>
     <string name="set_word_plural">Sets</string>
+    <string name="add_image">Add Image</string>
+    <string name="toast_new_set_missing_error">Please enter both reps and weight.</string>
+    <string name="toast_new_set_invalid_input_error">Please enter valid numbers for reps and weight.</string>
+    <string name="toast_new_exercise_missing_info_error">Make sure to enter a title and at least one set!</string>
+    <string name="toast_new_workout_missing_info_error">Enter a workout name and at least one done exercise.</string>
 </resources>

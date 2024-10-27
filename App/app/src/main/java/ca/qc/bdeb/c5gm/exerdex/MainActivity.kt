@@ -218,7 +218,7 @@ class MainActivity : AppCompatActivity() {
         deleteDone = findViewById(R.id.archiveButton)
         deleteDone.setOnClickListener {
             if (doneList.isEmpty() || newWorkoutName.text.toString().length < 2){
-                Toast.makeText(this,"Enter a workout name and at least one done exercise",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,getString(R.string.toast_new_workout_missing_info_error),Toast.LENGTH_SHORT).show()
             } else {
                 lifecycleScope.launch(Dispatchers.IO){
                     addDoneToArchive()
@@ -270,7 +270,7 @@ class MainActivity : AppCompatActivity() {
             val setsStringBuilder = StringBuilder()
             setsStringBuilder.append(exercise.name)
             val heaviestSet = exercise.setList.maxBy { it.weight }
-            setsStringBuilder.append(", heaviest set: ${heaviestSet.weight}x${heaviestSet.reps}")
+            setsStringBuilder.append(", ${getString(R.string.heaviest_set)}: ${heaviestSet.weight}x${heaviestSet.reps}")
             setList.add(setsStringBuilder.toString())
             val totalVolume = exercise.setList.sumOf { (it.weight * it.reps).toInt() }
             totalWorkoutVolume += totalVolume
