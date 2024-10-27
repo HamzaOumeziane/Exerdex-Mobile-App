@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Exerdex</string>
+    <string name="to_do_exos">To-Do Exercises</string>
+    <string name="done_word">Done</string>
+    <string name="workout_name_hint">Morning Pushday</string>
+    <string name="exo_set_word">Set</string>
+    <string name="heaviest_set">heaviest set</string>
+    <string name="exercise_word_plural">Exercises</string>
+    <string name="new_exercises_name_hint">Flat Barbell Bench Press</string>
+    <string name="new_exercise_desc_hint">Make sure to warmup rear delts and rotator cuffs!</string>
+    <string name="add_set">Add Set</string>
+    <string name="take_a_photo">Take a photo</string>
+    <string name="choose_from_gallery">Choose image from gallery</string>
+    <string name="cancel_word">Cancel</string>
+    <string name="workout_name_decl">Workout name</string>
+    <string name="finalize_workout">Finalize Workout</string>
+    <string name="set_word_plural">Sets</string>
 </resources>

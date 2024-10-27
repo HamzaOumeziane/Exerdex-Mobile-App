@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Exerdex</string>
+    <string name="to_do_exos">Exercices à faire</string>
+    <string name="exo_set_word">Série</string>
+    <string name="done_word">Terminés</string>
+    <string name="workout_name_hint">Pushday de matinée</string>
+    <string name="heaviest_set">Série la plus lourde</string>
+    <string name="exercise_word_plural">Exercices</string>
+    <string name="new_exercises_name_hint">Développé couché plat</string>
+    <string name="new_exercise_desc_hint">"Ne pas oublier d'échauffer les deltoîdes arrière! "</string>
+    <string name="add_set">Ajouter une série</string>
+    <string name="take_a_photo">Prendre une photo</string>
+    <string name="choose_from_gallery">Choisir depuis la galerie</string>
+    <string name="cancel_word">Annuler</string>
+    <string name="workout_name_decl">Nom de l\'entrainement</string>
+    <string name="finalize_workout">Terminer entrainement</string>
+    <string name="set_word_plural">Séries</string>
+</resources>
