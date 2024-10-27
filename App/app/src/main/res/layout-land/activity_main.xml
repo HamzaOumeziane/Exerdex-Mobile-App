@@ -27,12 +27,12 @@
         app:layout_constraintHeight_percent="0.4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleToDo"
-        app:layout_constraintWidth_percent="0.4" />
+        app:layout_constraintWidth_percent="0.48" />
 
     <TextView
         android:id="@+id/titleToDo"
         android:layout_width="0dp"
-        app:layout_constraintWidth_percent="0.4"
+        app:layout_constraintWidth_percent="0.48"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="?attr/colorPrimary"
@@ -55,7 +55,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintWidth_percent="0.4" />
+        app:layout_constraintWidth_percent="0.48" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/doneRecyclerView"
@@ -65,16 +65,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.4"
         app:layout_constraintTop_toBottomOf="@+id/titleDone"
-        app:layout_constraintWidth_percent="0.4" />
+        app:layout_constraintWidth_percent="0.48" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="Add new exercise to the to do list"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="28dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:clickable="true"
+        android:contentDescription="Add new exercise to the to do list"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/baseline_add_24_wh" />
@@ -83,7 +83,7 @@
         android:id="@+id/workoutAnnouncer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:text="Workout name"
         android:textColor="@color/text_primary_light"
         android:textStyle="bold"
