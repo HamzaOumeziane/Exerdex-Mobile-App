@@ -37,6 +37,7 @@ lateinit var adapterExercise: ExerciseListAdaptor
 class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val layout: ConstraintLayout
     val exercise: TextView
+    val category: TextView
     val sets: TextView
     val check: ImageView
     val edit: ImageView
@@ -45,6 +46,7 @@ class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     init {
         layout = itemView as ConstraintLayout
         exercise = itemView.findViewById(R.id.exerciseTextView)
+        category = itemView.findViewById(R.id.categoryTextView)
         sets = itemView.findViewById(R.id.setsTextView)
         check = itemView.findViewById(R.id.checkView)
         edit = itemView.findViewById(R.id.editView)
@@ -115,7 +117,17 @@ class ExerciseListAdaptor(
     }
 
     override fun onBindViewHolder(holder: ItemExerciseHolder, position: Int) {
+        exercisesList.sortBy { it.category }
+        Log.d("Sorting...",exercisesList.toString())
+
         val item = exercisesList[position]
+
+        if(position == 0 || exercisesList[position -1].category != item.category){
+            holder.category.visibility = View.VISIBLE
+            holder.category.text = item.category.name.replaceFirstChar { it.uppercase() }
+        }else{
+            holder.category.visibility = View.GONE
+        }
 
         holder.exercise.text = item.name
         /*
