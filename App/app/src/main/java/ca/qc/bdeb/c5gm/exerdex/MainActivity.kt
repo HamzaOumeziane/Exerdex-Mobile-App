@@ -1,5 +1,6 @@
 package ca.qc.bdeb.c5gm.exerdex
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.media.Image
@@ -331,6 +332,29 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 true
             }
+            R.id.action_about -> {
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle(R.string.info_title)
+                    .setMessage(R.string.info_message)
+                    .setPositiveButton("OK") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                builder.create().show()
+                true
+            }
+            R.id.action_settings -> {
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle(R.string.info_title)
+                    .setMessage(R.string.settings_message)
+                    .setPositiveButton("OK") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                builder.create().show()
+                true
+            }
+
+
+
             else -> super.onOptionsItemSelected(item)
         }
     }

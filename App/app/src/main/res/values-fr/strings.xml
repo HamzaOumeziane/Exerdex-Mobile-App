@@ -21,4 +21,7 @@
     <string name="toast_new_set_invalid_input_error">Assurez vous d\'entrer des nombres dans poids et réps</string>
     <string name="toast_new_exercise_missing_info_error">Assurez voir d\'entrer un titre et au moins une série!</string>
     <string name="toast_new_workout_missing_info_error">Entrer un nom d\'entrainement et au moins un exercice terminé.</string>
+    <string name="info_title">Information</string>
+    <string name="info_message">Auteurs: Hamza Oumeziane et Mohamad Atrash</string>
+    <string name="settings_message">Fonctionnalité pas encore utilisée</string>
 </resources>

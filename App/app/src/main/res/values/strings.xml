@@ -20,4 +20,7 @@
     <string name="toast_new_set_invalid_input_error">Please enter valid numbers for reps and weight.</string>
     <string name="toast_new_exercise_missing_info_error">Make sure to enter a title and at least one set!</string>
     <string name="toast_new_workout_missing_info_error">Enter a workout name and at least one done exercise.</string>
+    <string name="info_title">Information</string>
+    <string name="info_message">Authors: Hamza Oumeziane and Mohamad Atrash</string>
+    <string name="settings_message">Functionality not used yet.</string>
 </resources>
