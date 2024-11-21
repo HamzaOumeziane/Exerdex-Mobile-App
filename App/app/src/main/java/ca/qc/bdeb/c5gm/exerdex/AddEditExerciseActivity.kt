@@ -34,6 +34,11 @@ import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
+import ca.qc.bdeb.c5gm.exerdex.adaptors.SetListAdaptor
+import ca.qc.bdeb.c5gm.exerdex.data.Exercise
+import ca.qc.bdeb.c5gm.exerdex.data.MuscleCategory
+import ca.qc.bdeb.c5gm.exerdex.data.Set
+import ca.qc.bdeb.c5gm.exerdex.viewholders.ItemSetHolder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.File
 import java.util.Date
@@ -373,48 +378,3 @@ class AddEditExerciseActivity : AppCompatActivity() {
     }
 }
 
-class SetItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-
-    val layout: ConstraintLayout
-    val setTitle: TextView
-    val setContent: TextView
-    val cancelSetBtn: ImageView
-
-    init {
-        layout = itemView as ConstraintLayout
-        setTitle = itemView.findViewById(R.id.setTitle)
-        setContent = itemView.findViewById(R.id.setContent)
-        cancelSetBtn = itemView.findViewById(R.id.cancelSetImg)
-        cancelSetBtn.setImageResource(R.drawable.baseline_cancel_24_wh)
-    }
-
-}
-
-class SetListAdaptor(val ctx: Context, val activity: AddEditExerciseActivity, var data: MutableList<Set>):
-    RecyclerView.Adapter<SetItemHolder>(){
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetItemHolder {
-        val view = LayoutInflater.from(ctx).inflate(R.layout.list_set_item, parent, false)
-        return SetItemHolder(view)
-    }
-
-    override fun getItemCount(): Int {
-        return data.size
-    }
-
-    override fun onBindViewHolder(holder: SetItemHolder, position: Int) {
-        val item = data[position]
-
-        holder.setTitle.text = activity.getString(R.string.exo_set_word)+" ${position+1}:"
-        holder.setContent.text = "${item.weight} x ${item.reps}"
-        holder.cancelSetBtn.setOnClickListener {
-            val pos = holder.adapterPosition
-            if (pos != RecyclerView.NO_POSITION) {
-                data.removeAt(pos)
-                notifyItemRemoved(pos)
-                notifyItemRangeChanged(pos, data.size)
-            }
-        }
-    }
-
-
-}

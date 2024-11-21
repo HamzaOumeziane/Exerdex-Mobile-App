@@ -25,155 +25,17 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import ca.qc.bdeb.c5gm.exerdex.adaptors.DoneListAdaptor
+import ca.qc.bdeb.c5gm.exerdex.adaptors.ExerciseListAdaptor
+import ca.qc.bdeb.c5gm.exerdex.data.Exercise
+import ca.qc.bdeb.c5gm.exerdex.data.Workout
+import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.sql.Date
 
-private var currentEdited: Int = -1
-
-class ItemExerciseHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val layout: ConstraintLayout
-    val exercise: TextView
-    val category: TextView
-    val important: ImageView
-    val sets: TextView
-    val check: ImageView
-    val edit: ImageView
-    val cancel: ImageView
-
-    init {
-        layout = itemView as ConstraintLayout
-        exercise = itemView.findViewById(R.id.exerciseTextView)
-        category = itemView.findViewById(R.id.categoryTextView)
-        important = itemView.findViewById(R.id.importantImageView)
-        sets = itemView.findViewById(R.id.setsTextView)
-        check = itemView.findViewById(R.id.checkView)
-        edit = itemView.findViewById(R.id.editView)
-        cancel = itemView.findViewById(R.id.deleteView)
-    }
-}
-
-class ItemDoneHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-    val exercise: TextView
-    val comeback: ImageView
-
-    init{
-        exercise = itemView.findViewById(R.id.doneTextView)
-        comeback = itemView.findViewById(R.id.comebackImageView)
-    }
-}
-
-class DoneListAdaptor(
-    val ctx: Context,
-    val activity: MainActivity,
-    val database: ExerciseDatabase,
-    val exercisesList: MutableList<Exercise>,
-    val doneList: MutableList<Exercise>,
-) : RecyclerView.Adapter<ItemDoneHolder>(){
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemDoneHolder {
-        val view = LayoutInflater.from(ctx).inflate(R.layout.exercise_done_item, parent, false)
-        return ItemDoneHolder(view)
-    }
-
-    override fun getItemCount(): Int {
-        return doneList.size
-    }
-
-    override fun onBindViewHolder(holder: ItemDoneHolder, position: Int) {
-        val item = doneList[holder.adapterPosition]
-        holder.exercise.text = item.name
-
-        holder.comeback.setImageResource(R.drawable.baseline_loop_24)
-        holder.comeback.setOnClickListener {
-            item.isDone = false
-            activity.lifecycleScope.launch(Dispatchers.IO){
-                database.exerciseDao().updateAll(item)
-                activity.reloadDataFromDatabase()
-            }
-        }
-    }
-}
-
-class ExerciseListAdaptor(
-    val ctx: Context,
-    val activity: MainActivity,
-    val database: ExerciseDatabase,
-    val exercisesList: MutableList<Exercise>,
-    val doneList: MutableList<Exercise>,
-    private val editExercise: (isEdit: Boolean, exerciseToEdit: Exercise?) -> Unit,
-) : RecyclerView.Adapter<ItemExerciseHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemExerciseHolder {
-        val view = LayoutInflater.from(ctx).inflate(R.layout.exercise_item, parent, false)
-        return ItemExerciseHolder(view)
-    }
-
-    override fun getItemCount(): Int {
-        return exercisesList.size
-    }
-
-    override fun onBindViewHolder(holder: ItemExerciseHolder, position: Int) {
-        exercisesList.sortBy { it.category }
-
-        Log.d("Sorting...",exercisesList.toString())
-
-        val item = exercisesList[position]
-
-        if(position == 0 || exercisesList[position -1].category != item.category){
-            holder.category.visibility = View.VISIBLE
-            holder.category.text = item.category.name.replaceFirstChar { it.uppercase() }
-        }else{
-            holder.category.visibility = View.GONE
-        }
-
-        holder.exercise.text = item.name
-
-        if(!item.isImportant){
-            holder.important.visibility = View.GONE
-        }else{
-            holder.important.setImageResource(R.drawable.baseline_star_24)
-        }
-        /*
-        * Source : https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/join-to-string.html
-        * */
-        if (item.setList.size > 3){
-            holder.sets.text = (item.setList.joinToString("\n", "", "", 3) { it.toString() }) + " ${item.setList.size - 3} more"
-        }else{
-            holder.sets.text = item.setList.joinToString("\n") { it.toString() }
-        }
-        holder.check.setImageResource(R.drawable.baseline_check_circle_24)
-        holder.edit.setImageResource(R.drawable.baseline_edit_24)
-        holder.cancel.setImageResource(R.drawable.baseline_cancel_24)
-
-
-
-        holder.check.setOnClickListener {
-            item.isDone=true
-            activity.lifecycleScope.launch(Dispatchers.IO){
-                database.exerciseDao().updateAll(item)
-                activity.reloadDataFromDatabase()
-            }
-        }
-
-        holder.edit.setOnClickListener {
-            currentEdited = holder.adapterPosition
-            editExercise(true, item)
-        }
-
-        holder.cancel.setOnClickListener {
-            activity.lifecycleScope.launch(Dispatchers.IO){
-                database.exerciseDao().delete(item)
-            }
-            exercisesList.removeAt(holder.adapterPosition)
-            notifyItemRemoved(holder.adapterPosition)
-        }
-        holder.itemView.setOnClickListener{
-            activity.setUpPopup(item)
-        }
-    }
-}
 
 class MainActivity : AppCompatActivity() {
 
@@ -277,7 +139,7 @@ class MainActivity : AppCompatActivity() {
             totalWorkoutVolume += totalVolume
         }
 
-        val workout:Workout = Workout(newWorkoutName.text.toString(), Date(System.currentTimeMillis()), setList
+        val workout: Workout = Workout(newWorkoutName.text.toString(), Date(System.currentTimeMillis()), setList
             ,totalWorkoutVolume)
 
         runOnUiThread {

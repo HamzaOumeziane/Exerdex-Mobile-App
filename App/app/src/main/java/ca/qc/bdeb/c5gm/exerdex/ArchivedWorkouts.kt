@@ -19,6 +19,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ca.qc.bdeb.c5gm.exerdex.adaptors.WorkoutListAdaptor
+import ca.qc.bdeb.c5gm.exerdex.data.Workout
+import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -82,60 +85,4 @@ class ArchivedWorkouts : AppCompatActivity() {
         }
     }
 }
-class ItemWorkoutHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-    val layout: ConstraintLayout
-    val workoutName: TextView
-    val workoutDate: TextView
-    val workoutVolume: TextView
-    val workoutSummary: TextView
-    val deleteBtn: ImageView
 
-    init {
-        layout = itemView as ConstraintLayout
-        workoutName = itemView.findViewById(R.id.workoutNameTxt)
-        workoutDate = itemView.findViewById(R.id.workoutDateTxt)
-        workoutVolume = itemView.findViewById(R.id.workoutVolumeTxt)
-        workoutSummary = itemView.findViewById(R.id.exercisesSummaryTxt)
-        deleteBtn = itemView.findViewById(R.id.deleteImgBtn)
-    }
-}
-class WorkoutListAdaptor(val ctx: Context, val activity: ArchivedWorkouts, var data: MutableList<Workout>
-): RecyclerView.Adapter<ItemWorkoutHolder>(){
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemWorkoutHolder {
-        val view = LayoutInflater.from(ctx).inflate(
-            R.layout.list_workout_item,parent,false
-        )
-        return ItemWorkoutHolder(view)
-    }
-
-    override fun getItemCount(): Int {
-        return data.size
-    }
-
-    override fun onBindViewHolder(holder: ItemWorkoutHolder, position: Int) {
-        val item = data[position]
-
-        holder.workoutName.text = item.name
-        holder.workoutDate.text = item.date.toString()
-        holder.deleteBtn.setImageResource(R.drawable.baseline_delete_24_wh)
-        holder.workoutVolume.text = item.totalVolumne.toString()+"lbs"
-        val setsStringBuilder = StringBuilder()
-
-        item.exerciseList.forEachIndexed { index, exercise ->
-            setsStringBuilder.append(exercise)
-            // Pour ne pas avoir de new line au dernier element
-            if (index < item.exerciseList.size - 1) {
-                setsStringBuilder.append("\n")
-            }
-        }
-        holder.workoutSummary.text = setsStringBuilder.toString()
-        holder.deleteBtn.setOnClickListener {
-            activity.lifecycleScope.launch(Dispatchers.IO){
-                activity.database.workoutDao().delete(item)
-            }
-            data.removeAt(holder.adapterPosition)
-            notifyItemRemoved(holder.adapterPosition)
-        }
-    }
-
-}
