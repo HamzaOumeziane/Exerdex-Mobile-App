@@ -8,6 +8,32 @@
     android:background="@color/background_secondary_dark"
     tools:context=".MainActivity">
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/AWExercisesToDoFragment"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        android:name="ca.qc.bdeb.c5gm.exerdex.fragments.ExercisesToDoFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/AWExercisesDoneFragment"
+        app:layout_constraintTop_toBottomOf="@id/AWExercisesToDoFragment"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="32dp"
+        android:name="ca.qc.bdeb.c5gm.exerdex.fragments.ExerciesDoneFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/AWManagementFragment"
+        android:name="ca.qc.bdeb.c5gm.exerdex.fragments.ActiveWorkoutManagementFragment"
+        android:layout_width="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="16dp"
+        android:layout_height="wrap_content" />
+
     <include
         layout="@layout/toolbar_main"
         android:id="@+id/toolbar"
@@ -19,97 +45,7 @@
         />
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="412dp"
-        android:layout_height="210dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintHeight_percent="0.25"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleToDo"
-        app:layout_constraintWidth_percent="1.0" />
 
-    <TextView
-        android:id="@+id/titleToDo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="?attr/colorPrimary"
-        android:padding="8dp"
-        android:text="@string/to_do_exos"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
-
-    <TextView
-        android:id="@+id/titleDone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:background="?attr/colorPrimary"
-        android:padding="8dp"
-        android:text="@string/done_word"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/doneRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintHeight_percent="0.25"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleDone"
-        app:layout_constraintWidth_percent="1.0" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="Add new exercise to the to do list"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="28dp"
-        android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/baseline_add_24_wh" />
-
-    <TextView
-        android:id="@+id/workoutAnnouncer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="@string/workout_name_decl"
-        android:textColor="@color/text_primary_light"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/newWorkoutName"
-        app:layout_constraintStart_toStartOf="@+id/newWorkoutName" />
-
-    <EditText
-        android:id="@+id/newWorkoutName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:textColor="@color/text_primary_light"
-        android:textColorHint="@color/text_secondary_light"
-        android:ems="10"
-        android:inputType="text"
-        android:text=""
-        android:hint="@string/workout_name_hint"
-        app:layout_constraintBottom_toTopOf="@+id/archiveButton"
-        app:layout_constraintStart_toStartOf="@+id/archiveButton" />
-
-    <Button
-        android:id="@+id/archiveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="@string/finalize_workout"
-        app:layout_constraintBottom_toBottomOf="@+id/floatingActionBtn"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/popupLayer"

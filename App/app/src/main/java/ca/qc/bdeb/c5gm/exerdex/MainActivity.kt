@@ -1,18 +1,14 @@
 package ca.qc.bdeb.c5gm.exerdex
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
-import android.media.Image
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -252,7 +248,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    public fun setUpPopup(exerciseToDisplay:Exercise){
+    fun setUpPopup(exerciseToDisplay:Exercise){
         popupLayer.visibility = View.VISIBLE
         val titleView: TextView = findViewById(R.id.popupExoTitle)
         val typeView: TextView = findViewById(R.id.popupExoType)
