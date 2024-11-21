@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.ActiveWorkoutManagementFragment"
+    android:background="@color/background_secondary_dark">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingActionBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Add new exercise to the to do list"
+            android:layout_marginEnd="28dp"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/baseline_add_24_wh" />
+
+        <TextView
+            android:id="@+id/workoutAnnouncer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/workout_name_decl"
+            android:textColor="@color/text_primary_light"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/newWorkoutName"
+            app:layout_constraintStart_toStartOf="@+id/newWorkoutName" />
+
+        <EditText
+            android:id="@+id/newWorkoutName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/text_primary_light"
+            android:textColorHint="@color/text_secondary_light"
+            android:ems="10"
+            android:inputType="text"
+            android:text=""
+            android:hint="@string/workout_name_hint"
+            app:layout_constraintBottom_toTopOf="@+id/archiveButton"
+            app:layout_constraintStart_toStartOf="@+id/archiveButton" />
+
+        <Button
+            android:id="@+id/archiveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/finalize_workout"
+            app:layout_constraintBottom_toBottomOf="@+id/floatingActionBtn"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
