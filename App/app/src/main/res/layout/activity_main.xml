@@ -45,22 +45,20 @@
         />
 
 
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/popupLayer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintHeight_percent="0.8"
-        app:layout_constraintWidth_percent="0.8"
         android:background="@color/background_dark"
-
         android:elevation="16dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
+
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.8"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.8">
 
         <TextView
             android:id="@+id/popupExoTitle"
@@ -87,8 +85,8 @@
             android:id="@+id/popupScrollView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:fillViewport="true"
             android:layout_marginTop="8dp"
+            android:fillViewport="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

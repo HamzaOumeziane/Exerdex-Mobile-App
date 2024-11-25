@@ -27,13 +27,14 @@
     <string name="text_welcome_message">The best app for your workouts</string>
     <string name="register">Register</string>
     <string name="register_message">Create your new account</string>
+    <string name="login_message">Login to your account</string>
     <string name="to_register">Sign up</string>
     <string name="already_account">Already have an account ?</string>
+    <string name="not_yet_account">Don\'t have an account ?</string>
     <string name="to_login">Login</string>
     <string name="name">Name</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login_google">Continue with Google</string>
 
 </resources>

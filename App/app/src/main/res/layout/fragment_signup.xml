@@ -100,7 +100,7 @@
             android:layout_marginBottom="16dp"
             android:backgroundTint="#d4af37"
             android:text="@string/to_register"
-            android:textSize="24sp"
+            android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/textView4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.516"
