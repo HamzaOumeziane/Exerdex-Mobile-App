@@ -17,8 +17,11 @@ import kotlinx.coroutines.launch
 
 class ExerciseListAdaptor(
     val ctx: Context,
-    var exercisesList: MutableList<Exercise>,
-    //private val editExercise: (isEdit: Boolean, exerciseToEdit: Exercise?) -> Unit,
+    val activity: MainActivity,
+    val database: ExerciseDatabase,
+    val exercisesList: MutableList<Exercise>,
+    val doneList: MutableList<Exercise>,
+    private val editExercise: (isEdit: Boolean, exerciseToEdit: Exercise?) -> Unit,
 ) : RecyclerView.Adapter<ItemExerciseHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemExerciseHolder {

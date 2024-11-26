@@ -68,10 +68,6 @@ dependencies {
     // IMPORTANT: Dépendences externes requises pour utiliser Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
-    implementation ("androidx.credentials:credentials:<latest version>")
-    implementation ("androidx.credentials:credentials-play-services-auth:<latest version>")
-    implementation ("com.google.android.libraries.identity.googleid:googleid:<latest version>")
 }
 
 
