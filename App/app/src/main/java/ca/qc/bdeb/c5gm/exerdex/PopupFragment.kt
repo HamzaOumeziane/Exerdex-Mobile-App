@@ -33,7 +33,7 @@ class PopupFragment : Fragment() {
         val exercise = arguments?.getParcelable<Exercise>("exercise")
         exercise?.let { setUpPopup(it, view) }
         val closePopupButton = view.findViewById<ImageView>(R.id.closePopupImg)
-        closePopupButton.setOnClickListener { dismiss() }
+        //closePopupButton.setOnClickListener { dismiss() }
 }
 
     private fun setUpPopup(exerciseToDisplay: Exercise, view: View) {

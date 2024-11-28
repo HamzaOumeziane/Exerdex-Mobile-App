@@ -37,5 +37,7 @@
     <string name="email">Adresse courriel</string>
     <string name="password">Mot de passe</string>
     <string name="login_google">Continuer avec Google</string>
+    <string name="success_signup">Inscription réussie!! Bienvenue </string>
+    <string name="failed_signup">Inscription échouée.. Veuillez réessayer.</string>
 
 </resources>

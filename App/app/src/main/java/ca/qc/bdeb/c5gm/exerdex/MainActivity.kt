@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var newWorkoutName: TextView
     lateinit var adapterDone: DoneListAdaptor
     lateinit var adapterExercise: ExerciseListAdaptor
-    private val exercisesList: MutableList<Exercise> = mutableListOf()
+    //private val exercisesList: MutableList<Exercise> = mutableListOf()
     private val doneList: MutableList<Exercise> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,26 +92,26 @@ class MainActivity : AppCompatActivity() {
 
         recyclerViewExercise = findViewById(R.id.recyclerViewToDo)
         recyclerViewDone = findViewById(R.id.doneRecyclerView)
-        adapterExercise = ExerciseListAdaptor(applicationContext, this, database,
-            exercisesList, doneList) { isEdit, exercise ->
-            addExercise(isEdit, exercise)
-        }
-        adapterDone = DoneListAdaptor(applicationContext, this, database, exercisesList,
-            doneList)
+        //adapterExercise = ExerciseListAdaptor(applicationContext, this, database,
+        //    exercisesList, doneList) { isEdit, exercise ->
+        //    addExercise(isEdit, exercise)
+        //}
+        //adapterDone = DoneListAdaptor(applicationContext, this, database, exercisesList,
+        //    doneList)
         recyclerViewExercise.adapter = adapterExercise
         recyclerViewDone.adapter = adapterDone
 
         lifecycleScope.launch(Dispatchers.IO){
             val exercisesToDoFromDB = database.exerciseDao().loadExerciseByDone(false)
-            val exercisesDoneFromDB = database.exerciseDao().loadExerciseByDone(true)
+            //val exercisesDoneFromDB = database.exerciseDao().loadExerciseByDone(true)
             Log.d("databaseLOGS","Table, on load undone: "+exercisesToDoFromDB)
-            Log.d("databaseLOGS","Table, on load done: "+exercisesDoneFromDB)
+            //Log.d("databaseLOGS","Table, on load done: "+exercisesDoneFromDB)
 
 
-            exercisesList.clear()
+            //exercisesList.clear()
             doneList.clear()
-            exercisesList.addAll(exercisesToDoFromDB)
-            doneList.addAll(exercisesDoneFromDB)
+            //exercisesList.addAll(exercisesToDoFromDB)
+            //doneList.addAll(exercisesDoneFromDB)
             runOnUiThread {
                 adapterExercise.notifyDataSetChanged()
                 adapterDone.notifyDataSetChanged()
@@ -242,10 +242,10 @@ class MainActivity : AppCompatActivity() {
         val exercisesDoneFromDB = database.exerciseDao().loadExerciseByDone(true)
         Log.d("databaseLOGS","Table, on load undone: $exercisesToDoFromDB")
         Log.d("databaseLOGS","Table, on load done: $exercisesDoneFromDB")
-        exercisesList.clear()
+        //exercisesList.clear()
         doneList.clear()
-        exercisesList.addAll(exercisesToDoFromDB)
-        doneList.addAll(exercisesDoneFromDB)
+        //exercisesList.addAll(exercisesToDoFromDB)
+        //doneList.addAll(exercisesDoneFromDB)
         withContext(Dispatchers.Main) {
             adapterExercise.notifyDataSetChanged()
             adapterDone.notifyDataSetChanged()

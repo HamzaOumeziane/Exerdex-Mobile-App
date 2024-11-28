@@ -36,7 +36,7 @@
 
 
         <EditText
-            android:id="@+id/editTextText"
+            android:id="@+id/nameSignUpId"
             android:layout_width="261dp"
             android:layout_height="53dp"
             android:layout_marginTop="16dp"
@@ -48,10 +48,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.486"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextText2" />
+            app:layout_constraintTop_toBottomOf="@+id/emailSignUpId" />
 
         <EditText
-            android:id="@+id/editTextText2"
+            android:id="@+id/emailSignUpId"
             android:layout_width="261dp"
             android:layout_height="53dp"
             android:layout_marginTop="56dp"
@@ -66,7 +66,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
         <Button
-            android:id="@+id/loginButton"
+            android:id="@+id/loginButtonHome"
             android:layout_width="258dp"
             android:layout_height="53dp"
             android:layout_marginTop="68dp"
@@ -76,7 +76,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.47"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextText" />
+            app:layout_constraintTop_toBottomOf="@+id/nameSignUpId" />
 
         <Button
             android:id="@+id/loginGoogleButton"
@@ -103,11 +103,11 @@
             android:textSize="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/loginButton"
+            app:layout_constraintTop_toBottomOf="@+id/loginButtonHome"
             app:layout_constraintVertical_bias="0.145" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/loginLinkId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"

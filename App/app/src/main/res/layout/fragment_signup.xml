@@ -49,7 +49,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView" />
 
         <EditText
-            android:id="@+id/editTextText"
+            android:id="@+id/nameSignUpId"
             android:layout_width="261dp"
             android:layout_height="53dp"
             android:layout_marginTop="24dp"
@@ -64,7 +64,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
         <EditText
-            android:id="@+id/editTextText2"
+            android:id="@+id/emailSignUpId"
             android:layout_width="261dp"
             android:layout_height="53dp"
             android:layout_marginTop="12dp"
@@ -76,10 +76,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.486"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextText" />
+            app:layout_constraintTop_toBottomOf="@+id/nameSignUpId" />
 
         <EditText
-            android:id="@+id/editTextText3"
+            android:id="@+id/pwdSignUpId"
             android:layout_width="261dp"
             android:layout_height="53dp"
             android:layout_marginTop="8dp"
@@ -91,10 +91,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.48"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextText2" />
+            app:layout_constraintTop_toBottomOf="@+id/emailSignUpId" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/signUpButtonId"
             android:layout_width="258dp"
             android:layout_height="53dp"
             android:layout_marginBottom="16dp"
@@ -117,11 +117,11 @@
             android:textSize="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextText3"
+            app:layout_constraintTop_toBottomOf="@+id/pwdSignUpId"
             app:layout_constraintVertical_bias="0.924" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/loginLinkId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -135,7 +135,7 @@
             app:layout_constraintTop_toTopOf="@+id/textView4" />
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/returnRegisterId"
             android:layout_width="38dp"
             android:layout_height="47dp"
             android:layout_marginStart="4dp"
