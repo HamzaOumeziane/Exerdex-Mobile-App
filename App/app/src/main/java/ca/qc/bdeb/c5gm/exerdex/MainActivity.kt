@@ -14,11 +14,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import ca.qc.bdeb.c5gm.exerdex.adaptors.DoneListAdaptor
@@ -26,6 +28,7 @@ import ca.qc.bdeb.c5gm.exerdex.adaptors.ExerciseListAdaptor
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
 import ca.qc.bdeb.c5gm.exerdex.data.Workout
 import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
+import ca.qc.bdeb.c5gm.exerdex.viewmodels.ActiveWorkoutViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,16 +38,9 @@ import java.sql.Date
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var recyclerViewExercise: RecyclerView
-    lateinit var recyclerViewDone: RecyclerView
-    lateinit var deleteDone: Button
-    lateinit var database: ExerciseDatabase
     lateinit var popupLayer: ConstraintLayout
-    lateinit var newWorkoutName: TextView
-    lateinit var adapterDone: DoneListAdaptor
-    lateinit var adapterExercise: ExerciseListAdaptor
-    private val exercisesList: MutableList<Exercise> = mutableListOf()
-    private val doneList: MutableList<Exercise> = mutableListOf()
+    private val AWViewModel: ActiveWorkoutViewModel by viewModels()
+    lateinit var roomDatabase: ExerciseDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,64 +51,28 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        database = ExerciseDatabase.getExerciseDatabase(applicationContext)
-
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
-        val floatingBtn: FloatingActionButton = findViewById(R.id.floatingActionBtn)
-        floatingBtn.setOnClickListener {
-            addExercise(false, null)
-        }
-
-        newWorkoutName = findViewById(R.id.newWorkoutName)
-
         popupLayer = findViewById(R.id.popupLayer)
         val closePopupBtn: ImageView = findViewById(R.id.closePopupImg)
         closePopupBtn.setOnClickListener {
             closePopup()
         }
 
-        deleteDone = findViewById(R.id.archiveButton)
-        deleteDone.setOnClickListener {
-            if (doneList.isEmpty() || newWorkoutName.text.toString().length < 2){
-                Toast.makeText(this,getString(R.string.toast_new_workout_missing_info_error),Toast.LENGTH_SHORT).show()
-            } else {
-                lifecycleScope.launch(Dispatchers.IO){
-                    addDoneToArchive()
-                    database.exerciseDao().deleteAllExercisesDone()
-                }
-            }
-        }
+        roomDatabase = ExerciseDatabase.getExerciseDatabase(applicationContext)
+//
+//        deleteDone = findViewById(R.id.archiveButton)
+//        deleteDone.setOnClickListener {
+//            if (doneList.isEmpty() || newWorkoutName.text.toString().length < 2){
+//                Toast.makeText(this,getString(R.string.toast_new_workout_missing_info_error),Toast.LENGTH_SHORT).show()
+//            } else {
+//                lifecycleScope.launch(Dispatchers.IO){
+//                    addDoneToArchive()
+//                    database.exerciseDao().deleteAllExercisesDone()
+//                }
+//            }
+//        }
 
-        recyclerViewExercise = findViewById(R.id.recyclerView)
-        recyclerViewDone = findViewById(R.id.doneRecyclerView)
-        adapterExercise = ExerciseListAdaptor(applicationContext, this, database,
-            exercisesList, doneList) { isEdit, exercise ->
-            addExercise(isEdit, exercise)
-        }
-        adapterDone = DoneListAdaptor(applicationContext, this, database, exercisesList,
-            doneList)
-        recyclerViewExercise.adapter = adapterExercise
-        recyclerViewDone.adapter = adapterDone
-
-        lifecycleScope.launch(Dispatchers.IO){
-            val exercisesToDoFromDB = database.exerciseDao().loadExerciseByDone(false)
-            val exercisesDoneFromDB = database.exerciseDao().loadExerciseByDone(true)
-            Log.d("databaseLOGS","Table, on load undone: "+exercisesToDoFromDB)
-            Log.d("databaseLOGS","Table, on load done: "+exercisesDoneFromDB)
-
-
-            exercisesList.clear()
-            doneList.clear()
-            exercisesList.addAll(exercisesToDoFromDB)
-            doneList.addAll(exercisesDoneFromDB)
-            runOnUiThread {
-                adapterExercise.notifyDataSetChanged()
-                adapterDone.notifyDataSetChanged()
-            }
-        }
 
     }
 
@@ -121,33 +81,33 @@ class MainActivity : AppCompatActivity() {
         handleIncomingIntent(intent)
     }
 
-    private suspend fun addDoneToArchive(){
-        val setList: MutableList<String> = mutableListOf()
-        var totalWorkoutVolume: Int = 0
-        doneList.forEach { exercise: Exercise ->
-            Log.d("exerciseAddingLogs","Adding Exercise: ${exercise}")
-            val setsStringBuilder = StringBuilder()
-            setsStringBuilder.append(exercise.name)
-            val heaviestSet = exercise.setList.maxBy { it.weight }
-            setsStringBuilder.append(", ${getString(R.string.heaviest_set)}: ${heaviestSet.weight}x${heaviestSet.reps}")
-            setList.add(setsStringBuilder.toString())
-            val totalVolume = exercise.setList.sumOf { (it.weight * it.reps).toInt() }
-            totalWorkoutVolume += totalVolume
-        }
-
-        val workout: Workout = Workout(newWorkoutName.text.toString(), Date(System.currentTimeMillis()), setList
-            ,totalWorkoutVolume)
-
-        runOnUiThread {
-            newWorkoutName.text = ""
-        }
-        Log.d("exerciseAddingLogs","Workout Added: ${workout}")
-        database.workoutDao().insertAll(workout)
-        runOnUiThread {
-            doneList.clear()
-            adapterDone.notifyDataSetChanged()
-        }
-    }
+//    private suspend fun addDoneToArchive(){
+//        val setList: MutableList<String> = mutableListOf()
+//        var totalWorkoutVolume: Int = 0
+//        doneList.forEach { exercise: Exercise ->
+//            Log.d("exerciseAddingLogs","Adding Exercise: ${exercise}")
+//            val setsStringBuilder = StringBuilder()
+//            setsStringBuilder.append(exercise.name)
+//            val heaviestSet = exercise.setList.maxBy { it.weight }
+//            setsStringBuilder.append(", ${getString(R.string.heaviest_set)}: ${heaviestSet.weight}x${heaviestSet.reps}")
+//            setList.add(setsStringBuilder.toString())
+//            val totalVolume = exercise.setList.sumOf { (it.weight * it.reps).toInt() }
+//            totalWorkoutVolume += totalVolume
+//        }
+//
+//        val workout: Workout = Workout(newWorkoutName.text.toString(), Date(System.currentTimeMillis()), setList
+//            ,totalWorkoutVolume)
+//
+//        runOnUiThread {
+//            newWorkoutName.text = ""
+//        }
+//        Log.d("exerciseAddingLogs","Workout Added: ${workout}")
+//        database.workoutDao().insertAll(workout)
+//        runOnUiThread {
+//            doneList.clear()
+//            adapterDone.notifyDataSetChanged()
+//        }
+//    }
 
 
     private fun handleIncomingIntent(intent: Intent) {
@@ -165,13 +125,13 @@ class MainActivity : AppCompatActivity() {
                 if (isEdit){
                     actionDone = "Edited"
                     lifecycleScope.launch(Dispatchers.IO) {
-                        database.exerciseDao().updateAll(it)
+                        roomDatabase.exerciseDao().updateAll(it)
                         // Reload data after update
                         reloadDataFromDatabase()
                     }
                 } else {
                     lifecycleScope.launch(Dispatchers.IO) {
-                        database.exerciseDao().insertAll(it)
+                        roomDatabase.exerciseDao().insertAll(it)
                         // Reload data after insertion
                         reloadDataFromDatabase()
                     }
@@ -234,18 +194,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     suspend fun reloadDataFromDatabase() {
-        val exercisesToDoFromDB = database.exerciseDao().loadExerciseByDone(false)
-        val exercisesDoneFromDB = database.exerciseDao().loadExerciseByDone(true)
+        val exercisesToDoFromDB = roomDatabase.exerciseDao().loadExerciseByDone(false)
+        val exercisesDoneFromDB = roomDatabase.exerciseDao().loadExerciseByDone(true)
         Log.d("databaseLOGS","Table, on load undone: $exercisesToDoFromDB")
         Log.d("databaseLOGS","Table, on load done: $exercisesDoneFromDB")
-        exercisesList.clear()
-        doneList.clear()
-        exercisesList.addAll(exercisesToDoFromDB)
-        doneList.addAll(exercisesDoneFromDB)
-        withContext(Dispatchers.Main) {
-            adapterExercise.notifyDataSetChanged()
-            adapterDone.notifyDataSetChanged()
-        }
+        AWViewModel.updateBothLists(exercisesToDoFromDB, exercisesToDoFromDB)
     }
 
     fun setUpPopup(exerciseToDisplay:Exercise){

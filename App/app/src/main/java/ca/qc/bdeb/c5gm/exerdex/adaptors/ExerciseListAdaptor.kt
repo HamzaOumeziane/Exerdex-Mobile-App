@@ -18,6 +18,8 @@ import kotlinx.coroutines.launch
 class ExerciseListAdaptor(
     val ctx: Context,
     var exercisesList: MutableList<Exercise>,
+    private val finishExercise: (item: Exercise) -> Unit,
+    private val deleteExercise: (item: Exercise) -> Unit,
     //private val editExercise: (isEdit: Boolean, exerciseToEdit: Exercise?) -> Unit,
 ) : RecyclerView.Adapter<ItemExerciseHolder>() {
 
@@ -66,26 +68,23 @@ class ExerciseListAdaptor(
 
 
         holder.check.setOnClickListener {
-            item.isDone=true
-            activity.lifecycleScope.launch(Dispatchers.IO){
-                database.exerciseDao().updateAll(item)
-                activity.reloadDataFromDatabase()
-            }
+            finishExercise(item)
         }
 
         holder.edit.setOnClickListener {
-            editExercise(true, item)
+            //editExercise(true, item)
+            // dont you want me like I want you, baby?
+            // dont you need me like I need you, now?
         }
 
         holder.cancel.setOnClickListener {
-            activity.lifecycleScope.launch(Dispatchers.IO){
-                database.exerciseDao().delete(item)
-            }
-            exercisesList.removeAt(holder.adapterPosition)
-            notifyItemRemoved(holder.adapterPosition)
+            deleteExercise(item)
         }
         holder.itemView.setOnClickListener{
-            activity.setUpPopup(item)
+            //activity.setUpPopup(item)
+            // sleep tomorrow but tonight go crazy,
+            // won't you just meet me at the,
+            // APT APT APT APT APT APT
         }
     }
 }

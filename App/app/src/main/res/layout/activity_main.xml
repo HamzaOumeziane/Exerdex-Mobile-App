@@ -10,29 +10,29 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/AWExercisesToDoFragment"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintStart_toStartOf="parent"
         android:name="ca.qc.bdeb.c5gm.exerdex.fragments.ExercisesToDoFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/AWExercisesDoneFragment"
-        app:layout_constraintTop_toBottomOf="@id/AWExercisesToDoFragment"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="32dp"
         android:name="ca.qc.bdeb.c5gm.exerdex.fragments.ExerciesDoneFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/AWExercisesToDoFragment" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/AWManagementFragment"
         android:name="ca.qc.bdeb.c5gm.exerdex.fragments.ActiveWorkoutManagementFragment"
-        android:layout_width="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:layout_height="wrap_content" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <include
         layout="@layout/toolbar_main"
