@@ -7,21 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import ca.qc.bdeb.c5gm.exerdex.R
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import ca.qc.bdeb.c5gm.exerdex.MainActivity
 import ca.qc.bdeb.c5gm.exerdex.adaptors.ExerciseListAdaptor
-import ca.qc.bdeb.c5gm.exerdex.data.Exercise
-import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
 import ca.qc.bdeb.c5gm.exerdex.viewmodels.ActiveWorkoutViewModel
-import ca.qc.bdeb.c5gm.exerdex.viewmodels.ExerciseViewModel
 
 class ExercisesToDoFragment : Fragment() {
 
-    private lateinit var viewModel: ExerciseViewModel
-    private lateinit var adapter: ExerciseListAdaptor
-
+    private val viewModel: ActiveWorkoutViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,15 +25,7 @@ class ExercisesToDoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel = ViewModelProvider(this).get(ExerciseViewModel::class.java)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewToDo)
-        adapter = ExerciseListAdaptor(requireContext(), requireActivity() as MainActivity, viewModel)
-        recyclerView.adapter = adapter
-        viewModel.exercisesToDo.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                adapter.submitList(it)
-            }
-        })
+        val toDoRecyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
+        val exerciseListAdaptor = ExerciseListAdaptor(view.context, viewModel.toDoExercises)
     }
 }

@@ -1,7 +1,5 @@
 package ca.qc.bdeb.c5gm.exerdex.room
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -13,7 +11,7 @@ import ca.qc.bdeb.c5gm.exerdex.data.Exercise
 @Dao
 interface ExerciseDao {
     @Query("SELECT * FROM Exercise WHERE isDone = :isDone")
-    suspend fun loadExerciseByDone(isDone: Boolean): LiveData<List<Exercise>>
+    suspend fun loadExerciseByDone(isDone: Boolean): MutableList<Exercise>
     @Update
     suspend fun updateAll(vararg exercises: Exercise)
     @Delete
