@@ -198,7 +198,9 @@ class MainActivity : AppCompatActivity() {
         val exercisesDoneFromDB = roomDatabase.exerciseDao().loadExerciseByDone(true)
         Log.d("databaseLOGS","Table, on load undone: $exercisesToDoFromDB")
         Log.d("databaseLOGS","Table, on load done: $exercisesDoneFromDB")
-        AWViewModel.updateBothLists(exercisesToDoFromDB, exercisesToDoFromDB)
+        runOnUiThread {
+            AWViewModel.updateBothLists(exercisesToDoFromDB, exercisesDoneFromDB)
+        }
     }
 
     fun setUpPopup(exerciseToDisplay:Exercise){

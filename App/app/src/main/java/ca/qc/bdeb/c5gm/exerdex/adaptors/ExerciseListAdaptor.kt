@@ -20,6 +20,8 @@ class ExerciseListAdaptor(
     var exercisesList: MutableList<Exercise>,
     private val finishExercise: (item: Exercise) -> Unit,
     private val deleteExercise: (item: Exercise) -> Unit,
+    private val editExercise: (item: Exercise) -> Unit,
+    private val showExercise: (item: Exercise) -> Unit,
     //private val editExercise: (isEdit: Boolean, exerciseToEdit: Exercise?) -> Unit,
 ) : RecyclerView.Adapter<ItemExerciseHolder>() {
 
@@ -72,19 +74,14 @@ class ExerciseListAdaptor(
         }
 
         holder.edit.setOnClickListener {
-            //editExercise(true, item)
-            // dont you want me like I want you, baby?
-            // dont you need me like I need you, now?
+            editExercise(item)
         }
 
         holder.cancel.setOnClickListener {
             deleteExercise(item)
         }
         holder.itemView.setOnClickListener{
-            //activity.setUpPopup(item)
-            // sleep tomorrow but tonight go crazy,
-            // won't you just meet me at the,
-            // APT APT APT APT APT APT
+            showExercise(item)
         }
     }
 }

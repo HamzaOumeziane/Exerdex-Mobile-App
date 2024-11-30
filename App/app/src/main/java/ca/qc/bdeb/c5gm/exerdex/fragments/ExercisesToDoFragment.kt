@@ -9,6 +9,7 @@ import ca.qc.bdeb.c5gm.exerdex.R
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import ca.qc.bdeb.c5gm.exerdex.MainActivity
 import ca.qc.bdeb.c5gm.exerdex.adaptors.ExerciseListAdaptor
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
 import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
@@ -39,7 +40,9 @@ class ExercisesToDoFragment : Fragment() {
             view.context,
             emptyList<Exercise>().toMutableList(),
             { item: Exercise -> finishExercise(item) },
-            { item: Exercise -> deleteExercise(item) }
+            { item: Exercise -> deleteExercise(item) },
+            { item: Exercise -> editExercise(item) },
+            { item: Exercise -> showExercise(item) },
         )
         toDoRecyclerView.adapter = exerciseListAdaptor
 
@@ -62,6 +65,14 @@ class ExercisesToDoFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO){
             roomDatabase.exerciseDao().delete(item)
         }
+    }
+    private fun editExercise(item: Exercise){
+        val mainActivity = activity as? MainActivity
+        mainActivity?.addExercise(true, item)
+    }
+    private fun showExercise(item: Exercise){
+        val mainActivity = activity as? MainActivity
+        mainActivity?.setUpPopup(item)
     }
 
     private fun initFromDB(exerciseListAdaptor: ExerciseListAdaptor) {
