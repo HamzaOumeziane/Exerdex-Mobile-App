@@ -1,6 +1,7 @@
 package ca.qc.bdeb.c5gm.exerdex.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -71,8 +72,13 @@ class ExercisesToDoFragment : Fragment() {
         mainActivity?.addExercise(true, item)
     }
     private fun showExercise(item: Exercise){
-        val mainActivity = activity as? MainActivity
-        mainActivity?.setUpPopup(item)
+        Log.d("FRAG", "showExercise clicked from ToDO ")
+        val popupFragment = parentFragmentManager.findFragmentById(R.id.popupFragment) as ExercisePopUp
+        popupFragment.setUpPopup(item)
+        parentFragmentManager.beginTransaction()
+            .show(popupFragment)
+            .commit()
+        requireActivity().findViewById<View>(R.id.popupFragment).visibility = View.VISIBLE
     }
 
     private fun initFromDB(exerciseListAdaptor: ExerciseListAdaptor) {
