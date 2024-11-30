@@ -57,55 +57,12 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         roomDatabase = ExerciseDatabase.getExerciseDatabase(applicationContext)
-//
-//        deleteDone = findViewById(R.id.archiveButton)
-//        deleteDone.setOnClickListener {
-//            if (doneList.isEmpty() || newWorkoutName.text.toString().length < 2){
-//                Toast.makeText(this,getString(R.string.toast_new_workout_missing_info_error),Toast.LENGTH_SHORT).show()
-//            } else {
-//                lifecycleScope.launch(Dispatchers.IO){
-//                    addDoneToArchive()
-//                    database.exerciseDao().deleteAllExercisesDone()
-//                }
-//            }
-//        }
-
-
     }
 
     override fun onResume() {
         super.onResume()
         handleIncomingIntent(intent)
     }
-
-//    private suspend fun addDoneToArchive(){
-//        val setList: MutableList<String> = mutableListOf()
-//        var totalWorkoutVolume: Int = 0
-//        doneList.forEach { exercise: Exercise ->
-//            Log.d("exerciseAddingLogs","Adding Exercise: ${exercise}")
-//            val setsStringBuilder = StringBuilder()
-//            setsStringBuilder.append(exercise.name)
-//            val heaviestSet = exercise.setList.maxBy { it.weight }
-//            setsStringBuilder.append(", ${getString(R.string.heaviest_set)}: ${heaviestSet.weight}x${heaviestSet.reps}")
-//            setList.add(setsStringBuilder.toString())
-//            val totalVolume = exercise.setList.sumOf { (it.weight * it.reps).toInt() }
-//            totalWorkoutVolume += totalVolume
-//        }
-//
-//        val workout: Workout = Workout(newWorkoutName.text.toString(), Date(System.currentTimeMillis()), setList
-//            ,totalWorkoutVolume)
-//
-//        runOnUiThread {
-//            newWorkoutName.text = ""
-//        }
-//        Log.d("exerciseAddingLogs","Workout Added: ${workout}")
-//        database.workoutDao().insertAll(workout)
-//        runOnUiThread {
-//            doneList.clear()
-//            adapterDone.notifyDataSetChanged()
-//        }
-//    }
-
 
     private fun handleIncomingIntent(intent: Intent) {
         if (intent.hasExtra("exercise")) {
