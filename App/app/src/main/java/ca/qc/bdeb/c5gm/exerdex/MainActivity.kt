@@ -20,6 +20,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainer
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +29,7 @@ import ca.qc.bdeb.c5gm.exerdex.adaptors.DoneListAdaptor
 import ca.qc.bdeb.c5gm.exerdex.adaptors.ExerciseListAdaptor
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
 import ca.qc.bdeb.c5gm.exerdex.data.Workout
+import ca.qc.bdeb.c5gm.exerdex.fragments.ExercisePopUp
 import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
 import ca.qc.bdeb.c5gm.exerdex.viewmodels.ActiveWorkoutViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -38,7 +41,6 @@ import java.sql.Date
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var popupLayer: ConstraintLayout
     private val AWViewModel: ActiveWorkoutViewModel by viewModels()
     lateinit var roomDatabase: ExerciseDatabase
 
@@ -53,11 +55,6 @@ class MainActivity : AppCompatActivity() {
         }
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        popupLayer = findViewById(R.id.popupLayer)
-        val closePopupBtn: ImageView = findViewById(R.id.closePopupImg)
-        closePopupBtn.setOnClickListener {
-            closePopup()
-        }
 
         roomDatabase = ExerciseDatabase.getExerciseDatabase(applicationContext)
 //
@@ -203,42 +200,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun setUpPopup(exerciseToDisplay:Exercise){
-        popupLayer.visibility = View.VISIBLE
-        val titleView: TextView = findViewById(R.id.popupExoTitle)
-        val typeView: TextView = findViewById(R.id.popupExoType)
-        val descView: TextView = findViewById(R.id.popupExoDesc)
-        val setsView: TextView = findViewById(R.id.popupExoSets)
-        val exoImage: ImageView = findViewById(R.id.popupExoImg)
-        titleView.text = exerciseToDisplay.name
-        if(exerciseToDisplay.description.isNullOrEmpty()){
-            descView.visibility = View.GONE
-        }else{
-            descView.text = exerciseToDisplay.description
-        }
-
-        typeView.text = exerciseToDisplay.category.toString() + " Exercise"
-
-
-        val setsStringBuilder = StringBuilder()
-
-        exerciseToDisplay.setList.forEachIndexed { index, item ->
-            setsStringBuilder.append(item.toString())
-            // Pour ne pas avoir de new line au dernier element
-            if (index < exerciseToDisplay.setList.size - 1) {
-                setsStringBuilder.append("\n")
-            }
-        }
-        setsView.text = setsStringBuilder.toString()
-
-        if(!exerciseToDisplay.imageUri.isNullOrEmpty()){
-            val uri = Uri.parse(exerciseToDisplay.imageUri)
-            exoImage.setImageURI(uri)
-        }
-
-
-    }
-    private fun closePopup(){
-        popupLayer.visibility = View.GONE
-    }
 }
