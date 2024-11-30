@@ -61,6 +61,7 @@ class ExerciesDoneFragment : Fragment() {
             val doneListFromDB = roomDatabase.exerciseDao().loadExerciseByDone(true)
             withContext(Dispatchers.Main) {
                 doneListAdaptor.doneList = doneListFromDB
+                viewModel.doneExercises.value = doneListFromDB
                 doneListAdaptor.notifyDataSetChanged()
             }
         }
