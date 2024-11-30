@@ -10,8 +10,8 @@ class ActiveWorkoutViewModel: ViewModel() {
     var doneExercises = MutableLiveData<MutableList<Exercise>>()
 
     fun changeExerciseDoneState(item: Exercise, newDoneState: Boolean){
-        val toDo = toDoExercises.value ?: mutableListOf()
-        val done = doneExercises.value ?: mutableListOf()
+        val toDo = toDoExercises.value!!
+        val done = doneExercises.value!!
 
         item.isDone = newDoneState // Pourrait être simplifier à isDone = !item.isDone mais cette
                                    // manière de faire est plus 'safe' :D
