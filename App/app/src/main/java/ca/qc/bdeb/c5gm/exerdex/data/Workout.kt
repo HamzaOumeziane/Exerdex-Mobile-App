@@ -13,6 +13,7 @@ data class Workout(
     val date: Date,
     val exerciseList: List<String>, // Non une relation car ils sont utilisé pour affichage seulement
     // et sont effacés de la table 'Exercise'. On ne peut plus les modifier après une finalisation workout.
+    val exerciseListValues: List<Exercise>,
     val totalVolumne: Int,
     @PrimaryKey(autoGenerate = true) val workoutId: Int = 0
 ) : Parcelable

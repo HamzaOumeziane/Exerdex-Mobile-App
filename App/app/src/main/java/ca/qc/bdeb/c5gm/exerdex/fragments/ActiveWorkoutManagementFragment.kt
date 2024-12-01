@@ -81,7 +81,8 @@ class ActiveWorkoutManagementFragment : Fragment() {
             totalWorkoutVolume += totalVolume
         }
 
-        val workout: Workout = Workout(newWorkoutName.text.toString(), Date(System.currentTimeMillis()), setList
+        val workout: Workout = Workout(newWorkoutName.text.toString(), Date(System.currentTimeMillis()),
+            setList, viewModel.doneExercises.value!!.toList()
             ,totalWorkoutVolume)
 
         Log.d("exerciseAddingLogs","Workout Added: ${workout}")
