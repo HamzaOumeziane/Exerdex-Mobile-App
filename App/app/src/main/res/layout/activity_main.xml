@@ -9,6 +9,16 @@
     tools:context=".MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerAuthentication"
+        android:name="ca.qc.bdeb.c5gm.exerdex.fragments.HomePageFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="203dp"
+        android:layout_marginTop="319dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/AWExercisesToDoFragment"
         android:name="ca.qc.bdeb.c5gm.exerdex.fragments.ExercisesToDoFragment"
         android:layout_width="match_parent"
@@ -58,5 +68,23 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/popupLayer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/background_dark"
+        android:elevation="16dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.8">
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
