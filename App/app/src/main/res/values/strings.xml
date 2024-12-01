@@ -23,20 +23,6 @@
     <string name="info_title">Information</string>
     <string name="info_message">Authors: Hamza Oumeziane and Mohamad Atrash</string>
     <string name="settings_message">Functionality not used yet.</string>
-    <string name="welcome_message">Welcome to Exerdex</string>
-    <string name="text_welcome_message">The best app for your workouts</string>
-    <string name="register">Register</string>
-    <string name="register_message">Create your new account</string>
-    <string name="login_message">Login to your account</string>
-    <string name="to_register">Sign up</string>
-    <string name="already_account">Already have an account ?</string>
-    <string name="not_yet_account">Don\'t have an account ?</string>
-    <string name="to_login">Login</string>
-    <string name="name">Name</string>
-    <string name="email">Email</string>
-    <string name="password">Password</string>
-    <string name="login_google">Continue with Google</string>
-    <string name="success_signup">Successful signup! Welcome </string>
-    <string name="failed_signup">Sign-up failed.. Please try again.</string>
-
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

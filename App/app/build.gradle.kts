@@ -4,7 +4,6 @@ plugins {
 
     id("org.jetbrains.kotlin.plugin.parcelize")
     id("com.google.devtools.ksp")
-    alias(libs.plugins.google.gms.google.services)
 
 }
 
@@ -38,9 +37,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildFeatures {
-        viewBinding = true
-    }
 }
 
 dependencies {
@@ -50,10 +46,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.legacy.support.v4)
-    implementation(libs.androidx.recyclerview)
-    implementation(libs.play.services.base)
-    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -70,10 +62,6 @@ dependencies {
     // IMPORTANT: Dépendences externes requises pour utiliser Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
-    implementation ("androidx.credentials:credentials:<latest version>")
-    implementation ("androidx.credentials:credentials-play-services-auth:<latest version>")
-    implementation ("com.google.android.libraries.identity.googleid:googleid:<latest version>")
 }
 
 

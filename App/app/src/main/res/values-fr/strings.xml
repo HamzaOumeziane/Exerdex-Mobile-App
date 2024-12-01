@@ -24,20 +24,4 @@
     <string name="info_title">Information</string>
     <string name="info_message">Auteurs: Hamza Oumeziane et Mohamad Atrash</string>
     <string name="settings_message">Fonctionnalité pas encore utilisée</string>
-    <string name="welcome_message">Bienvenue à Exerdex</string>
-    <string name="text_welcome_message">La meilleure application pour vos entraînements</string>
-    <string name="register">Inscription</string>
-    <string name="register_message">Créez votre nouveau compte</string>
-    <string name="login_message">Connectez-vous sur votre compte</string>
-    <string name="to_register">S\'inscrire</string>
-    <string name="already_account">Vous avez déjà un compte ?</string>
-    <string name="not_yet_account">Vous n\'avez pas un compte ?</string>
-    <string name="to_login">Se connecter</string>
-    <string name="name">Nom</string>
-    <string name="email">Adresse courriel</string>
-    <string name="password">Mot de passe</string>
-    <string name="login_google">Continuer avec Google</string>
-    <string name="success_signup">Inscription réussie!! Bienvenue </string>
-    <string name="failed_signup">Inscription échouée.. Veuillez réessayer.</string>
-
 </resources>

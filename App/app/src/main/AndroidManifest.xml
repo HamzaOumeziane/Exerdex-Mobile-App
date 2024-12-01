@@ -17,12 +17,9 @@
         android:theme="@style/Theme.Exerdex"
         tools:targetApi="31">
         <activity
-            android:name=".authentification"
-            android:exported="false" />
-        <activity
             android:name=".ArchivedWorkouts"
             android:exported="false"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"/>
         <activity
             android:name=".AddEditExerciseActivity"
             android:exported="false"
@@ -48,5 +45,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
     </application>
+
+
+
 
 </manifest>
