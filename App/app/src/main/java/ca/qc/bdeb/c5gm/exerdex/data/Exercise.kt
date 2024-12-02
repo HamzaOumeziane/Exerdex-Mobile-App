@@ -8,12 +8,10 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Entity
 data class Exercise(
-    var name: String,
-    val description: String = "",
-    val category: MuscleCategory,
+    val exerciseRawData: ExerciseRaw,
+    val exerciseRawId: Int,
     val setList: List<Set>,
     var isDone: Boolean = false,
     var isImportant: Boolean,
-    var imageUri: String? = null,
     @PrimaryKey(autoGenerate = true) val exId: Int = 0
 ) : Parcelable

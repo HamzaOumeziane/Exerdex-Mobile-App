@@ -36,6 +36,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
 import ca.qc.bdeb.c5gm.exerdex.adaptors.SetListAdaptor
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
+import ca.qc.bdeb.c5gm.exerdex.data.ExerciseRaw
 import ca.qc.bdeb.c5gm.exerdex.data.MuscleCategory
 import ca.qc.bdeb.c5gm.exerdex.data.Set
 import ca.qc.bdeb.c5gm.exerdex.viewholders.ItemSetHolder
@@ -58,6 +59,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
     private lateinit var uriPic: Uri
     private lateinit var picTaken: ActivityResultLauncher<Uri>
     private lateinit var picSelected: ActivityResultLauncher<PickVisualMediaRequest>
+    private lateinit var exerciseRaw: ExerciseRaw
     private var pictureSet: Boolean = false
     private var exerciseImportant: Boolean = false
     private var setsList: MutableList<Set> = mutableListOf()
@@ -219,7 +221,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
     }
 
     private fun handleIncomingIntent(intent: Intent) {
-        var exerciseToEdit: Exercise? = Exercise("haha","haha",MuscleCategory.ABS, listOf(), isImportant = exerciseImportant)
+        var exerciseToEdit: Exercise? = null
         if (intent.hasExtra("isEdit")) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 isEditing = intent.getBooleanExtra("isEdit", false)
@@ -235,10 +237,32 @@ class AddEditExerciseActivity : AppCompatActivity() {
                 }
             }
         }
+        if (intent.hasExtra("exerciseRaw")) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                exerciseRaw = intent.getParcelableExtra("exerciseRaw", ExerciseRaw::class.java)!!
+                if (isEditing){
+                    exerciseToEdit = intent.getParcelableExtra("exerciseToEdit", Exercise::class.java)
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                exerciseToEdit = intent.getParcelableExtra("exerciseToEdit")
+            }
+            exerciseTitleView.text = exerciseRaw.name
+            exerciseDescriptionView.text = exerciseRaw.description
+            exerciseTitleView.isEnabled = false
+            exerciseDescriptionView.isEnabled = false
+            val spinner: Spinner = findViewById(R.id.muscleCategorySpinner)
+            val categoryName = exerciseRaw.category.name.lowercase().replaceFirstChar { it.uppercase() }
+            val position = (spinner.adapter as ArrayAdapter<String>).getPosition(categoryName)
+            if (position >= 0) {
+                spinner.setSelection(position)
+            }
+            spinner.isEnabled = false
+        }
         if (isEditing && exerciseToEdit != null) {
             exerciseBeingEditedId = exerciseToEdit.exId
-            exerciseTitleView.text = exerciseToEdit.name
-            exerciseDescriptionView.text = exerciseToEdit.description
+            exerciseTitleView.text = exerciseToEdit.exerciseRawData.name
+            exerciseDescriptionView.text = exerciseToEdit.exerciseRawData.description
 
             exerciseImportant = exerciseToEdit.isImportant
             if(exerciseImportant){
@@ -247,15 +271,15 @@ class AddEditExerciseActivity : AppCompatActivity() {
                 exerciseImportantView.setImageResource(R.drawable.baseline_label_important_outline_24)
             }
 
-            if (!exerciseToEdit.imageUri.isNullOrEmpty()) {
-                uriPic = Uri.parse(exerciseToEdit.imageUri)
+            if (!exerciseToEdit.exerciseRawData.imageUri.isNullOrEmpty()) {
+                uriPic = Uri.parse(exerciseToEdit.exerciseRawData.imageUri)
                 pictureTake.setImageURI(uriPic)
                 manipulatePicture.setImageResource(R.drawable.baseline_cancel_24_wh)
                 pictureSet = true
             }
 
             val spinner: Spinner = findViewById(R.id.muscleCategorySpinner)
-            val categoryName = exerciseToEdit.category.name.lowercase().replaceFirstChar { it.uppercase() }
+            val categoryName = exerciseToEdit.exerciseRawData.category.name.lowercase().replaceFirstChar { it.uppercase() }
             val position = (spinner.adapter as ArrayAdapter<String>).getPosition(categoryName)
             if (position >= 0) {
                 spinner.setSelection(position)
@@ -308,12 +332,11 @@ class AddEditExerciseActivity : AppCompatActivity() {
             return
         }
 
-        val newExercise: Exercise = Exercise(exerciseTitleView.text.toString(),
-            exerciseDescriptionView.text.toString(),
-            selectedCategory,
-            setsList,
+        val newExercise: Exercise = Exercise(
+            exerciseRawData = exerciseRaw,
+            exerciseRawId = exerciseRaw.exRawId,
+            setList =  setsList,
             isImportant = exerciseImportant,
-            imageUri = if (pictureSet) uriPic.toString() else null,
             exId = exerciseBeingEditedId?: 0
             )
         val intent = Intent(this,MainActivity::class.java)

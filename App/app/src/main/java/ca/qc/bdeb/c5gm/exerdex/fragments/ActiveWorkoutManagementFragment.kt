@@ -54,7 +54,7 @@ class ActiveWorkoutManagementFragment : Fragment() {
     }
     private fun addExercise() {
         val mainActivity = activity as? MainActivity
-        mainActivity?.addExercise(false, null)
+        mainActivity?.showAddExerciseDialog()
     }
     private fun finalizeCurrentWorkout(){
         if (viewModel.doneExercises.value!!.isEmpty() || newWorkoutName.text.toString().length < 2){
@@ -73,7 +73,7 @@ class ActiveWorkoutManagementFragment : Fragment() {
         viewModel.doneExercises.value!!.forEach { exercise: Exercise ->
             Log.d("exerciseAddingLogs","Adding Exercise: ${exercise}")
             val setsStringBuilder = StringBuilder()
-            setsStringBuilder.append(exercise.name)
+            setsStringBuilder.append(exercise.exerciseRawData.name)
             val heaviestSet = exercise.setList.maxBy { it.weight }
             setsStringBuilder.append(", ${getString(R.string.heaviest_set)}: ${heaviestSet.weight}x${heaviestSet.reps}")
             setList.add(setsStringBuilder.toString())

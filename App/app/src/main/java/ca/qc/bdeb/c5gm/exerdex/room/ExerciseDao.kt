@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
+import ca.qc.bdeb.c5gm.exerdex.data.ExerciseRaw
 
 @Dao
 interface ExerciseDao {
@@ -22,4 +23,8 @@ interface ExerciseDao {
     suspend fun deleteAllExercises()
     @Query("DELETE FROM Exercise WHERE isDone = 1")
     suspend fun deleteAllExercisesDone()
+    @Query("SELECT * FROM Exercise WHERE exerciseRawId = :exerciseRawId")
+    suspend fun loadExercisesByExerciseRaw(exerciseRawId: Int): List<Exercise>
+    @Query("Select * FROM ExerciseRaw")
+    suspend fun loadAllExerciseRaw(): List<ExerciseRaw>
 }

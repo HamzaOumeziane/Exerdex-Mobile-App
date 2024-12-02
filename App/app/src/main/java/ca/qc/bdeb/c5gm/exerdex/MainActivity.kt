@@ -27,7 +27,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import ca.qc.bdeb.c5gm.exerdex.adaptors.DoneListAdaptor
 import ca.qc.bdeb.c5gm.exerdex.adaptors.ExerciseListAdaptor
+import ca.qc.bdeb.c5gm.exerdex.adaptors.ExerciseRawListAdaptor
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
+import ca.qc.bdeb.c5gm.exerdex.data.ExerciseRaw
 import ca.qc.bdeb.c5gm.exerdex.data.Workout
 import ca.qc.bdeb.c5gm.exerdex.fragments.ExercisePopUp
 import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
@@ -92,7 +94,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 intent.removeExtra("exercise") // Pour pas que les exercises se rajoutent lors
                                                      // du changement d'orientation.
-                Toast.makeText(this, "Exercise ${actionDone}: ${it.name}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Exercise ${actionDone}: ${it.exerciseRawData.name}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -138,14 +140,44 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun addExercise(isEdit: Boolean, exerciseToEdit: Exercise?) {
+    fun addExercise(isEdit: Boolean, exerciseToEdit: Exercise?, exerciseRaw: ExerciseRaw?) {
         val intent = Intent(this, AddEditExerciseActivity::class.java)
         intent.putExtra("isEdit",isEdit)
         if (isEdit){
             intent.putExtra("exerciseToEdit",exerciseToEdit)
         }
+        if (exerciseRaw != null){
+            intent.putExtra("exerciseRaw",exerciseRaw)
+        }
         startActivity(intent)
     }
+
+    fun showAddExerciseDialog(){
+        val dialogView = layoutInflater.inflate(R.layout.add_exercise_dialog, null)
+
+        val recyclerView = dialogView.findViewById<RecyclerView>(R.id.existingExoRawsRecycler)
+        val createCustomBtn = dialogView.findViewById<Button>(R.id.createNewExoRawBtn)
+        lifecycleScope.launch(Dispatchers.IO) {
+            val exercisesRaw = roomDatabase.exerciseDao().loadAllExerciseRaw()
+            withContext(Dispatchers.Main){
+                val adaptor = ExerciseRawListAdaptor(
+                    applicationContext,
+                    this@MainActivity,
+                    exercisesRaw
+                ) { isEdit: Boolean, exerciseToEdit: Exercise?, exerciseRaw: ExerciseRaw?
+                        ->
+                        addExercise(isEdit, exerciseToEdit, exerciseRaw)
+                }
+                recyclerView.adapter = adaptor
+                val builder = AlertDialog.Builder(this@MainActivity)
+                builder.setView(dialogView)
+                val dialog = builder.create()
+                dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                dialog.show()
+            }
+        }
+    }
+
 
     suspend fun reloadDataFromDatabase() {
         val exercisesToDoFromDB = roomDatabase.exerciseDao().loadExerciseByDone(false)

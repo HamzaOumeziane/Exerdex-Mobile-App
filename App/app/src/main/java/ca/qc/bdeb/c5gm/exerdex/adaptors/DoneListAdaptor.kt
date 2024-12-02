@@ -29,7 +29,7 @@ class DoneListAdaptor(
 
     override fun onBindViewHolder(holder: ItemDoneHolder, position: Int) {
         val item = doneList[holder.adapterPosition]
-        holder.exercise.text = item.name
+        holder.exercise.text = item.exerciseRawData.name
 
         holder.comeback.setImageResource(R.drawable.baseline_loop_24)
         holder.comeback.setOnClickListener {

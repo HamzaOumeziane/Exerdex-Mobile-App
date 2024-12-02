@@ -35,20 +35,20 @@ class ExerciseListAdaptor(
     }
 
     override fun onBindViewHolder(holder: ItemExerciseHolder, position: Int) {
-        exercisesList.sortBy { it.category }
+        exercisesList.sortBy { it.exerciseRawData.category }
 
         Log.d("Sorting...",exercisesList.toString())
 
         val item = exercisesList[position]
 
-        if(position == 0 || exercisesList[position -1].category != item.category){
+        if(position == 0 || exercisesList[position -1].exerciseRawData.category != item.exerciseRawData.category){
             holder.category.visibility = View.VISIBLE
-            holder.category.text = item.category.name.replaceFirstChar { it.uppercase() }
+            holder.category.text = item.exerciseRawData.category.name.replaceFirstChar { it.uppercase() }
         }else{
             holder.category.visibility = View.GONE
         }
 
-        holder.exercise.text = item.name
+        holder.exercise.text = item.exerciseRawData.name
 
         if(!item.isImportant){
             holder.important.visibility = View.GONE

@@ -2,6 +2,7 @@ package ca.qc.bdeb.c5gm.exerdex.room
 
 import androidx.room.TypeConverter
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
+import ca.qc.bdeb.c5gm.exerdex.data.ExerciseRaw
 import ca.qc.bdeb.c5gm.exerdex.data.Set
 import ca.qc.bdeb.c5gm.exerdex.data.MuscleCategory
 import com.google.gson.Gson
@@ -55,5 +56,13 @@ class Converters {
     fun toStringList(stringListString: String): List<String> {
         val listType = object : TypeToken<List<String>>() {}.type
         return gson.fromJson(stringListString, listType)
+    }
+    @TypeConverter
+    fun fromExerciseRaw(exerciseRaw: ExerciseRaw): String {
+        return gson.toJson(exerciseRaw)
+    }
+    @TypeConverter
+    fun toExerciseRaw(exerciseRawString: String): ExerciseRaw {
+        return gson.fromJson(exerciseRawString, ExerciseRaw::class.java)
     }
 }

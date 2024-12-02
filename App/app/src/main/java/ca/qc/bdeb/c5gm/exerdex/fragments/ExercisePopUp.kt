@@ -42,14 +42,14 @@ class ExercisePopUp : Fragment() {
         val descView: TextView = popupLayer.findViewById(R.id.popupExoDesc)
         val setsView: TextView = popupLayer.findViewById(R.id.popupExoSets)
         val exoImage: ImageView = popupLayer.findViewById(R.id.popupExoImg)
-        titleView.text = exerciseToDisplay.name
-        if(exerciseToDisplay.description.isNullOrEmpty()){
+        titleView.text = exerciseToDisplay.exerciseRawData.name
+        if(exerciseToDisplay.exerciseRawData.description.isNullOrEmpty()){
             descView.visibility = View.GONE
         }else{
-            descView.text = exerciseToDisplay.description
+            descView.text = exerciseToDisplay.exerciseRawData.description
         }
 
-        typeView.text = exerciseToDisplay.category.toString() + " Exercise"
+        typeView.text = exerciseToDisplay.exerciseRawData.category.toString() + " Exercise"
 
 
         val setsStringBuilder = StringBuilder()
@@ -63,8 +63,8 @@ class ExercisePopUp : Fragment() {
         }
         setsView.text = setsStringBuilder.toString()
 
-        if(!exerciseToDisplay.imageUri.isNullOrEmpty()){
-            val uri = Uri.parse(exerciseToDisplay.imageUri)
+        if(!exerciseToDisplay.exerciseRawData.imageUri.isNullOrEmpty()){
+            val uri = Uri.parse(exerciseToDisplay.exerciseRawData.imageUri)
             exoImage.setImageURI(uri)
         }
         popupLayer.visibility = View.VISIBLE
