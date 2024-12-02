@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rootConstraintLayout"
+    android:id="@+id/quickSearchBtn"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_secondary_dark"
@@ -33,48 +33,57 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/pictureTakeId"
-                android:layout_width="208dp"
-                android:layout_height="170dp"
+                android:id="@+id/exerciseImg"
+                android:layout_width="286dp"
+                android:layout_height="270dp"
                 android:layout_marginBottom="28dp"
                 android:src="@drawable/baseline_photo_camera_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <EditText
-                android:id="@+id/exerciseNameInput"
+            <TextView
+                android:id="@+id/exerciseNameDecl"
                 android:layout_width="0dp"
-                android:layout_height="44dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:ems="10"
-                android:hint="@string/new_exercises_name_hint"
-                android:inputType="text"
+                android:text="An Exercise"
                 android:textColor="@color/text_primary_light"
-                android:textColorHint="@color/text_secondary_light"
                 android:textSize="24sp"
+                android:textStyle="normal|bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.256"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.8" />
 
-            <EditText
-                android:id="@+id/exerciseDescInput"
+            <TextView
+                android:id="@+id/exerciseCategoryDecl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_secondary_light"
+                android:textSize="16sp"
+                android:text="Category"
+                app:layout_constraintStart_toStartOf="@+id/exerciseNameDecl"
+                app:layout_constraintTop_toBottomOf="@id/exerciseNameDecl" />
+
+            <TextView
+                android:id="@+id/exerciseDescDecl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:ems="10"
                 android:gravity="start|top"
                 android:hint="@string/new_exercise_desc_hint"
-                android:inputType="textMultiLine"
+                android:text="A description that is long enough to wrap to multiple lines to demonstrate how text wrapping works in this bih"
                 android:textColor="@color/text_primary_light"
-                android:textColorHint="@color/text_secondary_light"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:maxLines="5"
+                android:ellipsize="end"
+                app:layout_constraintWidth_percent="0.9"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/exerciseNameInput"
-                app:layout_constraintWidth_percent="0.9" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/exerciseCategoryDecl" />
+
 
             <TextView
                 android:id="@+id/setsTitle"
@@ -85,8 +94,8 @@
                 android:textColor="@color/text_primary_light"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@id/exerciseDescInput"
-                app:layout_constraintTop_toBottomOf="@id/exerciseDescInput" />
+                app:layout_constraintStart_toStartOf="@id/exerciseDescDecl"
+                app:layout_constraintTop_toBottomOf="@id/exerciseDescDecl" />
 
             <EditText
                 android:id="@+id/newSetWeight"
@@ -133,8 +142,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/add_set"
-                android:background="@color/background_dark"
-                app:layout_constraintEnd_toEndOf="@id/exerciseDescInput"
+                app:layout_constraintEnd_toEndOf="@id/exerciseDescDecl"
                 app:layout_constraintTop_toBottomOf="@id/setsRecyclerView" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -146,44 +154,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/setsTitle" />
 
-            <TextView
-                android:id="@+id/photoTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Photo"
-                android:textColor="@color/text_primary_light"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@id/setsTitle"
-                app:layout_constraintTop_toBottomOf="@id/addSetBtn" />
-
-            <Spinner
-                android:id="@+id/muscleCategorySpinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/text_primary_light"
-                app:layout_constraintEnd_toEndOf="@id/exerciseDescInput"
-                app:layout_constraintTop_toBottomOf="@id/exerciseDescInput" />
-
-            <ImageView
-                android:id="@+id/AddRemovePicButton"
-                android:layout_width="87dp"
-                android:layout_height="87dp"
-                android:layout_marginTop="44dp"
-                android:clickable="true"
-                android:focusable="auto"
-                android:src="@drawable/baseline_add_circle_24"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/pictureTakeId"
-                app:layout_constraintTop_toTopOf="@+id/pictureTakeId" />
-
             <ImageView
                 android:id="@+id/importantExercise"
                 android:layout_width="41dp"
                 android:layout_height="35dp"
                 android:layout_marginStart="12dp"
-                app:layout_constraintStart_toEndOf="@+id/exerciseNameInput"
-                app:layout_constraintTop_toTopOf="@+id/exerciseNameInput"
+                app:layout_constraintStart_toEndOf="@+id/exerciseNameDecl"
+                app:layout_constraintTop_toTopOf="@+id/exerciseNameDecl"
                 app:srcCompat="@drawable/baseline_label_important_outline_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

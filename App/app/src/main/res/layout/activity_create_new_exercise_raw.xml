@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/quickSearchBtn"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_secondary_dark"
+    tools:context=".CreateNewExerciseRaw">
+
+    <include
+        layout="@layout/toolbar_add_exercise"
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/exerciseNameInput"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="16dp"
+                android:ems="10"
+                android:hint="@string/new_exercises_name_hint"
+                android:inputType="text"
+                android:textColor="@color/text_primary_light"
+                android:textColorHint="@color/text_secondary_light"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.256"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.8" />
+
+            <EditText
+                android:id="@+id/exerciseDescInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:gravity="start|top"
+                android:hint="@string/new_exercise_desc_hint"
+                android:inputType="textMultiLine"
+                android:textColor="@color/text_primary_light"
+                android:textColorHint="@color/text_secondary_light"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/exerciseNameInput"
+                app:layout_constraintWidth_percent="0.9" />
+
+            <TextView
+                android:id="@+id/photoTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Photo"
+                android:textColor="@color/text_primary_light"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/exerciseDescInput"
+                app:layout_constraintTop_toBottomOf="@+id/muscleCategorySpinner" />
+
+            <Spinner
+                android:id="@+id/muscleCategorySpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary_light"
+                app:layout_constraintEnd_toEndOf="@id/exerciseDescInput"
+                app:layout_constraintTop_toBottomOf="@id/exerciseDescInput" />
+
+            <ImageView
+                android:id="@+id/pictureTakeId"
+                android:layout_width="208dp"
+                android:layout_height="170dp"
+                android:src="@drawable/baseline_photo_camera_24"
+                app:layout_constraintStart_toStartOf="@+id/photoTitle"
+                app:layout_constraintTop_toBottomOf="@+id/photoTitle" />
+
+            <ImageView
+                android:id="@+id/AddRemovePicButton"
+                android:layout_width="87dp"
+                android:layout_height="87dp"
+                android:layout_marginTop="44dp"
+                android:clickable="true"
+                android:focusable="auto"
+                android:src="@drawable/baseline_add_circle_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/pictureTakeId"
+                app:layout_constraintTop_toTopOf="@+id/pictureTakeId" />
+            <View
+                android:id="@+id/separator"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/darker_gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pictureTakeId" />
+
+            <TextView
+                android:id="@+id/quickSearchDecl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Quick Search"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/separator" />
+
+            <EditText
+                android:id="@+id/quickSearchInput"
+                android:layout_width="0dp"
+                app:layout_constraintWidth_percent="0.75"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:ems="10"
+                android:hint="chest"
+                android:inputType="text"
+                android:textColor="@color/text_primary_light"
+                android:textColorHint="@color/text_secondary_light"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/pictureTakeId"
+                app:layout_constraintTop_toBottomOf="@+id/quickSearchDecl" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="61dp"
+                android:layout_height="45dp"
+                app:layout_constraintBottom_toBottomOf="@+id/quickSearchInput"
+                app:layout_constraintStart_toEndOf="@+id/quickSearchInput"
+                app:layout_constraintTop_toTopOf="@+id/quickSearchInput"
+                app:srcCompat="@drawable/baseline_search_24_wh" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/quickSearchResults"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/quickSearchInput" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

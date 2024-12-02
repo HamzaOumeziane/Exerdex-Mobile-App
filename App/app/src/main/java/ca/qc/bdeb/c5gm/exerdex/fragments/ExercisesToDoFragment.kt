@@ -69,7 +69,7 @@ class ExercisesToDoFragment : Fragment() {
     }
     private fun editExercise(item: Exercise){
         val mainActivity = activity as? MainActivity
-        mainActivity?.addExercise(true, item, null)
+        mainActivity?.addExercise(true, item, item.exerciseRawData)
     }
     private fun showExercise(item: Exercise){
         Log.d("FRAG", "showExercise clicked from ToDO ")

@@ -176,6 +176,10 @@ class MainActivity : AppCompatActivity() {
                 dialog.show()
             }
         }
+        createCustomBtn.setOnClickListener {
+            val intent = Intent(this, CreateNewExerciseRaw::class.java)
+            startActivity(intent)
+        }
     }
 
 

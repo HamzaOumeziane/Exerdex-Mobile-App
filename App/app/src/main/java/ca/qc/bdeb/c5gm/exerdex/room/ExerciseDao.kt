@@ -27,4 +27,6 @@ interface ExerciseDao {
     suspend fun loadExercisesByExerciseRaw(exerciseRawId: Int): List<Exercise>
     @Query("Select * FROM ExerciseRaw")
     suspend fun loadAllExerciseRaw(): List<ExerciseRaw>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertExerciseRaw(vararg exercisesRaw: ExerciseRaw)
 }
