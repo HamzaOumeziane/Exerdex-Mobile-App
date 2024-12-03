@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_secondary_dark">
+
+    <ImageView
+        android:id="@+id/iconValueId"
+        android:layout_width="33dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/baseline_person_outline_24" />
+
+    <TextView
+        android:id="@+id/valueProfileId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/cardview_light_background"
+        android:text="HamzaAtrash"
+        app:layout_constraintStart_toEndOf="@+id/iconValueId"
+        app:layout_constraintTop_toTopOf="@+id/iconValueId" />
+
+    <ImageView
+        android:id="@+id/editProfileId"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="33dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/valueProfileId"
+        tools:srcCompat="@drawable/baseline_edit_square_24" />
+</androidx.constraintlayout.widget.ConstraintLayout>

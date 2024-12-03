@@ -39,4 +39,5 @@
     <string name="login_google">Continuer avec Google</string>
     <string name="success_signup">Inscription réussie!! Bienvenue </string>
     <string name="failed_signup">Inscription échouée.. Veuillez réessayer.</string>
+    <string name="profile_title">Profil</string>
 </resources>
