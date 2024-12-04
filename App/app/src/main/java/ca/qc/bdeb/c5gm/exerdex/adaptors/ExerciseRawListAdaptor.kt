@@ -1,5 +1,6 @@
 package ca.qc.bdeb.c5gm.exerdex.adaptors
 
+import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -14,7 +15,7 @@ import ca.qc.bdeb.c5gm.exerdex.viewholders.ItemSetHolder
 
 class ExerciseRawListAdaptor (
     val ctx: Context,
-    val activity: MainActivity,
+    val activity: Activity,
     var data: List<ExerciseRaw>,
     private val addExercise: (isEdit: Boolean, exerciseToEdit: Exercise?, exerciseRaw: ExerciseRaw?) -> Unit,
 ) : RecyclerView.Adapter<ItemExerciseRawHolder>() {

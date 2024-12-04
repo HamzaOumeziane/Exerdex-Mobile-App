@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
@@ -35,8 +36,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import ca.qc.bdeb.c5gm.exerdex.adaptors.ExerciseRawListAdaptor
 import ca.qc.bdeb.c5gm.exerdex.adaptors.SetListAdaptor
+import ca.qc.bdeb.c5gm.exerdex.api.ApiExercise
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
+import ca.qc.bdeb.c5gm.exerdex.data.ExerciseFromAPI
 import ca.qc.bdeb.c5gm.exerdex.data.ExerciseRaw
 import ca.qc.bdeb.c5gm.exerdex.data.MuscleCategory
 import ca.qc.bdeb.c5gm.exerdex.data.Set
@@ -59,6 +63,9 @@ class CreateNewExerciseRaw : AppCompatActivity() {
     private lateinit var uriPic: Uri
     private lateinit var picTaken: ActivityResultLauncher<Uri>
     private lateinit var picSelected: ActivityResultLauncher<PickVisualMediaRequest>
+    private lateinit var quickSearchInput: EditText
+    private lateinit var quickSearchResults: RecyclerView
+    private lateinit var exerciseRawListAdaptor: ExerciseRawListAdaptor
     private var pictureSet: Boolean = false
     lateinit var roomDatabase: ExerciseDatabase
 
@@ -81,6 +88,16 @@ class CreateNewExerciseRaw : AppCompatActivity() {
 
         pictureTake = findViewById(R.id.pictureTakeId)
         manipulatePicture = findViewById(R.id.AddRemovePicButton)
+        quickSearchInput = findViewById(R.id.quickSearchInput)
+        quickSearchResults = findViewById(R.id.quickSearchResults)
+
+        exerciseRawListAdaptor = ExerciseRawListAdaptor(
+            ctx = applicationContext,
+            activity = this,
+            data = emptyList(),
+            addExercise = ::chooseExerciseFromQuickSearch
+        )
+        quickSearchResults.adapter = exerciseRawListAdaptor
 
         picTaken = registerForActivityResult(ActivityResultContracts.TakePicture()){ success ->
             if(success){
@@ -122,8 +139,71 @@ class CreateNewExerciseRaw : AppCompatActivity() {
         exerciseDescriptionView = findViewById(R.id.exerciseDescInput)
         initializeCategorySpinnner()
         roomDatabase = ExerciseDatabase.getExerciseDatabase(applicationContext)
+
+        val quickSearchBtn: ImageView = findViewById(R.id.quickSearchBtn)
+        quickSearchBtn.setOnClickListener {
+            quickSearch()
+        }
     }
 
+    private fun quickSearch(){
+        val exerciseNameSearched = quickSearchInput.text.toString()
+        if (exerciseNameSearched.length<3){
+            Toast.makeText(applicationContext, "Make sure to enter an exercise name (min: 3 char)", Toast.LENGTH_SHORT).show()
+            return
+        }
+        lifecycleScope.launch(Dispatchers.IO){
+            val response = ApiExercise.
+                apiExerciseService.getExercisesByName(exerciseNameSearched)
+            if (response.isSuccessful && response.body() != null){
+                withContext(Dispatchers.Main) {
+                    val foundExercises = response.body()!!
+                    val foundExercisesRaw = mutableListOf<ExerciseRaw>()
+                    for (foundExercise in foundExercises) {
+                        val descriptionRaw = "Equipment: ${foundExercise.equipment}, " +
+                                "difficulty: ${foundExercise.difficulty!!}, " +
+                                "instructions: ${foundExercise.instructions!!}"
+                        val categoryRaw: MuscleCategory = try {
+                            MuscleCategory.valueOf(foundExercise.muscle!!.uppercase())
+                        } catch (e: IllegalArgumentException) {
+                            MuscleCategory.CARDIO // When in doubt, cardio
+                        }
+                        foundExercisesRaw.add(
+                            ExerciseRaw(
+                            name = foundExercise.name!!,
+                            description = descriptionRaw,
+                            category = categoryRaw,
+                            imageUri = null
+                        )
+                        )
+                    }
+                    val foundExercisesRawList = foundExercisesRaw.toList()
+                    exerciseRawListAdaptor.data = foundExercisesRawList
+                    exerciseRawListAdaptor.notifyDataSetChanged()
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    val errorMessage = response.errorBody()?.string() ?: "No exercises found"
+                    Toast.makeText(applicationContext, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun chooseExerciseFromQuickSearch (isEdit: Boolean, exerciseToEdit: Exercise?, exerciseRaw: ExerciseRaw?){
+        setSpinnerToCategory(exerciseRaw!!.category)
+        exerciseTitleView.text = exerciseRaw.name
+        exerciseDescriptionView.text = exerciseRaw.description
+    }
+
+    fun setSpinnerToCategory(category: MuscleCategory) {
+        val spinner: Spinner = findViewById(R.id.muscleCategorySpinner)
+        val categoryValues = MuscleCategory.values()
+        val index = categoryValues.indexOf(category)
+        if (index != -1) {
+            spinner.setSelection(index)
+        }
+    }
     private fun showMenuImage(){
         /*
         * Source : https://www.digitalocean.com/community/tutorials/android-alert-dialog-using-kotlin
