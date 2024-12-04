@@ -68,7 +68,8 @@ class SignupFragment : Fragment() {
             val user = hashMapOf(
                 "Name" to name.text.toString(),
                 "Email" to email.text.toString(),
-                "Password" to password.text.toString()
+                "Password" to password.text.toString(),
+                "Country" to "Canada"
             )
 
             name.text.clear()

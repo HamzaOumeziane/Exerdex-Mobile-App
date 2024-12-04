@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
     fun onLogout(){
         val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         sharedPref.edit().clear().apply()
-        sharedViewModel.updateUserId("")
+        sharedViewModel.updateUserId(null.toString())
         showAuthenticationFragment()
     }
 
