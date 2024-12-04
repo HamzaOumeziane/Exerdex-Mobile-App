@@ -54,7 +54,6 @@ class ActiveWorkoutManagementFragment : Fragment() {
             Log.d("AWMFragment", "User logged in with ID: $userId")
             if (userId == null) {
                 Log.e("AWMFragment", "currentUserId is null!")
-                // Handle the error appropriately
                 return@observe
             }
 
