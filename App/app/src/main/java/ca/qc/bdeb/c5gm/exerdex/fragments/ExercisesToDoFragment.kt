@@ -38,7 +38,7 @@ class ExercisesToDoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         currentUserId = arguments?.getString("currentUserId")
-        Log.d("ToDoFragment", "User logged in with ID: $currentUserId")
+        Log.d("ExercisesToDoFragment", "User logged in with ID: $currentUserId")
         if (currentUserId == null) {
             Log.e("ExercisesToDoFragment", "currentUserId is null!")
             // Handle the error appropriately
