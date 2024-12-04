@@ -15,10 +15,9 @@
             android:id="@+id/imageView"
             android:layout_width="174dp"
             android:layout_height="149dp"
+            android:layout_marginStart="36dp"
             android:layout_marginTop="24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/signUpButtonId"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/exerdex" />
 
@@ -26,13 +25,13 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
             android:text="@string/register"
             android:textColor="@color/cardview_light_background"
             android:textSize="48sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/signUpButtonId"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
         <TextView
@@ -43,28 +42,24 @@
             android:text="@string/register_message"
             android:textColor="@color/cardview_light_background"
             android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.496"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/signUpButtonId"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
 
         <EditText
-            android:id="@+id/nameSignUpId"
+            android:id="@+id/nameSignupId"
             android:layout_width="261dp"
             android:layout_height="53dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="28dp"
             android:ems="10"
             android:hint="@string/name"
             android:inputType="text"
             android:textColor="#d4af37"
             android:textColorHint="#80e7c766"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.486"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/signUpButtonId"
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
         <EditText
-            android:id="@+id/emailSignUpId"
+            android:id="@+id/emailSignupId"
             android:layout_width="261dp"
             android:layout_height="53dp"
             android:layout_marginTop="12dp"
@@ -73,52 +68,58 @@
             android:inputType="text"
             android:textColor="#d4af37"
             android:textColorHint="#80e7c766"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.486"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nameSignUpId" />
+            app:layout_constraintStart_toStartOf="@+id/signUpButtonId"
+            app:layout_constraintTop_toBottomOf="@+id/nameSignupId" />
 
         <EditText
             android:id="@+id/pwdSignUpId"
             android:layout_width="261dp"
             android:layout_height="53dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:ems="10"
             android:hint="@string/password"
-            android:inputType="text"
+            android:inputType="textPassword"
             android:textColor="#d4af37"
             android:textColorHint="#80e7c766"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.48"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/emailSignUpId" />
+            app:layout_constraintStart_toStartOf="@+id/signUpButtonId"
+            app:layout_constraintTop_toBottomOf="@+id/emailSignupId" />
+
+
+        <ImageView
+            android:id="@+id/pwdSignupVisibility"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/baseline_visibility_off_24"
+            app:layout_constraintStart_toEndOf="@id/pwdSignUpId"
+            app:layout_constraintTop_toTopOf="@id/pwdSignUpId"
+            app:layout_constraintBottom_toBottomOf="@id/pwdSignUpId" />
 
         <Button
             android:id="@+id/signUpButtonId"
             android:layout_width="258dp"
             android:layout_height="53dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="76dp"
+            android:layout_marginBottom="20dp"
             android:backgroundTint="#d4af37"
             android:text="@string/to_register"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/textView4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.516"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pwdSignUpId"
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="72dp"
-            android:layout_marginBottom="64dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="52dp"
             android:text="@string/already_account"
             android:textColor="@color/cardview_light_background"
             android:textSize="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pwdSignUpId"
-            app:layout_constraintVertical_bias="0.924" />
+            app:layout_constraintStart_toStartOf="@+id/signUpButtonId" />
 
         <TextView
             android:id="@+id/loginLinkId"
@@ -127,8 +128,8 @@
             android:layout_marginStart="16dp"
             android:text="@string/to_login"
             android:textColor="#d4af37"
-            android:textStyle="bold"
             android:textSize="17dp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.045"
             app:layout_constraintStart_toEndOf="@+id/textView4"

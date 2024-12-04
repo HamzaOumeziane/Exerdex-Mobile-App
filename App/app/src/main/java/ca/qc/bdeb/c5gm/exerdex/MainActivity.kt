@@ -22,6 +22,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainer
+import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
@@ -43,6 +44,7 @@ import java.sql.Date
 
 class MainActivity : AppCompatActivity() {
 
+    private var isAuthenticated = false
     private val AWViewModel: ActiveWorkoutViewModel by viewModels()
     lateinit var roomDatabase: ExerciseDatabase
 
@@ -59,6 +61,39 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         roomDatabase = ExerciseDatabase.getExerciseDatabase(applicationContext)
+
+        // Vérifier l'état d'authentification et gérer l'affichage des fragments
+        if (isAuthenticated) {
+            showMainFragments()
+        } else {
+            showAuthenticationFragment()
+        }
+
+    }
+
+    fun onLoginSuccessful() {
+        isAuthenticated = true
+        showMainFragments()
+    }
+
+    private fun showAuthenticationFragment() {
+        findViewById<FragmentContainerView>(R.id.fragmentContainerAuthentication).visibility = View.VISIBLE
+
+        findViewById<FragmentContainerView>(R.id.AWExercisesToDoFragment).visibility = View.GONE
+        findViewById<FragmentContainerView>(R.id.AWExercisesDoneFragment).visibility = View.GONE
+        findViewById<FragmentContainerView>(R.id.AWManagementFragment).visibility = View.GONE
+        findViewById<FragmentContainerView>(R.id.popupFragment).visibility = View.GONE
+        findViewById<Toolbar>(R.id.toolbar).visibility = View.GONE
+    }
+
+    private fun showMainFragments() {
+        findViewById<FragmentContainerView>(R.id.fragmentContainerAuthentication).visibility = View.GONE
+
+        findViewById<FragmentContainerView>(R.id.AWExercisesToDoFragment).visibility = View.VISIBLE
+        findViewById<FragmentContainerView>(R.id.AWExercisesDoneFragment).visibility = View.VISIBLE
+        findViewById<FragmentContainerView>(R.id.AWManagementFragment).visibility = View.VISIBLE
+        findViewById<FragmentContainerView>(R.id.popupFragment).visibility = View.GONE
+        findViewById<Toolbar>(R.id.toolbar).visibility = View.VISIBLE
     }
 
     override fun onResume() {
@@ -126,9 +161,6 @@ class MainActivity : AppCompatActivity() {
                 builder.create().show()
                 true
             }
-
-
-
             else -> super.onOptionsItemSelected(item)
         }
     }

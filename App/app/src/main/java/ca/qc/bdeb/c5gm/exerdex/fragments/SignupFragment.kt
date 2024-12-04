@@ -22,7 +22,6 @@ class SignupFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -36,36 +35,75 @@ class SignupFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val name: EditText = view.findViewById(R.id.nameSignUpId)
-        val email: EditText = view.findViewById(R.id.emailSignUpId)
+        val name: EditText = view.findViewById(R.id.nameSignupId)
+        val email: EditText = view.findViewById(R.id.emailSignupId)
         val password: EditText = view.findViewById(R.id.pwdSignUpId)
         val button: Button = view.findViewById(R.id.signUpButtonId)
         val loginLink: TextView = view.findViewById(R.id.loginLinkId)
         val returnRegister: ImageView = view.findViewById(R.id.returnRegisterId)
+        val pwdVisibility: ImageView = view.findViewById(R.id.pwdSignupVisibility)
 
-        button.isEnabled = !(name.text.isNullOrEmpty() || email.text.isNullOrEmpty() || password.text.isNullOrEmpty())
+        var isVisible = false
+
+        pwdVisibility.setOnClickListener {
+            isVisible = !isVisible
+            if(isVisible){
+                password.inputType = android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                pwdVisibility.setImageResource(R.drawable.baseline_visibility_24)
+            }else{
+                password.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+                pwdVisibility.setImageResource(R.drawable.baseline_visibility_off_24)
+            }
+        }
+
 
         button.setOnClickListener {
+            if (name.text.isNullOrBlank() || email.text.isNullOrBlank() || password.text.isNullOrBlank()) {
+                Snackbar.make(view, "Veuillez remplir tous les champs", Snackbar.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val userEmail = email.text.toString()
+
             val user = hashMapOf(
-                "Name" to name.text,
-                "Email" to email.text,
-                "Password" to password
+                "Name" to name.text.toString(),
+                "Email" to email.text.toString(),
+                "Password" to password.text.toString()
             )
 
+            name.text.clear()
+            email.text.clear()
+            password.text.clear()
+
+
             db.collection("users")
-                .add(user)
-                .addOnSuccessListener { documentReference ->
-                    Log.d("Success SignUp", "\"DocumentSnapshot added with ID: ${documentReference.id}\"")
-                    Snackbar.make(view,  R.string.success_signup.toString() + "${user.get("Name")}", Snackbar.LENGTH_SHORT).show()
-                    parentFragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainerAuthentication, LoginFragment())
-                        .commit()
+                .whereEqualTo("Email", userEmail)
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    if(!querySnapshot.isEmpty){
+                        Snackbar.make(view, R.string.user_existed, Snackbar.LENGTH_SHORT).show()
+                    }else{
+                        db.collection("users")
+                        .add(user)
+                            .addOnSuccessListener { documentReference ->
+                                Log.d("Success SignUp", "\"DocumentSnapshot added with ID: ${documentReference.id}\"")
+                                Snackbar.make(view,  getString(R.string.success_signup) + " ${user.get("Name")}", Snackbar.LENGTH_SHORT).show()
+                                parentFragmentManager.beginTransaction()
+                                    .replace(R.id.fragmentContainerAuthentication, LoginFragment())
+                                    .commit()
+                            }
+                            .addOnFailureListener{ e ->
+                                Log.w("Error SignUp", "Error adding document", e)
+                                // Show a failure Snackbar
+                                Snackbar.make(view, R.string.failed_signup, Snackbar.LENGTH_LONG).show()
+                            }
+                    }
                 }
                 .addOnFailureListener{ e ->
-                    Log.w("Error SignUp", "Error adding document", e)
-                    // Show a failure Snackbar
-                    Snackbar.make(view, R.string.failed_signup, Snackbar.LENGTH_LONG).show()
+                    Log.e("Error Query", "Erreur lors de la vérification de l'email", e)
+                    Snackbar.make(view, R.string.error_verification, Snackbar.LENGTH_LONG).show()
                 }
+
         }
 
         loginLink.setOnClickListener {
