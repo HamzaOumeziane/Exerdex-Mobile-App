@@ -32,7 +32,10 @@ import ca.qc.bdeb.c5gm.exerdex.adaptors.ExerciseRawListAdaptor
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
 import ca.qc.bdeb.c5gm.exerdex.data.ExerciseRaw
 import ca.qc.bdeb.c5gm.exerdex.data.Workout
+import ca.qc.bdeb.c5gm.exerdex.fragments.ActiveWorkoutManagementFragment
+import ca.qc.bdeb.c5gm.exerdex.fragments.ExerciesDoneFragment
 import ca.qc.bdeb.c5gm.exerdex.fragments.ExercisePopUp
+import ca.qc.bdeb.c5gm.exerdex.fragments.ExercisesToDoFragment
 import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
 import ca.qc.bdeb.c5gm.exerdex.viewmodels.ActiveWorkoutViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -45,6 +48,7 @@ import java.sql.Date
 class MainActivity : AppCompatActivity() {
 
     private var isAuthenticated = false
+    private var currentUserId: String? = null
     private val AWViewModel: ActiveWorkoutViewModel by viewModels()
     lateinit var roomDatabase: ExerciseDatabase
 
@@ -62,18 +66,30 @@ class MainActivity : AppCompatActivity() {
 
         roomDatabase = ExerciseDatabase.getExerciseDatabase(applicationContext)
 
-        // Vérifier l'état d'authentification et gérer l'affichage des fragments
         if (isAuthenticated) {
             showMainFragments()
+            currentUserId?.let { userId ->
+                lifecycleScope.launch(Dispatchers.IO) {
+                    reloadDataFromDatabase(userId)
+                }
+            }
+
         } else {
             showAuthenticationFragment()
         }
 
     }
 
-    fun onLoginSuccessful() {
+    fun onLoginSuccessful(userId: String) {
         isAuthenticated = true
-        showMainFragments()
+        currentUserId = userId
+        Log.d("CurrentUser", "User logged in with ID: $currentUserId")
+        runOnUiThread {
+            showMainFragments()
+        }
+        lifecycleScope.launch(Dispatchers.IO) {
+            reloadDataFromDatabase(userId)
+        }
     }
 
     private fun showAuthenticationFragment() {
@@ -87,12 +103,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showMainFragments() {
+        // source : https://stackoverflow.com/questions/46551228/how-to-pass-and-get-value-from-fragment-and-activity
+        val exercisesToDoFragment = ExercisesToDoFragment().apply {
+            arguments = Bundle().apply {
+                putString("currentUserId", currentUserId)
+            }
+        }
+        val exercisesDoneFragment = ExerciesDoneFragment().apply {
+            arguments = Bundle().apply {
+                putString("currentUserId", currentUserId)
+            }
+        }
+        val workoutManagementFragment = ActiveWorkoutManagementFragment().apply {
+            arguments = Bundle().apply {
+                putString("currentUserId", currentUserId)
+            }
+        }
+
+        Log.d("MainActivity", "currentUserId dans showMainFragments: $currentUserId")
         findViewById<FragmentContainerView>(R.id.fragmentContainerAuthentication).visibility = View.GONE
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.AWExercisesToDoFragment, exercisesToDoFragment)
+            .replace(R.id.AWExercisesDoneFragment, exercisesDoneFragment)
+            .replace(R.id.AWManagementFragment, workoutManagementFragment)
+            .commit()
 
         findViewById<FragmentContainerView>(R.id.AWExercisesToDoFragment).visibility = View.VISIBLE
         findViewById<FragmentContainerView>(R.id.AWExercisesDoneFragment).visibility = View.VISIBLE
         findViewById<FragmentContainerView>(R.id.AWManagementFragment).visibility = View.VISIBLE
-        findViewById<FragmentContainerView>(R.id.popupFragment).visibility = View.GONE
+
+
         findViewById<Toolbar>(R.id.toolbar).visibility = View.VISIBLE
     }
 
@@ -118,13 +159,15 @@ class MainActivity : AppCompatActivity() {
                     lifecycleScope.launch(Dispatchers.IO) {
                         roomDatabase.exerciseDao().updateAll(it)
                         // Reload data after update
-                        reloadDataFromDatabase()
+                        currentUserId?.let { it1 -> reloadDataFromDatabase(it1) }
                     }
                 } else {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        roomDatabase.exerciseDao().insertAll(it)
-                        // Reload data after insertion
-                        reloadDataFromDatabase()
+                    currentUserId?.let { userId ->
+                        it.userId = userId // Associer l'exercice à l'utilisateur actuel
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            roomDatabase.exerciseDao().insertAll(it)
+                            reloadDataFromDatabase(userId)
+                        }
                     }
                 }
                 intent.removeExtra("exercise") // Pour pas que les exercises se rajoutent lors
@@ -138,6 +181,7 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_history -> {
                 val intent = Intent(this, ArchivedWorkouts::class.java)
+                intent.putExtra("currentUserId", currentUserId)
                 startActivity(intent)
                 true
             }
@@ -175,6 +219,7 @@ class MainActivity : AppCompatActivity() {
     fun addExercise(isEdit: Boolean, exerciseToEdit: Exercise?, exerciseRaw: ExerciseRaw?) {
         val intent = Intent(this, AddEditExerciseActivity::class.java)
         intent.putExtra("isEdit",isEdit)
+        intent.putExtra("currentUserId", currentUserId)
         if (isEdit){
             intent.putExtra("exerciseToEdit",exerciseToEdit)
         }
@@ -210,14 +255,16 @@ class MainActivity : AppCompatActivity() {
         }
         createCustomBtn.setOnClickListener {
             val intent = Intent(this, CreateNewExerciseRaw::class.java)
+            intent.putExtra("currentUserId", currentUserId)
             startActivity(intent)
         }
     }
 
 
-    suspend fun reloadDataFromDatabase() {
-        val exercisesToDoFromDB = roomDatabase.exerciseDao().loadExerciseByDone(false)
-        val exercisesDoneFromDB = roomDatabase.exerciseDao().loadExerciseByDone(true)
+    suspend fun reloadDataFromDatabase(userId: String) {
+        Log.d("Reload", "UserID from loading : ${userId}")
+        val exercisesToDoFromDB = roomDatabase.exerciseDao().loadExerciseByDone(false, userId)
+        val exercisesDoneFromDB = roomDatabase.exerciseDao().loadExerciseByDone(true, userId)
         Log.d("databaseLOGS","Table, on load undone: $exercisesToDoFromDB")
         Log.d("databaseLOGS","Table, on load done: $exercisesDoneFromDB")
         runOnUiThread {

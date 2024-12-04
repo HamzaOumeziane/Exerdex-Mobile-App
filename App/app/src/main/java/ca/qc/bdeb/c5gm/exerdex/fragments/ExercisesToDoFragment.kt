@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ExercisesToDoFragment : Fragment() {
-
+    private var currentUserId: String? = null
     private val viewModel: ActiveWorkoutViewModel by activityViewModels()
     private val roomDatabase: ExerciseDatabase by lazy {
         ExerciseDatabase.getExerciseDatabase(requireContext())
@@ -30,12 +30,20 @@ class ExercisesToDoFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_exercises_to_do, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        currentUserId = arguments?.getString("currentUserId")
+        Log.d("ToDoFragment", "User logged in with ID: $currentUserId")
+        if (currentUserId == null) {
+            Log.e("ExercisesToDoFragment", "currentUserId is null!")
+            // Handle the error appropriately
+            return
+        }
         val toDoRecyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
         val exerciseListAdaptor = ExerciseListAdaptor(
             view.context,
@@ -83,7 +91,8 @@ class ExercisesToDoFragment : Fragment() {
 
     private fun initFromDB(exerciseListAdaptor: ExerciseListAdaptor) {
         lifecycleScope.launch(Dispatchers.IO) {
-            val exercisesToDoFromDB = roomDatabase.exerciseDao().loadExerciseByDone(false)
+            Log.d("InitFromDB", "CurrentUser: ${currentUserId}")
+            val exercisesToDoFromDB = roomDatabase.exerciseDao().loadExerciseByDone(false, currentUserId ?: "")
             withContext(Dispatchers.Main) {
                 exerciseListAdaptor.exercisesList = exercisesToDoFromDB
                 viewModel.toDoExercises.value = exercisesToDoFromDB

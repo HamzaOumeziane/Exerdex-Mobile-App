@@ -13,5 +13,6 @@ data class Exercise(
     val setList: List<Set>,
     var isDone: Boolean = false,
     var isImportant: Boolean,
+    var userId: String,
     @PrimaryKey(autoGenerate = true) val exId: Int = 0
 ) : Parcelable

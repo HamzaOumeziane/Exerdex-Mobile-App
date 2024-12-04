@@ -64,11 +64,13 @@ class AddEditExerciseActivity : AppCompatActivity() {
     private var setsList: MutableList<Set> = mutableListOf()
     private var isEditing: Boolean = false
     private var exerciseBeingEditedId: Int? = null
+    private var currentUserId: String? = null
 
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_add_edit_exercise)
@@ -84,6 +86,9 @@ class AddEditExerciseActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.baseline_keyboard_return_24_wh)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        currentUserId = intent.getStringExtra("currentUserId")
+        Log.d("AddEditExerciseActivity", "User logged in with ID: $currentUserId")
 
         exerciseImg = findViewById(R.id.exerciseImg)
 
@@ -207,6 +212,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
         weightTextView.text=""
     }
 
+
     private fun finalizeExercise(){
         if (setsList.isEmpty()){
             Toast.makeText(this,"Make sure to enter at least one set!", Toast.LENGTH_SHORT).show()
@@ -218,8 +224,11 @@ class AddEditExerciseActivity : AppCompatActivity() {
             exerciseRawId = exerciseRaw.exRawId,
             setList =  setsList,
             isImportant = exerciseImportant,
-            exId = exerciseBeingEditedId?: 0
+            exId = exerciseBeingEditedId?: 0,
+            userId = currentUserId ?: ""
             )
+
+        Log.d("New Exercise", "Create new exercise to the UserId : ${newExercise.userId}")
         val intent = Intent(this,MainActivity::class.java)
         intent.putExtra("exercise",newExercise)
         intent.putExtra("isEdit",isEditing)

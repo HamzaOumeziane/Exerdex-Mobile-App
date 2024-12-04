@@ -26,7 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ArchivedWorkouts : AppCompatActivity() {
-
+    var currentUserId: String? = null
     lateinit var recyclerView: RecyclerView
     lateinit var adaptor: WorkoutListAdaptor
     var workoutsList: MutableList<Workout> = mutableListOf()
@@ -42,6 +42,8 @@ class ArchivedWorkouts : AppCompatActivity() {
             insets
         }
 
+        currentUserId = intent.getStringExtra("currentUserId")
+        Log.d("ArchivedWorkouts", "User logged in with ID: $currentUserId")
         database = ExerciseDatabase.getExerciseDatabase(applicationContext)
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
@@ -64,7 +66,7 @@ class ArchivedWorkouts : AppCompatActivity() {
 
     fun getLatestData(){
         lifecycleScope.launch(Dispatchers.IO){
-            val workoutsFromDB = database.workoutDao().loadAllWorkouts()
+            val workoutsFromDB = database.workoutDao().loadWorkoutsByUserId(currentUserId ?: "" )
             Log.d("databaseLOGS","Table, workouts: "+workoutsFromDB)
             workoutsList.clear()
             workoutsList.addAll(workoutsFromDB)

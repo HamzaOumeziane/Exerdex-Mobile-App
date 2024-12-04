@@ -75,9 +75,11 @@ class LoginFragment : Fragment() {
                 .get()
                 .addOnSuccessListener { querySnapshot ->
                     if (!querySnapshot.isEmpty) {
+                        val userDocument = querySnapshot.documents[0]
+                        val userId = userDocument.id
                         Snackbar.make(view, "Connexion réussie ! Bienvenue ${querySnapshot.documents[0]["Name"]}", Snackbar.LENGTH_SHORT).show()
 
-                        (activity as? MainActivity)?.onLoginSuccessful()
+                        (activity as? MainActivity)?.onLoginSuccessful(userId)
 
                     } else {
                         Snackbar.make(view, "Email ou mot de passe incorrect", Snackbar.LENGTH_SHORT).show()

@@ -68,6 +68,7 @@ class CreateNewExerciseRaw : AppCompatActivity() {
     private lateinit var exerciseRawListAdaptor: ExerciseRawListAdaptor
     private var pictureSet: Boolean = false
     lateinit var roomDatabase: ExerciseDatabase
+    private var currentUserId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +80,8 @@ class CreateNewExerciseRaw : AppCompatActivity() {
             insets
         }
 
+        currentUserId = intent.getStringExtra("currentUserId")
+        Log.d("CreateNewExerciseRaw", "User logged in with ID: $currentUserId")
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 

@@ -15,5 +15,6 @@ data class Workout(
     // et sont effacés de la table 'Exercise'. On ne peut plus les modifier après une finalisation workout.
     val exerciseListValues: List<Exercise>,
     val totalVolumne: Int,
+    var userId: String,
     @PrimaryKey(autoGenerate = true) val workoutId: Int = 0
 ) : Parcelable

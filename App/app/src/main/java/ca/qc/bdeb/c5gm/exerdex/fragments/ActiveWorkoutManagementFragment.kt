@@ -1,5 +1,6 @@
 package ca.qc.bdeb.c5gm.exerdex.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import ca.qc.bdeb.c5gm.exerdex.AddEditExerciseActivity
 import ca.qc.bdeb.c5gm.exerdex.MainActivity
 import ca.qc.bdeb.c5gm.exerdex.R
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
@@ -25,6 +27,7 @@ import java.sql.Date
 
 class ActiveWorkoutManagementFragment : Fragment() {
 
+    private var currentUserId: String? = null
     private val viewModel: ActiveWorkoutViewModel by activityViewModels()
     private val roomDatabase: ExerciseDatabase by lazy {
         ExerciseDatabase.getExerciseDatabase(requireContext())
@@ -35,13 +38,20 @@ class ActiveWorkoutManagementFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_active_workout_management, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        currentUserId = arguments?.getString("currentUserId")
+        Log.d("AWMFragment", "User logged in with ID: $currentUserId")
+        if (currentUserId == null) {
+            Log.e("AWMFragment", "currentUserId is null!")
+            // Handle the error appropriately
+            return
+        }
         val addExoBtn: FloatingActionButton = view.findViewById(R.id.floatingActionBtn)
         addExoBtn.setOnClickListener {
             addExercise()
@@ -62,7 +72,7 @@ class ActiveWorkoutManagementFragment : Fragment() {
             } else {
                 lifecycleScope.launch(Dispatchers.IO){
                     archiveWorkout()
-                    roomDatabase.exerciseDao().deleteAllExercisesDone()
+                    roomDatabase.exerciseDao().deleteAllExercisesDone(currentUserId ?: "")
                 }
             }
     }
@@ -83,7 +93,7 @@ class ActiveWorkoutManagementFragment : Fragment() {
 
         val workout: Workout = Workout(newWorkoutName.text.toString(), Date(System.currentTimeMillis()),
             setList, viewModel.doneExercises.value!!.toList()
-            ,totalWorkoutVolume)
+            ,totalWorkoutVolume, currentUserId ?: "")
 
         Log.d("exerciseAddingLogs","Workout Added: ${workout}")
         roomDatabase.workoutDao().insertAll(workout)
