@@ -23,10 +23,10 @@ interface ExerciseDao {
     suspend fun deleteAllExercises(userId: String)
     @Query("DELETE FROM Exercise WHERE isDone = 1 AND userId = :userId")
     suspend fun deleteAllExercisesDone(userId: String)
-    @Query("SELECT * FROM Exercise WHERE exerciseRawId = :exerciseRawId AND userId = :userId")
-    suspend fun loadExercisesByExerciseRaw(exerciseRawId: Int, userId: String): List<Exercise>
-    @Query("Select * FROM ExerciseRaw")
-    suspend fun loadAllExerciseRaw(): List<ExerciseRaw>
+    //@Query("SELECT * FROM Exercise WHERE exerciseRawId = :exerciseRawId AND userId = :userId")
+    //suspend fun loadExercisesByExerciseRaw(exerciseRawId: Int, userId: String): List<Exercise>
+    @Query("Select * FROM ExerciseRaw WHERE userId = :userId")
+    suspend fun loadExerciseRawByUser(userId: String): List<ExerciseRaw>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExerciseRaw(vararg exercisesRaw: ExerciseRaw)
 }

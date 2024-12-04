@@ -228,7 +228,7 @@ class MainActivity : AppCompatActivity() {
         val recyclerView = dialogView.findViewById<RecyclerView>(R.id.existingExoRawsRecycler)
         val createCustomBtn = dialogView.findViewById<Button>(R.id.createNewExoRawBtn)
         lifecycleScope.launch(Dispatchers.IO) {
-            val exercisesRaw = roomDatabase.exerciseDao().loadAllExerciseRaw()
+            val exercisesRaw = roomDatabase.exerciseDao().loadExerciseRawByUser(currentUserId!!)
             withContext(Dispatchers.Main){
                 val adaptor = ExerciseRawListAdaptor(
                     applicationContext,

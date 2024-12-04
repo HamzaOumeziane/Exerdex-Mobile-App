@@ -71,7 +71,7 @@ class CreateNewExerciseRaw : AppCompatActivity() {
     private lateinit var exerciseRawListAdaptor: ExerciseRawListAdaptor
     private var pictureSet: Boolean = false
     lateinit var roomDatabase: ExerciseDatabase
-    private val sharedViewModel: SharedViewModel by viewModels()
+    private var currentUserId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,11 +83,12 @@ class CreateNewExerciseRaw : AppCompatActivity() {
             insets
         }
 
-        // Observer currentUserId depuis SharedViewModel
-        sharedViewModel.currentUserId.observe(this, Observer { userId ->
-            Log.d("CreateNewExerciseRaw", "User logged in with ID: $userId")
-            // Utiliser userId pour les actions appropriées
-        })
+        currentUserId = intent.getStringExtra("currentUserId")
+        if (currentUserId.isNullOrEmpty()) {
+            Toast.makeText(this, "User ID is not available. Please log in again.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
@@ -182,7 +183,7 @@ class CreateNewExerciseRaw : AppCompatActivity() {
                             name = foundExercise.name!!,
                             description = descriptionRaw,
                             category = categoryRaw,
-                            imageUri = null
+                            imageUri = null, userId = currentUserId!!
                         )
                         )
                     }
@@ -288,11 +289,17 @@ class CreateNewExerciseRaw : AppCompatActivity() {
             return
         }
 
+        if (currentUserId.isNullOrEmpty()) {
+            Toast.makeText(this, "User ID is not available. Please log in again.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val newExercise: ExerciseRaw = ExerciseRaw(
             name = exerciseTitleView.text.toString(),
             description = exerciseDescriptionView.text.toString(),
             category = selectedCategory,
             imageUri = if (pictureSet) uriPic.toString() else null,
+            userId = currentUserId!!
         )
 
         val intent = Intent(this,MainActivity::class.java)

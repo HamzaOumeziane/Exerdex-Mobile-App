@@ -12,6 +12,6 @@ data class ExerciseRaw (
     val description: String = "",
     val category: MuscleCategory,
     val imageUri: String? = null,
-    var userId: String? = null,
+    val userId: String,
     @PrimaryKey(autoGenerate = true) val exRawId: Int = 0
 ) : Parcelable
