@@ -28,12 +28,14 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import ca.qc.bdeb.c5gm.exerdex.adaptors.ExerciseRawListAdaptor
@@ -46,6 +48,7 @@ import ca.qc.bdeb.c5gm.exerdex.data.MuscleCategory
 import ca.qc.bdeb.c5gm.exerdex.data.Set
 import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
 import ca.qc.bdeb.c5gm.exerdex.viewholders.ItemSetHolder
+import ca.qc.bdeb.c5gm.exerdex.viewmodels.SharedViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -68,7 +71,7 @@ class CreateNewExerciseRaw : AppCompatActivity() {
     private lateinit var exerciseRawListAdaptor: ExerciseRawListAdaptor
     private var pictureSet: Boolean = false
     lateinit var roomDatabase: ExerciseDatabase
-    private var currentUserId: String? = null
+    private val sharedViewModel: SharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,8 +83,11 @@ class CreateNewExerciseRaw : AppCompatActivity() {
             insets
         }
 
-        currentUserId = intent.getStringExtra("currentUserId")
-        Log.d("CreateNewExerciseRaw", "User logged in with ID: $currentUserId")
+        // Observer currentUserId depuis SharedViewModel
+        sharedViewModel.currentUserId.observe(this, Observer { userId ->
+            Log.d("CreateNewExerciseRaw", "User logged in with ID: $userId")
+            // Utiliser userId pour les actions appropriées
+        })
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 

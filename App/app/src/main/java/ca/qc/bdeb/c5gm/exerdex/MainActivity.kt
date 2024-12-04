@@ -36,8 +36,10 @@ import ca.qc.bdeb.c5gm.exerdex.fragments.ActiveWorkoutManagementFragment
 import ca.qc.bdeb.c5gm.exerdex.fragments.ExerciesDoneFragment
 import ca.qc.bdeb.c5gm.exerdex.fragments.ExercisePopUp
 import ca.qc.bdeb.c5gm.exerdex.fragments.ExercisesToDoFragment
+import ca.qc.bdeb.c5gm.exerdex.fragments.ProfileFragment
 import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
 import ca.qc.bdeb.c5gm.exerdex.viewmodels.ActiveWorkoutViewModel
+import ca.qc.bdeb.c5gm.exerdex.viewmodels.SharedViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,6 +52,7 @@ class MainActivity : AppCompatActivity() {
     private var isAuthenticated = false
     private var currentUserId: String? = null
     private val AWViewModel: ActiveWorkoutViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by viewModels()
     lateinit var roomDatabase: ExerciseDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,7 +86,9 @@ class MainActivity : AppCompatActivity() {
     fun onLoginSuccessful(userId: String) {
         isAuthenticated = true
         currentUserId = userId
-        Log.d("CurrentUser", "User logged in with ID: $currentUserId")
+        sharedViewModel.updateUserId(userId)
+
+        //Log.d("CurrentUser", "User logged in with ID: $currentUserId")
         runOnUiThread {
             showMainFragments()
         }
@@ -103,31 +108,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showMainFragments() {
-        // source : https://stackoverflow.com/questions/46551228/how-to-pass-and-get-value-from-fragment-and-activity
-        val exercisesToDoFragment = ExercisesToDoFragment().apply {
-            arguments = Bundle().apply {
-                putString("currentUserId", currentUserId)
-            }
-        }
-        val exercisesDoneFragment = ExerciesDoneFragment().apply {
-            arguments = Bundle().apply {
-                putString("currentUserId", currentUserId)
-            }
-        }
-        val workoutManagementFragment = ActiveWorkoutManagementFragment().apply {
-            arguments = Bundle().apply {
-                putString("currentUserId", currentUserId)
-            }
-        }
 
-        Log.d("MainActivity", "currentUserId dans showMainFragments: $currentUserId")
         findViewById<FragmentContainerView>(R.id.fragmentContainerAuthentication).visibility = View.GONE
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.AWExercisesToDoFragment, exercisesToDoFragment)
-            .replace(R.id.AWExercisesDoneFragment, exercisesDoneFragment)
-            .replace(R.id.AWManagementFragment, workoutManagementFragment)
-            .commit()
 
         findViewById<FragmentContainerView>(R.id.AWExercisesToDoFragment).visibility = View.VISIBLE
         findViewById<FragmentContainerView>(R.id.AWExercisesDoneFragment).visibility = View.VISIBLE
@@ -143,6 +125,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleIncomingIntent(intent: Intent) {
+        if (intent.hasExtra("currentUserId")) {
+            currentUserId = intent.getStringExtra("currentUserId")
+            sharedViewModel.updateUserId(currentUserId!!)
+        }
+
         if (intent.hasExtra("exercise")) {
             var newExercise:Exercise?
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -162,12 +149,15 @@ class MainActivity : AppCompatActivity() {
                         currentUserId?.let { it1 -> reloadDataFromDatabase(it1) }
                     }
                 } else {
-                    currentUserId?.let { userId ->
-                        it.userId = userId // Associer l'exercice à l'utilisateur actuel
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            roomDatabase.exerciseDao().insertAll(it)
-                            reloadDataFromDatabase(userId)
-                        }
+                    Log.d("MainActivity", "CurrentUserId: $currentUserId")
+                    if (currentUserId == null) {
+                        Toast.makeText(this, "User ID is null. Cannot add exercise.", Toast.LENGTH_SHORT).show()
+                        return
+                    }
+                    it.userId = currentUserId!! // Associer l'exercice à l'utilisateur actuel
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        roomDatabase.exerciseDao().insertAll(it)
+                        reloadDataFromDatabase(currentUserId!!)
                     }
                 }
                 intent.removeExtra("exercise") // Pour pas que les exercises se rajoutent lors
@@ -196,13 +186,16 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.action_settings -> {
-                val builder = AlertDialog.Builder(this)
-                builder.setTitle(R.string.info_title)
-                    .setMessage(R.string.settings_message)
-                    .setPositiveButton("OK") { dialog, _ ->
-                        dialog.dismiss()
+                val profileFragment = ProfileFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("currentUserId", currentUserId)
                     }
-                builder.create().show()
+                }
+                findViewById<FragmentContainerView>(R.id.AWExercisesToDoFragment).visibility = View.GONE
+                findViewById<FragmentContainerView>(R.id.AWExercisesDoneFragment).visibility = View.GONE
+                findViewById<FragmentContainerView>(R.id.AWManagementFragment).visibility = View.GONE
+                findViewById<Toolbar>(R.id.toolbar).visibility = View.GONE
+                findViewById<FragmentContainerView>(R.id.fragmentContainerProfile).visibility = View.VISIBLE
                 true
             }
             else -> super.onOptionsItemSelected(item)

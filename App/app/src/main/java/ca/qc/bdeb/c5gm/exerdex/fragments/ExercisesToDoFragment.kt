@@ -15,12 +15,13 @@ import ca.qc.bdeb.c5gm.exerdex.adaptors.ExerciseListAdaptor
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
 import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
 import ca.qc.bdeb.c5gm.exerdex.viewmodels.ActiveWorkoutViewModel
+import ca.qc.bdeb.c5gm.exerdex.viewmodels.SharedViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ExercisesToDoFragment : Fragment() {
-    private var currentUserId: String? = null
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val viewModel: ActiveWorkoutViewModel by activityViewModels()
     private val roomDatabase: ExerciseDatabase by lazy {
         ExerciseDatabase.getExerciseDatabase(requireContext())
@@ -37,29 +38,30 @@ class ExercisesToDoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        currentUserId = arguments?.getString("currentUserId")
-        Log.d("ExercisesToDoFragment", "User logged in with ID: $currentUserId")
-        if (currentUserId == null) {
-            Log.e("ExercisesToDoFragment", "currentUserId is null!")
-            // Handle the error appropriately
-            return
-        }
-        val toDoRecyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
-        val exerciseListAdaptor = ExerciseListAdaptor(
-            view.context,
-            emptyList<Exercise>().toMutableList(),
-            { item: Exercise -> finishExercise(item) },
-            { item: Exercise -> deleteExercise(item) },
-            { item: Exercise -> editExercise(item) },
-            { item: Exercise -> showExercise(item) },
-        )
-        toDoRecyclerView.adapter = exerciseListAdaptor
+        sharedViewModel.currentUserId.observe(viewLifecycleOwner) { userId ->
+            Log.d("ExercisesToDoFragment", "User logged in with ID: $userId")
+            if (userId == null) {
+                Log.e("ExercisesToDoFragment", "currentUserId is null!")
+                return@observe
+            }
 
-        initFromDB(exerciseListAdaptor)
+            val toDoRecyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
+            val exerciseListAdaptor = ExerciseListAdaptor(
+                view.context,
+                emptyList<Exercise>().toMutableList(),
+                { item: Exercise -> finishExercise(item) },
+                { item: Exercise -> deleteExercise(item) },
+                { item: Exercise -> editExercise(item) },
+                { item: Exercise -> showExercise(item) },
+            )
+            toDoRecyclerView.adapter = exerciseListAdaptor
 
-        viewModel.toDoExercises.observe(viewLifecycleOwner) { toDoExercisesUpdated ->
-            exerciseListAdaptor.exercisesList = toDoExercisesUpdated
-            exerciseListAdaptor.notifyDataSetChanged()
+            initFromDB(exerciseListAdaptor, userId)
+
+            viewModel.toDoExercises.observe(viewLifecycleOwner) { toDoExercisesUpdated ->
+                exerciseListAdaptor.exercisesList = toDoExercisesUpdated
+                exerciseListAdaptor.notifyDataSetChanged()
+            }
         }
     }
 
@@ -89,10 +91,10 @@ class ExercisesToDoFragment : Fragment() {
         requireActivity().findViewById<View>(R.id.popupFragment).visibility = View.VISIBLE
     }
 
-    private fun initFromDB(exerciseListAdaptor: ExerciseListAdaptor) {
+    private fun initFromDB(exerciseListAdaptor: ExerciseListAdaptor, userId: String) {
         lifecycleScope.launch(Dispatchers.IO) {
-            Log.d("InitFromDB", "CurrentUser: ${currentUserId}")
-            val exercisesToDoFromDB = roomDatabase.exerciseDao().loadExerciseByDone(false, currentUserId ?: "")
+            Log.d("InitFromDB", "CurrentUser: ${userId}")
+            val exercisesToDoFromDB = roomDatabase.exerciseDao().loadExerciseByDone(false, userId)
             withContext(Dispatchers.Main) {
                 exerciseListAdaptor.exercisesList = exercisesToDoFromDB
                 viewModel.toDoExercises.value = exercisesToDoFromDB

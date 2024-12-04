@@ -19,6 +19,7 @@ import ca.qc.bdeb.c5gm.exerdex.data.Exercise
 import ca.qc.bdeb.c5gm.exerdex.data.Workout
 import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
 import ca.qc.bdeb.c5gm.exerdex.viewmodels.ActiveWorkoutViewModel
+import ca.qc.bdeb.c5gm.exerdex.viewmodels.SharedViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,7 +28,7 @@ import java.sql.Date
 
 class ActiveWorkoutManagementFragment : Fragment() {
 
-    private var currentUserId: String? = null
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val viewModel: ActiveWorkoutViewModel by activityViewModels()
     private val roomDatabase: ExerciseDatabase by lazy {
         ExerciseDatabase.getExerciseDatabase(requireContext())
@@ -45,39 +46,43 @@ class ActiveWorkoutManagementFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        currentUserId = arguments?.getString("currentUserId")
-        Log.d("AWMFragment", "User logged in with ID: $currentUserId")
-        if (currentUserId == null) {
-            Log.e("AWMFragment", "currentUserId is null!")
-            // Handle the error appropriately
-            return
-        }
-        val addExoBtn: FloatingActionButton = view.findViewById(R.id.floatingActionBtn)
-        addExoBtn.setOnClickListener {
-            addExercise()
-        }
         newWorkoutName = view.findViewById(R.id.newWorkoutName)
+        val addExoBtn: FloatingActionButton = view.findViewById(R.id.floatingActionBtn)
         val finalizeWorkoutBtn: Button = view.findViewById(R.id.archiveButton)
-        finalizeWorkoutBtn.setOnClickListener {
-            finalizeCurrentWorkout()
+
+        sharedViewModel.currentUserId.observe(viewLifecycleOwner) { userId ->
+            Log.d("AWMFragment", "User logged in with ID: $userId")
+            if (userId == null) {
+                Log.e("AWMFragment", "currentUserId is null!")
+                // Handle the error appropriately
+                return@observe
+            }
+
+            addExoBtn.setOnClickListener {
+                addExercise()
+            }
+
+            finalizeWorkoutBtn.setOnClickListener {
+                finalizeCurrentWorkout(userId)
+            }
         }
     }
     private fun addExercise() {
         val mainActivity = activity as? MainActivity
         mainActivity?.showAddExerciseDialog()
     }
-    private fun finalizeCurrentWorkout(){
+    private fun finalizeCurrentWorkout(userId: String){
         if (viewModel.doneExercises.value!!.isEmpty() || newWorkoutName.text.toString().length < 2){
                 Toast.makeText(requireContext(),getString(R.string.toast_new_workout_missing_info_error),Toast.LENGTH_SHORT).show()
             } else {
                 lifecycleScope.launch(Dispatchers.IO){
-                    archiveWorkout()
-                    roomDatabase.exerciseDao().deleteAllExercisesDone(currentUserId ?: "")
+                    archiveWorkout(userId)
+                    roomDatabase.exerciseDao().deleteAllExercisesDone(userId)
                 }
             }
     }
 
-    private suspend fun archiveWorkout(){
+    private suspend fun archiveWorkout(userId: String){
         val setList: MutableList<String> = mutableListOf()
         var totalWorkoutVolume: Int = 0
         viewModel.doneExercises.value!!.forEach { exercise: Exercise ->
@@ -93,7 +98,7 @@ class ActiveWorkoutManagementFragment : Fragment() {
 
         val workout: Workout = Workout(newWorkoutName.text.toString(), Date(System.currentTimeMillis()),
             setList, viewModel.doneExercises.value!!.toList()
-            ,totalWorkoutVolume, currentUserId ?: "")
+            ,totalWorkoutVolume, userId)
 
         Log.d("exerciseAddingLogs","Workout Added: ${workout}")
         roomDatabase.workoutDao().insertAll(workout)

@@ -27,12 +27,14 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import ca.qc.bdeb.c5gm.exerdex.adaptors.SetListAdaptor
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
@@ -40,6 +42,7 @@ import ca.qc.bdeb.c5gm.exerdex.data.ExerciseRaw
 import ca.qc.bdeb.c5gm.exerdex.data.MuscleCategory
 import ca.qc.bdeb.c5gm.exerdex.data.Set
 import ca.qc.bdeb.c5gm.exerdex.viewholders.ItemSetHolder
+import ca.qc.bdeb.c5gm.exerdex.viewmodels.SharedViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.File
 import java.util.Date
@@ -64,7 +67,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
     private var setsList: MutableList<Set> = mutableListOf()
     private var isEditing: Boolean = false
     private var exerciseBeingEditedId: Int? = null
-    private var currentUserId: String? = null
+    private var currentUser: String? = ""
 
 
 
@@ -86,9 +89,6 @@ class AddEditExerciseActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.baseline_keyboard_return_24_wh)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        currentUserId = intent.getStringExtra("currentUserId")
-        Log.d("AddEditExerciseActivity", "User logged in with ID: $currentUserId")
 
         exerciseImg = findViewById(R.id.exerciseImg)
 
@@ -115,6 +115,13 @@ class AddEditExerciseActivity : AppCompatActivity() {
                 exerciseImportantView.setImageResource(R.drawable.baseline_label_important_outline_24)
             }
         }
+        currentUser = intent.getStringExtra("currentUserId")
+        if (currentUser.isNullOrEmpty()) {
+            Toast.makeText(this, "User ID is not available. Please log in again.", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
         handleIncomingIntent(intent)
     }
 
@@ -219,19 +226,26 @@ class AddEditExerciseActivity : AppCompatActivity() {
             return
         }
 
+        Log.d("CurrentUserAdd",  "CurrentUser: ${currentUser}")
+        if (currentUser.isNullOrEmpty()) {
+            Toast.makeText(this, "User ID is not available. Please log in again.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val newExercise: Exercise = Exercise(
             exerciseRawData = exerciseRaw,
             exerciseRawId = exerciseRaw.exRawId,
             setList =  setsList,
             isImportant = exerciseImportant,
             exId = exerciseBeingEditedId?: 0,
-            userId = currentUserId ?: ""
+            userId = currentUser!!
             )
 
         Log.d("New Exercise", "Create new exercise to the UserId : ${newExercise.userId}")
         val intent = Intent(this,MainActivity::class.java)
         intent.putExtra("exercise",newExercise)
         intent.putExtra("isEdit",isEditing)
+        intent.putExtra("currentUserId", currentUser)
         startActivity(intent)
     }
 

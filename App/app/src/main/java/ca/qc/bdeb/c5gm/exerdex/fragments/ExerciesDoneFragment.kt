@@ -15,12 +15,13 @@ import ca.qc.bdeb.c5gm.exerdex.adaptors.ExerciseListAdaptor
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
 import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
 import ca.qc.bdeb.c5gm.exerdex.viewmodels.ActiveWorkoutViewModel
+import ca.qc.bdeb.c5gm.exerdex.viewmodels.SharedViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ExerciesDoneFragment : Fragment() {
-    private var currentUserId: String? = null
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val viewModel: ActiveWorkoutViewModel by activityViewModels()
     private val roomDatabase: ExerciseDatabase by lazy {
         ExerciseDatabase.getExerciseDatabase(requireContext())
@@ -37,23 +38,25 @@ class ExerciesDoneFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        currentUserId = arguments?.getString("currentUserId")
-        Log.d("DoneFragment", "User logged in with ID: $currentUserId")
-        if (currentUserId == null) {
-            Log.e("DoneFragment", "currentUserId is null!")
-            // Handle the error appropriately
-            return
-        }
-        val doneRecyclerView: RecyclerView = view.findViewById(R.id.doneRecyclerView)
-        val doneListAdaptor: DoneListAdaptor = DoneListAdaptor(view.context, emptyList<Exercise>().toMutableList()
-        ) { item: Exercise -> returnExercise(item)}
-        doneRecyclerView.adapter = doneListAdaptor
+        sharedViewModel.currentUserId.observe(viewLifecycleOwner) { userId ->
+            Log.d("DoneFragment", "User logged in with ID: $userId")
+            if (userId == null) {
+                Log.e("DoneFragment", "currentUserId is null!")
+                return@observe
+            }
 
-        initFromDB(doneListAdaptor)
+            val doneRecyclerView: RecyclerView = view.findViewById(R.id.doneRecyclerView)
+            val doneListAdaptor = DoneListAdaptor(view.context, emptyList<Exercise>().toMutableList()) { item: Exercise ->
+                returnExercise(item)
+            }
+            doneRecyclerView.adapter = doneListAdaptor
 
-        viewModel.doneExercises.observe(viewLifecycleOwner) { doneListUpdated ->
-            doneListAdaptor.doneList = doneListUpdated
-            doneListAdaptor.notifyDataSetChanged()
+            initFromDB(doneListAdaptor, userId)
+
+            viewModel.doneExercises.observe(viewLifecycleOwner) { doneListUpdated ->
+                doneListAdaptor.doneList = doneListUpdated
+                doneListAdaptor.notifyDataSetChanged()
+            }
         }
     }
 
@@ -64,9 +67,9 @@ class ExerciesDoneFragment : Fragment() {
         }
     }
 
-    private fun initFromDB(doneListAdaptor: DoneListAdaptor) {
+    private fun initFromDB(doneListAdaptor: DoneListAdaptor, userId: String) {
         lifecycleScope.launch(Dispatchers.IO) {
-            val doneListFromDB = roomDatabase.exerciseDao().loadExerciseByDone(true, currentUserId ?: "")
+            val doneListFromDB = roomDatabase.exerciseDao().loadExerciseByDone(true, userId)
             withContext(Dispatchers.Main) {
                 doneListAdaptor.doneList = doneListFromDB
                 viewModel.doneExercises.value = doneListFromDB
