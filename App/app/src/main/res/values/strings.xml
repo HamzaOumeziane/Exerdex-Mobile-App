@@ -39,4 +39,7 @@
     <string name="success_signup">Successful signup! Welcome </string>
     <string name="failed_signup">Sign-up failed.. Please try again.</string>
     <string name="profile_title">Profile</string>
+    <string name="user_existed">A user with this email already exists.</string>
+    <string name="error_verification">Error occurred on the verification</string>
+    <string name="cases_empty">Fill all the cases</string>
 </resources>

@@ -28,7 +28,7 @@ class HomePageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val signup: Button = view.findViewById(R.id.signUpButtonHome)
-        val login: Button = view.findViewById(R.id.loginButtonHome)
+        val login: Button = view.findViewById(R.id.loginButton)
 
         signup.setOnClickListener {
             parentFragmentManager.beginTransaction()
