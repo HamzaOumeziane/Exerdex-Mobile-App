@@ -1,6 +1,7 @@
 package ca.qc.bdeb.c5gm.exerdex
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -76,18 +77,30 @@ class MainActivity : AppCompatActivity() {
 
         roomDatabase = ExerciseDatabase.getExerciseDatabase(applicationContext)
 
-        if (isAuthenticated) {
-            showMainFragments()
-            currentUserId?.let { userId ->
-                lifecycleScope.launch(Dispatchers.IO) {
-                    reloadDataFromDatabase(userId)
-                }
-            }
+        // source :
+        // https://developer.android.com/training/data-storage/shared-preferences?hl=fr
+        // https://www.topcoder.com/thrive/articles/shared-preferences-in-android#:~:text=The%20primary%20purpose%20of%20SharedPreference,t%20require%20any%20specific%20structure.
+        val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        isAuthenticated = sharedPref.getBoolean("isAuthenticated", false)
+        currentUserId = sharedPref.getString("currentUserId", null)
 
+        if (isAuthenticated && currentUserId != null) {
+            sharedViewModel.updateUserId(currentUserId!!)
+            showMainFragments()
+            lifecycleScope.launch(Dispatchers.IO) {
+                reloadDataFromDatabase(currentUserId!!)
+            }
         } else {
             showAuthenticationFragment()
         }
 
+    }
+
+    fun onLogout(){
+        val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        sharedPref.edit().clear().apply()
+        sharedViewModel.updateUserId(null.toString())
+        showAuthenticationFragment()
     }
 
     fun onLoginSuccessful(userId: String) {
@@ -95,7 +108,13 @@ class MainActivity : AppCompatActivity() {
         currentUserId = userId
         sharedViewModel.updateUserId(userId)
 
-        //Log.d("CurrentUser", "User logged in with ID: $currentUserId")
+        val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putBoolean("isAuthenticated", true)
+            putString("currentUserId", userId)
+            apply()
+        }
+
         runOnUiThread {
             showMainFragments()
         }
@@ -107,6 +126,7 @@ class MainActivity : AppCompatActivity() {
     private fun showAuthenticationFragment() {
         findViewById<FragmentContainerView>(R.id.fragmentContainerAuthentication).visibility = View.VISIBLE
 
+        findViewById<FragmentContainerView>(R.id.fragmentContainerProfile).visibility = View.GONE
         findViewById<FragmentContainerView>(R.id.AWExercisesToDoFragment).visibility = View.GONE
         findViewById<FragmentContainerView>(R.id.AWExercisesDoneFragment).visibility = View.GONE
         findViewById<FragmentContainerView>(R.id.AWManagementFragment).visibility = View.GONE
@@ -161,7 +181,7 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this, "User ID is null. Cannot add exercise.", Toast.LENGTH_SHORT).show()
                         return
                     }
-                    it.userId = currentUserId!! // Associer l'exercice à l'utilisateur actuel
+                    it.userId = currentUserId!!
                     lifecycleScope.launch(Dispatchers.IO) {
                         roomDatabase.exerciseDao().insertAll(it)
                         reloadDataFromDatabase(currentUserId!!)
@@ -193,11 +213,7 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.action_settings -> {
-                val profileFragment = ProfileFragment().apply {
-                    arguments = Bundle().apply {
-                        putString("currentUserId", currentUserId)
-                    }
-                }
+                
                 findViewById<FragmentContainerView>(R.id.AWExercisesToDoFragment).visibility = View.GONE
                 findViewById<FragmentContainerView>(R.id.AWExercisesDoneFragment).visibility = View.GONE
                 findViewById<FragmentContainerView>(R.id.AWManagementFragment).visibility = View.GONE

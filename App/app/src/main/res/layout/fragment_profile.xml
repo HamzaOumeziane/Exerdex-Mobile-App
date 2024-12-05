@@ -12,11 +12,12 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/returnProfileId"
             android:layout_width="43dp"
             android:layout_height="44dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="25dp"
+
             android:src="@drawable/baseline_arrow_back_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -37,7 +38,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView5"
+            android:id="@+id/profileImageView"
             android:layout_width="114dp"
             android:layout_height="102dp"
             android:layout_marginStart="149dp"
@@ -48,7 +49,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView5"
 
-            tools:src="@tools:sample/avatars" />
+            tools:src="@drawable/exerdex" />
 
         <TextView
             android:id="@+id/nameProfileId"
@@ -62,9 +63,10 @@
             android:textSize="34sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+            app:layout_constraintTop_toBottomOf="@+id/profileImageView" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/profileRecyclerView"
             android:layout_width="409dp"
             android:layout_height="449dp"
             android:layout_marginStart="1dp"
@@ -74,5 +76,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/nameProfileId" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

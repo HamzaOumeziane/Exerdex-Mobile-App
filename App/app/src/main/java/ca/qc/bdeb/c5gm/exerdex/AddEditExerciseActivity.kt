@@ -67,7 +67,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
     private var setsList: MutableList<Set> = mutableListOf()
     private var isEditing: Boolean = false
     private var exerciseBeingEditedId: Int? = null
-    private var currentUser: String? = ""
+    private var currentUser: String? = null
 
 
 
@@ -115,7 +115,9 @@ class AddEditExerciseActivity : AppCompatActivity() {
                 exerciseImportantView.setImageResource(R.drawable.baseline_label_important_outline_24)
             }
         }
-        currentUser = intent.getStringExtra("currentUserId")
+        val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        currentUser = sharedPref.getString("currentUserId", null)
+
         if (currentUser.isNullOrEmpty()) {
             Toast.makeText(this, "User ID is not available. Please log in again.", Toast.LENGTH_SHORT).show()
             finish()

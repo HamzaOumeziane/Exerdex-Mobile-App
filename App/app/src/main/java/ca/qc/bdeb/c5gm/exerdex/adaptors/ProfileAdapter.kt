@@ -1,17 +1,22 @@
 package ca.qc.bdeb.c5gm.exerdex.adaptors
 
+import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import ca.qc.bdeb.c5gm.exerdex.R
 import ca.qc.bdeb.c5gm.exerdex.data.User
 import ca.qc.bdeb.c5gm.exerdex.viewholders.ProfileViewHolder
 
 class ProfileAdapter(
-    private val items: List<User>,
+    private val context: Context,
+    private val items: MutableList<User>,
     private val onEditClick: (User) -> Unit,
-    private val onLogoutClick: () -> Unit
+    private val onLogoutClick: () -> Unit,
+    private val onDeleteClick: () -> Unit
     ) : RecyclerView.Adapter<ProfileViewHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -22,22 +27,43 @@ class ProfileAdapter(
     override fun onBindViewHolder(holder: ProfileViewHolder, position: Int) {
         val item = items[position]
 
-        holder.textValue.text = item.title
+        holder.textValue.text = if (position == items.size - 4) "********" else item.title.split(": ")[1]
         holder.mainIcon.setImageResource(item.iconId)
+
+        if(holder.textValue.text == "Log out"){
+            holder.mainIcon.setOnClickListener {
+                onLogoutClick()
+                Log.d("ProfileAdapter", "Logout!!")
+            }
+        }
+
+        if(holder.textValue.text == "Delete account"){
+            holder.mainIcon.setOnClickListener {
+                onDeleteClick()
+                Log.d("ProfileAdapter", "Delete !!")
+            }
+        }
 
         if (item.hasEditIcon) {
             holder.editIcon.visibility = View.VISIBLE
+            holder.editIcon.setImageResource(R.drawable.baseline_edit_square_24)
             holder.editIcon.setOnClickListener {
                 onEditClick(item)
             }
-            holder.itemView.setOnClickListener(null)
+
         } else {
             holder.editIcon.visibility = View.GONE
-            holder.itemView.setOnClickListener {
-                onLogoutClick()
-            }
         }
     }
 
+
     override fun getItemCount(): Int = items.size
+
+    fun updateItems(newItems: List<User>) {
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
     }
+
+    }
+

@@ -42,4 +42,10 @@
     <string name="user_existed">A user with this email already exists.</string>
     <string name="error_verification">Error occurred on the verification</string>
     <string name="cases_empty">Fill all the cases</string>
+    <string name="edit">Editing</string>
+    <string name="new_edit">New edit...</string>
+    <string name="country">Country</string>
+    <string name="delete">Delete account</string>
+    <string name="logout">Log out</string>
+    <string name="value_empty">Value cannot be empty.</string>
 </resources>
