@@ -27,17 +27,17 @@ class ProfileAdapter(
     override fun onBindViewHolder(holder: ProfileViewHolder, position: Int) {
         val item = items[position]
 
-        holder.textValue.text = if (position == items.size - 4) "********" else item.title
+        holder.textValue.text = if (position == items.size - 4) "********" else item.title.split(": ")[1]
         holder.mainIcon.setImageResource(item.iconId)
 
-        if(item.title == "Log out"){
+        if(holder.textValue.text == "Log out"){
             holder.mainIcon.setOnClickListener {
                 onLogoutClick()
                 Log.d("ProfileAdapter", "Logout!!")
             }
         }
 
-        if(item.title == "Delete account"){
+        if(holder.textValue.text == "Delete account"){
             holder.mainIcon.setOnClickListener {
                 onDeleteClick()
                 Log.d("ProfileAdapter", "Delete !!")
@@ -45,6 +45,7 @@ class ProfileAdapter(
         }
 
         if (item.hasEditIcon) {
+            holder.editIcon.visibility = View.VISIBLE
             holder.editIcon.setImageResource(R.drawable.baseline_edit_square_24)
             holder.editIcon.setOnClickListener {
                 onEditClick(item)

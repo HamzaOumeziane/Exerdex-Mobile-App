@@ -1,5 +1,6 @@
 package ca.qc.bdeb.c5gm.exerdex.fragments
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -72,7 +73,7 @@ class ProfileFragment : Fragment() {
             view.context,
             mutableListOf(),
             onEditClick = { user ->
-                handleEditClick()
+                handleEditClick(user)
             },
             onLogoutClick = {
                 (activity as? MainActivity)?.onLogout()
@@ -89,8 +90,6 @@ class ProfileFragment : Fragment() {
             loadUserData(userId)
         })
 
-
-
     }
 
     private fun handleDeleteClick() {
@@ -104,6 +103,7 @@ class ProfileFragment : Fragment() {
         db.collection("users").document(userId).delete()
             .addOnSuccessListener {
                 Log.d("ProfileFragment", "User account deleted successfully.")
+                (activity as? MainActivity)?.onLogout()
                 Toast.makeText(context, "Compte supprimé.", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
@@ -111,12 +111,54 @@ class ProfileFragment : Fragment() {
                 Toast.makeText(context, "Erreur lors de la suppression du compte.", Toast.LENGTH_SHORT).show()
             }
 
-        (activity as? MainActivity)?.onLogout()
     }
 
 
-    private fun handleEditClick() {
+    private fun handleEditClick(user: User) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle(getString(R.string.edit) + " " + user.title.split(": ")[0])
 
+        // source : https://www.digitalocean.com/community/tutorials/android-alert-dialog-using-kotlin
+        val input = android.widget.EditText(requireContext())
+        input.hint = getString(R.string.new_edit)
+        builder.setView(input)
+
+        builder.setPositiveButton(getString(R.string.edit)) { dialog, which ->
+            val newValue = input.text.toString().trim()
+            if(newValue.isNotEmpty()){
+                updateUser(user.title.split(": ")[0], newValue)
+            } else {
+                Toast.makeText(context, getString(R.string.value_empty), Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        builder.setNegativeButton("Annuler") { dialog, which ->
+            dialog.cancel()
+        }
+
+        builder.show()
+    }
+
+    private fun updateUser(updated: String, newValue: String){
+        val userId = sharedViewModel.currentUserId.value
+        if(userId == null){
+            Log.w("ProfileFragment", "User ID is null, cannot update user data.")
+            Toast.makeText(context, "Erreur: ID utilisateur manquant.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        db.collection("users").document(userId)
+            .update(updated, newValue)
+            .addOnSuccessListener {
+                Log.d("ProfileFragment", "User $updated updated successfully.")
+                // Rafraîchir les données
+                loadUserData(userId)
+                Toast.makeText(context, "$updated mis à jour.", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Log.w("ProfileFragment", "Error updating $updated", e)
+                Toast.makeText(context, "Erreur lors de la mise à jour de $updated.", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun loadUserData(userId: String?) {
@@ -133,12 +175,12 @@ class ProfileFragment : Fragment() {
                     profileName.text = document["Name"].toString()
 
                     val userItems = listOf(
-                        User(document["Name"].toString() ?: "Nom indisponible", R.drawable.baseline_person_outline_24, true),
-                        User(document["Email"].toString() ?: "Email indisponible", R.drawable.baseline_mail_outline_24, false),
-                        User(document["Password"].toString() ?: "PWD indisponible", R.drawable.baseline_lock_outline_24, true),
-                        User(document["Country"].toString() ?: "Pays indisponible", R.drawable.baseline_outlined_flag_24, true),
-                        User("Delete account", R.drawable.baseline_delete_outline_24, false),
-                        User("Log out", R.drawable.baseline_logout_24, false)
+                        User(getString(R.string.name) + ": " + document["Name"].toString() ?: "Nom indisponible", R.drawable.baseline_person_outline_24, true),
+                        User(getString(R.string.email) + ": "+ document["Email"].toString() ?: "Email indisponible", R.drawable.baseline_mail_outline_24, false),
+                        User(getString(R.string.password) + ": " + document["Password"].toString() ?: "PWD indisponible", R.drawable.baseline_lock_outline_24, true),
+                        User(getString(R.string.country) + ": " + document["Country"].toString() ?: "Pays indisponible", R.drawable.baseline_outlined_flag_24, true),
+                        User(getString(R.string.delete) + ": " +getString(R.string.delete), R.drawable.baseline_delete_outline_24, false),
+                        User(getString(R.string.logout) + ": "+ getString(R.string.logout), R.drawable.baseline_logout_24, false)
                     )
 
                     profileAdapter.updateItems(userItems)

@@ -43,4 +43,10 @@
     <string name="user_existed">Un utilisateur avec ce mail existe déjà.</string>
     <string name="error_verification">Une erreur est survenue de la verification</string>
     <string name="cases_empty">Veuillez remplir tous les champs</string>
+    <string name="edit">Modification</string>
+    <string name="new_edit">Nouvelle modification...</string>
+    <string name="country">Pays</string>
+    <string name="delete">Supprimer le compte</string>
+    <string name="logout">Se déconnecter</string>
+    <string name="value_empty">La valeur ne peut pas être vide.</string>
 </resources>
