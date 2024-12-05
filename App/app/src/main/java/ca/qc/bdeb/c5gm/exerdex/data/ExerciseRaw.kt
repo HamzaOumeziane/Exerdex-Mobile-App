@@ -14,4 +14,8 @@ data class ExerciseRaw (
     val imageUri: String? = null,
     val userId: String,
     @PrimaryKey(autoGenerate = true) val exRawId: Int = 0
-) : Parcelable
+) : Parcelable {
+    fun toCompactString(): String {
+        return "name='$name', description='$description', category=$category"
+    }
+}

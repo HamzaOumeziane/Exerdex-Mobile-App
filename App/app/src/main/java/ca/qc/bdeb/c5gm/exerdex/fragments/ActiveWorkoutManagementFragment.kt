@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
@@ -49,6 +50,7 @@ class ActiveWorkoutManagementFragment : Fragment() {
         newWorkoutName = view.findViewById(R.id.newWorkoutName)
         val addExoBtn: FloatingActionButton = view.findViewById(R.id.floatingActionBtn)
         val finalizeWorkoutBtn: Button = view.findViewById(R.id.archiveButton)
+        val generateWorkoutBtn: FloatingActionButton = view.findViewById(R.id.generateWorkoutBtn)
 
         sharedViewModel.currentUserId.observe(viewLifecycleOwner) { userId ->
             Log.d("AWMFragment", "User logged in with ID: $userId")
@@ -66,10 +68,18 @@ class ActiveWorkoutManagementFragment : Fragment() {
                 finalizeCurrentWorkout(userId)
             }
         }
+        generateWorkoutBtn.setOnClickListener {
+            generateWorkout()
+        }
     }
     private fun addExercise() {
         val mainActivity = activity as? MainActivity
         mainActivity?.showAddExerciseDialog()
+    }
+
+    private fun generateWorkout(){
+        val mainActivity = activity as? MainActivity
+        mainActivity?.showGenerateExercisesDialog()
     }
     private fun finalizeCurrentWorkout(userId: String){
         if (viewModel.doneExercises.value!!.isEmpty() || newWorkoutName.text.toString().length < 2){
