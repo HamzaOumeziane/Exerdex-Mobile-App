@@ -12,7 +12,7 @@
         android:id="@+id/AWExercisesToDoFragment"
         android:name="ca.qc.bdeb.c5gm.exerdex.fragments.ExercisesToDoFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="250dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
@@ -20,10 +20,10 @@
         android:id="@+id/AWExercisesDoneFragment"
         android:name="ca.qc.bdeb.c5gm.exerdex.fragments.ExerciesDoneFragment"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="250dp"
         android:layout_marginTop="32dp"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/AWExercisesToDoFragment" />
 
     <androidx.fragment.app.FragmentContainerView
