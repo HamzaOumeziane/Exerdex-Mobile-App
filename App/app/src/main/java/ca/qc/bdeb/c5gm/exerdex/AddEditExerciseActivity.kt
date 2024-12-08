@@ -119,7 +119,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
         currentUser = sharedPref.getString("currentUserId", null)
 
         if (currentUser.isNullOrEmpty()) {
-            Toast.makeText(this, "User ID is not available. Please log in again.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.user_id_unfound_toast), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -224,13 +224,13 @@ class AddEditExerciseActivity : AppCompatActivity() {
 
     private fun finalizeExercise(){
         if (setsList.isEmpty()){
-            Toast.makeText(this,"Make sure to enter at least one set!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,getString(R.string.toast_new_workout_missing_info_error), Toast.LENGTH_SHORT).show()
             return
         }
 
         Log.d("CurrentUserAdd",  "CurrentUser: ${currentUser}")
         if (currentUser.isNullOrEmpty()) {
-            Toast.makeText(this, "User ID is not available. Please log in again.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.user_id_unfound_toast), Toast.LENGTH_SHORT).show()
             return
         }
 

@@ -85,7 +85,7 @@ class CreateNewExerciseRaw : AppCompatActivity() {
 
         currentUserId = intent.getStringExtra("currentUserId")
         if (currentUserId.isNullOrEmpty()) {
-            Toast.makeText(this, "User ID is not available. Please log in again.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.user_id_unfound_toast), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -115,7 +115,7 @@ class CreateNewExerciseRaw : AppCompatActivity() {
                 manipulatePicture.setImageResource(R.drawable.baseline_cancel_24_wh)
                 pictureSet = true
             }else{
-                Toast.makeText(this, "Échec de la prise de photo.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.take_picture_error_toast), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -129,7 +129,7 @@ class CreateNewExerciseRaw : AppCompatActivity() {
                     manipulatePicture.setImageResource(R.drawable.baseline_cancel_24_wh)
                     pictureSet = true
                 } else {
-                    Toast.makeText(this, "Failed to save selected image.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.save_image_error_toast), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -159,7 +159,7 @@ class CreateNewExerciseRaw : AppCompatActivity() {
     private fun quickSearch(){
         val exerciseNameSearched = quickSearchInput.text.toString()
         if (exerciseNameSearched.length<3){
-            Toast.makeText(applicationContext, "Make sure to enter an exercise name (min: 3 char)", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, getString(R.string.quick_search_too_short_toast), Toast.LENGTH_SHORT).show()
             return
         }
         lifecycleScope.launch(Dispatchers.IO){
@@ -285,12 +285,12 @@ class CreateNewExerciseRaw : AppCompatActivity() {
 
     private fun finalizeExercise(){
         if (exerciseTitleView.text.toString().isBlank()){
-            Toast.makeText(this,"Make sure to enter a title.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,getString(R.string.exercise_raw_missing_title_toast), Toast.LENGTH_SHORT).show()
             return
         }
 
         if (currentUserId.isNullOrEmpty()) {
-            Toast.makeText(this, "User ID is not available. Please log in again.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.user_id_unfound_toast), Toast.LENGTH_SHORT).show()
             return
         }
 

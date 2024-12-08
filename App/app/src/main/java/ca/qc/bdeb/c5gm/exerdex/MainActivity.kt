@@ -169,9 +169,9 @@ class MainActivity : AppCompatActivity() {
             }
             val isEdit: Boolean = intent.getBooleanExtra("isEdit",false)
             newExercise?.let {
-                var actionDone: String = "Added"
+                var actionDone: String = getString(R.string.added_word)
                 if (isEdit){
-                    actionDone = "Edited"
+                    actionDone = getString(R.string.edited_word)
                     lifecycleScope.launch(Dispatchers.IO) {
                         roomDatabase.exerciseDao().updateAll(it)
                         // Reload data after update
@@ -267,7 +267,7 @@ class MainActivity : AppCompatActivity() {
         val exercisesRaw = roomDatabase.exerciseDao().loadExerciseRawByUser(currentUserId!!)
         if (exercisesRaw.isEmpty()) {
             withContext(Dispatchers.Main){
-                Toast.makeText(this@MainActivity, "No exercises available.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, getString(R.string.generate_no_preset_found_toast), Toast.LENGTH_SHORT).show()
             }
             return
         } else {
@@ -280,7 +280,7 @@ class MainActivity : AppCompatActivity() {
             val responseText = response.text
             withContext(Dispatchers.Main){
                 if (responseText.isNullOrEmpty()){
-                    Toast.makeText(this@MainActivity, "Something went wrong with gemini...", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, getString(R.string.gemini_error_toast), Toast.LENGTH_SHORT).show()
                 } else {
                     Log.d("promptGemini", "promptGemini response: $responseText")
                     parseGeminiOutput(responseText, clearCurrentToDo, exercisesRaw)
@@ -329,7 +329,7 @@ class MainActivity : AppCompatActivity() {
                 reloadDataFromDatabase(currentUserId!!)
             }
         } else {
-            Toast.makeText(this, "No exercises found to add", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.generate_no_preset_found_toast), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -348,7 +348,7 @@ class MainActivity : AppCompatActivity() {
             if (userRequestInput.text.toString().length < 4) {
                 Toast.makeText(
                     this@MainActivity,
-                    "Please enter a valid prompt",
+                    getString(R.string.invalid_ai_prompt_toast),
                     Toast.LENGTH_LONG
                 ).show()
             } else {
@@ -363,7 +363,7 @@ class MainActivity : AppCompatActivity() {
                         withContext(Dispatchers.Main) {
                             Toast.makeText(
                                 this@MainActivity,
-                                "An error occurred: ${e.message}",
+                                "Error: ${e.message}",
                                 Toast.LENGTH_SHORT).show()
                             errorImg.visibility = View.VISIBLE
                         }
@@ -379,7 +379,7 @@ class MainActivity : AppCompatActivity() {
                             errorImg.visibility = View.GONE
                             doneImg.visibility = View.GONE
                             generateExercisesBtn.isEnabled = true
-                            generateExercisesBtn.text = "Generate a workout!"
+                            generateExercisesBtn.text = getString(R.string.generate_dialog_btn)
                         }
                     }
                 }
