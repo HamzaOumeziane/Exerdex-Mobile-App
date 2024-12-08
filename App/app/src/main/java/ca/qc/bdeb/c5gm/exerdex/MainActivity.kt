@@ -14,6 +14,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -52,6 +53,7 @@ import java.sql.Date
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
 import com.google.ai.client.generativeai.type.generationConfig
+import kotlinx.coroutines.delay
 
 
 class MainActivity : AppCompatActivity() {
@@ -245,11 +247,9 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun promptGemini(userRequest: String, clearCurrentToDo: Boolean){
+    private suspend fun promptGemini(userRequest: String, clearCurrentToDo: Boolean){
         val model = GenerativeModel(
             "gemini-1.5-pro",
-            // Retrieve API key as an environmental variable defined in a Build Configuration
-            // see https://github.com/google/secrets-gradle-plugin for further instructions
             GOOGLE_API_KEY,
             generationConfig = generationConfig {
                 temperature = 1f
@@ -264,28 +264,26 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "User ID is null.", Toast.LENGTH_SHORT).show()
             return
         }
-        lifecycleScope.launch(Dispatchers.IO){
-            val exercisesRaw = roomDatabase.exerciseDao().loadExerciseRawByUser(currentUserId!!)
-            if (exercisesRaw.isEmpty()) {
-                withContext(Dispatchers.Main){
-                    Toast.makeText(this@MainActivity, "No exercises available.", Toast.LENGTH_SHORT).show()
-                }
-                return@launch
-            } else {
-                val contextStringBuilder = StringBuilder()
-                for ((index, exerciseRaw) in exercisesRaw.withIndex()) {
-                    contextStringBuilder.append("index:$index, ${exerciseRaw.toCompactString()} ;; ")
-                }
-                val contextString = contextStringBuilder.toString()
-                val response = model.generateContent("user_request: '$userRequest', existing_exercises_raw: '$contextString'")
-                val responseText = response.text
-                withContext(Dispatchers.Main){
-                    if (responseText.isNullOrEmpty()){
-                        Toast.makeText(this@MainActivity, "Something went wrong with gemini...", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Log.d("promptGemini", "promptGemini response: $responseText")
-                        parseGeminiOutput(responseText, clearCurrentToDo, exercisesRaw)
-                    }
+        val exercisesRaw = roomDatabase.exerciseDao().loadExerciseRawByUser(currentUserId!!)
+        if (exercisesRaw.isEmpty()) {
+            withContext(Dispatchers.Main){
+                Toast.makeText(this@MainActivity, "No exercises available.", Toast.LENGTH_SHORT).show()
+            }
+            return
+        } else {
+            val contextStringBuilder = StringBuilder()
+            for ((index, exerciseRaw) in exercisesRaw.withIndex()) {
+                contextStringBuilder.append("index:$index, ${exerciseRaw.toCompactString()} ;; ")
+            }
+            val contextString = contextStringBuilder.toString()
+            val response = model.generateContent("user_request: '$userRequest', existing_exercises_raw: '$contextString'")
+            val responseText = response.text
+            withContext(Dispatchers.Main){
+                if (responseText.isNullOrEmpty()){
+                    Toast.makeText(this@MainActivity, "Something went wrong with gemini...", Toast.LENGTH_SHORT).show()
+                } else {
+                    Log.d("promptGemini", "promptGemini response: $responseText")
+                    parseGeminiOutput(responseText, clearCurrentToDo, exercisesRaw)
                 }
             }
         }
@@ -300,7 +298,6 @@ class MainActivity : AppCompatActivity() {
             for (exerciseToAdd in exercisesToAddString) {
                 val parametersString = exerciseToAdd.split(";;")
                 if (parametersString.size < 3) continue
-                Log.d("promptGemini", "parametersString: $parametersString")
                 val index = parametersString[0].toIntOrNull() ?: continue
                 val setsString = parametersString[1].split(";").filter { it.isNotBlank() }
                 val setsMutableList = mutableListOf<Set>()
@@ -316,7 +313,6 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
                 val isImportant = parametersString[2].trim().equals("true", ignoreCase = true)
-                Log.d("promptGemini", "isImportant value after parsing: $isImportant (raw: '${parametersString[2]}')")
                 toDoList.add(Exercise(
                     exerciseRawData = exercisesRaw[index],
                     exerciseRawId = exercisesRaw[index].exRawId,
@@ -344,11 +340,49 @@ class MainActivity : AppCompatActivity() {
         val generateExercisesBtn = dialogView.findViewById<Button>(R.id.sendPromptBtn)
         val clearCurrentCheckBox = dialogView.findViewById<CheckBox>(R.id.clearCurrentCheckBox)
 
+        val loadingSpinner = dialogView.findViewById<ProgressBar>(R.id.loadingSpinner)
+        val doneImg = dialogView.findViewById<ImageView>(R.id.doneCheckImg)
+        val errorImg = dialogView.findViewById<ImageView>(R.id.errorImg)
+
         generateExercisesBtn.setOnClickListener {
-            if (userRequestInput.text.toString().length<4){
-                Toast.makeText(this@MainActivity, "Please enter a valid prompt", Toast.LENGTH_LONG).show()
+            if (userRequestInput.text.toString().length < 4) {
+                Toast.makeText(
+                    this@MainActivity,
+                    "Please enter a valid prompt",
+                    Toast.LENGTH_LONG
+                ).show()
             } else {
-                promptGemini(userRequestInput.text.toString(), clearCurrentCheckBox.isChecked)
+                generateExercisesBtn.text = ""
+                generateExercisesBtn.isEnabled = false
+                loadingSpinner.visibility = View.VISIBLE
+                lifecycleScope.launch(Dispatchers.IO){
+                    try {
+                        promptGemini(userRequestInput.text.toString(), clearCurrentCheckBox.isChecked)
+                    } catch (e: Exception){
+                        e.printStackTrace()
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "An error occurred: ${e.message}",
+                                Toast.LENGTH_SHORT).show()
+                            errorImg.visibility = View.VISIBLE
+                        }
+                    } finally {
+                        withContext(Dispatchers.Main) {
+                            loadingSpinner.visibility = View.GONE
+                            if (errorImg.visibility != View.VISIBLE) {
+                                doneImg.visibility = View.VISIBLE
+                            }
+                        }
+                        delay(2000)
+                        withContext(Dispatchers.Main) {
+                            errorImg.visibility = View.GONE
+                            doneImg.visibility = View.GONE
+                            generateExercisesBtn.isEnabled = true
+                            generateExercisesBtn.text = "Generate a workout!"
+                        }
+                    }
+                }
             }
         }
 

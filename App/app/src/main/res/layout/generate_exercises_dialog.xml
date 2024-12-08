@@ -88,4 +88,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sendPromptBtn" />
 
+    <ProgressBar
+        android:id="@+id/loadingSpinner"
+        android:layout_width="38dp"
+        android:layout_height="33dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/sendPromptBtn"
+        app:layout_constraintEnd_toEndOf="@+id/sendPromptBtn"
+        app:layout_constraintStart_toStartOf="@+id/sendPromptBtn"
+        app:layout_constraintTop_toTopOf="@+id/sendPromptBtn" />
+
+    <ImageView
+        android:id="@+id/doneCheckImg"
+        android:layout_width="38dp"
+        android:layout_height="33dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/sendPromptBtn"
+        app:layout_constraintEnd_toEndOf="@+id/sendPromptBtn"
+        app:layout_constraintStart_toStartOf="@+id/sendPromptBtn"
+        app:layout_constraintTop_toTopOf="@+id/sendPromptBtn"
+        app:srcCompat="@drawable/baseline_check_24_wh" />
+
+    <ImageView
+        android:id="@+id/errorImg"
+        android:layout_width="38dp"
+        android:layout_height="33dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/sendPromptBtn"
+        app:layout_constraintEnd_toEndOf="@+id/sendPromptBtn"
+        app:layout_constraintStart_toStartOf="@+id/sendPromptBtn"
+        app:layout_constraintTop_toTopOf="@+id/sendPromptBtn"
+        app:srcCompat="@drawable/baseline_error_24_wh" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
