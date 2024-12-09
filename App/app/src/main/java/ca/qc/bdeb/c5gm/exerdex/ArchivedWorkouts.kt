@@ -27,9 +27,9 @@ import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
 import ca.qc.bdeb.c5gm.exerdex.viewmodels.SharedViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ArchivedWorkouts : AppCompatActivity() {
-    private val sharedViewModel: SharedViewModel by viewModels()
     lateinit var recyclerView: RecyclerView
     lateinit var adaptor: WorkoutListAdaptor
     var workoutsList: MutableList<Workout> = mutableListOf()
@@ -56,32 +56,38 @@ class ArchivedWorkouts : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         recyclerView = findViewById(R.id.archivedWorkouts)
-        recyclerView.layoutManager = LinearLayoutManager(this)  // Add this line
+        recyclerView.layoutManager = LinearLayoutManager(this)
         adaptor = WorkoutListAdaptor(applicationContext, this, workoutsList)
         recyclerView.adapter = adaptor
+        Log.d("ArchivedWorkouts", "Moved to page")
 
-        // Observer currentUserId depuis SharedViewModel
-        sharedViewModel.currentUserId.observe(this, Observer { userId ->
-            Log.d("ArchivedWorkouts", "User logged in with ID: $userId")
-            if (userId != null) {
-                getLatestData(userId)
-            } else {
-                Log.e("ArchivedWorkouts", "User ID is null. Cannot fetch workout data.")
-            }
-        })
     }
 
+    override fun onResume() {
+        super.onResume()
+        handleIncomingIntent(intent)
+    }
 
+    private fun handleIncomingIntent(intent: Intent) {
+        if (intent.hasExtra("currentUserId")) {
+            val currentUserId = intent.getStringExtra("currentUserId")
+            getLatestData(currentUserId)
+        }
+    }
 
-    fun getLatestData(userId: String){
-        lifecycleScope.launch(Dispatchers.IO){
-            val workoutsFromDB = database.workoutDao().loadWorkoutsByUserId(userId)
-            Log.d("databaseLOGS","Table, workouts: "+workoutsFromDB)
-            workoutsList.clear()
-            workoutsList.addAll(workoutsFromDB)
-            runOnUiThread {
-                adaptor.notifyDataSetChanged()
+    private fun getLatestData(userId: String?){
+        if (userId != null) {
+            lifecycleScope.launch(Dispatchers.IO){
+                val workoutsFromDB = database.workoutDao().loadWorkoutsByUserId(userId)
+                withContext(Dispatchers.Main) {
+                    Log.d("ArchivedWorkouts","Table, workouts: "+workoutsFromDB)
+                    workoutsList.clear()
+                    workoutsList.addAll(workoutsFromDB)
+                    adaptor.notifyDataSetChanged()
+                }
             }
+        } else {
+            Log.e("ArchivedWorkouts", "User ID is null. Cannot fetch workout data.")
         }
     }
 
