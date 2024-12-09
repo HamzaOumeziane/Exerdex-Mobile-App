@@ -24,6 +24,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainer
 import androidx.fragment.app.FragmentContainerView
@@ -398,6 +399,8 @@ class MainActivity : AppCompatActivity() {
 
         val recyclerView = dialogView.findViewById<RecyclerView>(R.id.existingExoRawsRecycler)
         val createCustomBtn = dialogView.findViewById<Button>(R.id.createNewExoRawBtn)
+        val searchInputTxt = dialogView.findViewById<EditText>(R.id.searchInput)
+
         lifecycleScope.launch(Dispatchers.IO) {
             val exercisesRaw = roomDatabase.exerciseDao().loadExerciseRawByUser(currentUserId!!)
             withContext(Dispatchers.Main){
@@ -410,6 +413,11 @@ class MainActivity : AppCompatActivity() {
                         addExercise(isEdit, exerciseToEdit, exerciseRaw)
                 }
                 recyclerView.adapter = adaptor
+
+                searchInputTxt.doOnTextChanged { text, _, _, _ ->
+                    adaptor.filter(text.toString())
+                }
+
                 val builder = AlertDialog.Builder(this@MainActivity)
                 builder.setView(dialogView)
                 val dialog = builder.create()

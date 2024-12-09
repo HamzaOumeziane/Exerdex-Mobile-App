@@ -188,8 +188,7 @@ class CreateNewExerciseRaw : AppCompatActivity() {
                         )
                     }
                     val foundExercisesRawList = foundExercisesRaw.toList()
-                    exerciseRawListAdaptor.data = foundExercisesRawList
-                    exerciseRawListAdaptor.notifyDataSetChanged()
+                    exerciseRawListAdaptor.updateData(foundExercisesRawList)
                 }
             } else {
                 withContext(Dispatchers.Main) {

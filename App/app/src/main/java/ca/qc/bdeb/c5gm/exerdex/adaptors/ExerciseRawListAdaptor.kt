@@ -20,17 +20,33 @@ class ExerciseRawListAdaptor (
     private val addExercise: (isEdit: Boolean, exerciseToEdit: Exercise?, exerciseRaw: ExerciseRaw?) -> Unit,
 ) : RecyclerView.Adapter<ItemExerciseRawHolder>() {
 
+    private var filteredList: List<ExerciseRaw> = data.toMutableList()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemExerciseRawHolder {
         val view = LayoutInflater.from(ctx).inflate(R.layout.exercise_raw_item, parent, false)
         return ItemExerciseRawHolder(view)
     }
 
     override fun getItemCount(): Int {
-        return data.size
+        return filteredList.size
+    }
+
+    fun filter(query: String) {
+        filteredList = if (query.isEmpty()) {
+            data
+        } else {
+            data.filter { it.name.contains(query, ignoreCase = true) }
+        }
+        notifyDataSetChanged()
+    }
+    fun updateData(newData: List<ExerciseRaw>) {
+        data = newData
+        filteredList = newData
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: ItemExerciseRawHolder, position: Int) {
-        val item = data[position]
+        val item = filteredList[position]
         holder.exerciseRawName.text = item.name
         holder.itemView.setOnClickListener {
             addExercise(false, null, item)
