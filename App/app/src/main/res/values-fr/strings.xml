@@ -19,7 +19,7 @@
     <string name="add_image">Ajouter une image</string>
     <string name="toast_new_set_missing_error">Assurez vous de rentrer le poids ainsi que le nombre de réps!</string>
     <string name="toast_new_set_invalid_input_error">Assurez vous d\'entrer des nombres dans poids et réps</string>
-    <string name="toast_new_exercise_missing_info_error">Assurez voir d\'entrer un titre et au moins une série!</string>
+    <string name="toast_new_exercise_missing_info_error">Créer au minimum une série!</string>
     <string name="toast_new_workout_missing_info_error">Entrer un nom d\'entrainement et au moins un exercice terminé.</string>
     <string name="info_title">Information</string>
     <string name="info_message">Auteurs: Hamza Oumeziane et Mohamad Atrash</string>
@@ -39,5 +39,32 @@
     <string name="login_google">Continuer avec Google</string>
     <string name="success_signup">Inscription réussie!! Bienvenue </string>
     <string name="failed_signup">Inscription échouée.. Veuillez réessayer.</string>
-
+    <string name="profile_title">Profil</string>
+    <string name="user_existed">Un utilisateur avec ce mail existe déjà.</string>
+    <string name="error_verification">Une erreur est survenue de la verification</string>
+    <string name="cases_empty">Veuillez remplir tous les champs</string>
+    <string name="edit">Modification</string>
+    <string name="new_edit">Nouvelle modification...</string>
+    <string name="country">Pays</string>
+    <string name="delete">Supprimer le compte</string>
+    <string name="logout">Se déconnecter</string>
+    <string name="value_empty">La valeur ne peut pas être vide.</string>
+    <string name="quick_search_title">Recherche rapide</string>
+    <string name="add_exercise_dialog_title">Créer à neuf</string>
+    <string name="add_exercise_dialog_find">Trouver:</string>
+    <string name="generate_dialog_title">Générer un entraînement en un clic!</string>
+    <string name="generate_dialog_disclaimer">L\'IA peut seulement choisir des exercices à partir de ceux pre-créé. Par défaut, les poids sont mis à 0.</string>
+    <string name="generate_dialog_hint">Génére moi un entraînement à haute intensité d\'hypertrophie. Mon PR bench est de 255, pour reférence.</string>
+    <string name="generate_dialog_btn">Générer!</string>
+    <string name="generate_dialog_clear_option">Vider les exercices à faire</string>
+    <string name="invalid_ai_prompt_toast">Assurez-vous d\'entrer un prompt valide</string>
+    <string name="generate_no_preset_found_toast">Aucun exercice disponible à ajouter.</string>
+    <string name="gemini_error_toast">Quelque chose ne marche pas avec Gemini..</string>
+    <string name="added_word">ajouté</string>
+    <string name="edited_word">modifié</string>
+    <string name="quick_search_too_short_toast">Veuillez entrer une recherche plus longue que trois caractères</string>
+    <string name="take_picture_error_toast">Échec de la prise de photo.</string>
+    <string name="save_image_error_toast">Échec du sauvegarde de l\'image selectionné.</string>
+    <string name="user_id_unfound_toast">Utilisateur introuvable. Veuillez vous re-authentifier.</string>
+    <string name="exercise_raw_missing_title_toast">Entrez un titre.</string>
 </resources>

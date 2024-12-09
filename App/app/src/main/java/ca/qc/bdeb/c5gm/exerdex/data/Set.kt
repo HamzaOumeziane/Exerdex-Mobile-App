@@ -10,6 +10,6 @@ data class Set(
     val reps: Int
 ) : Parcelable {
     override fun toString(): String {
-        return "Set $setOrder : $weight : lbs x $reps reps"
+        return "Set $setOrder : $weight lbs x $reps reps"
     }
 }

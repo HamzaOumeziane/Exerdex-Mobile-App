@@ -11,22 +11,25 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.qc.bdeb.c5gm.exerdex.adaptors.WorkoutListAdaptor
 import ca.qc.bdeb.c5gm.exerdex.data.Workout
 import ca.qc.bdeb.c5gm.exerdex.room.ExerciseDatabase
+import ca.qc.bdeb.c5gm.exerdex.viewmodels.SharedViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ArchivedWorkouts : AppCompatActivity() {
-
     lateinit var recyclerView: RecyclerView
     lateinit var adaptor: WorkoutListAdaptor
     var workoutsList: MutableList<Workout> = mutableListOf()
@@ -42,6 +45,7 @@ class ArchivedWorkouts : AppCompatActivity() {
             insets
         }
 
+
         database = ExerciseDatabase.getExerciseDatabase(applicationContext)
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
@@ -52,25 +56,38 @@ class ArchivedWorkouts : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         recyclerView = findViewById(R.id.archivedWorkouts)
-        recyclerView.layoutManager = LinearLayoutManager(this)  // Add this line
+        recyclerView.layoutManager = LinearLayoutManager(this)
         adaptor = WorkoutListAdaptor(applicationContext, this, workoutsList)
         recyclerView.adapter = adaptor
+        Log.d("ArchivedWorkouts", "Moved to page")
+
     }
 
     override fun onResume() {
         super.onResume()
-        getLatestData()
+        handleIncomingIntent(intent)
     }
 
-    fun getLatestData(){
-        lifecycleScope.launch(Dispatchers.IO){
-            val workoutsFromDB = database.workoutDao().loadAllWorkouts()
-            Log.d("databaseLOGS","Table, workouts: "+workoutsFromDB)
-            workoutsList.clear()
-            workoutsList.addAll(workoutsFromDB)
-            runOnUiThread {
-                adaptor.notifyDataSetChanged()
+    private fun handleIncomingIntent(intent: Intent) {
+        if (intent.hasExtra("currentUserId")) {
+            val currentUserId = intent.getStringExtra("currentUserId")
+            getLatestData(currentUserId)
+        }
+    }
+
+    private fun getLatestData(userId: String?){
+        if (userId != null) {
+            lifecycleScope.launch(Dispatchers.IO){
+                val workoutsFromDB = database.workoutDao().loadWorkoutsByUserId(userId)
+                withContext(Dispatchers.Main) {
+                    Log.d("ArchivedWorkouts","Table, workouts: "+workoutsFromDB)
+                    workoutsList.clear()
+                    workoutsList.addAll(workoutsFromDB)
+                    adaptor.notifyDataSetChanged()
+                }
             }
+        } else {
+            Log.e("ArchivedWorkouts", "User ID is null. Cannot fetch workout data.")
         }
     }
 

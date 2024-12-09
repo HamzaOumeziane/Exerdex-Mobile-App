@@ -18,6 +18,10 @@ import kotlinx.coroutines.launch
 class ExerciseListAdaptor(
     val ctx: Context,
     var exercisesList: MutableList<Exercise>,
+    private val finishExercise: (item: Exercise) -> Unit,
+    private val deleteExercise: (item: Exercise) -> Unit,
+    private val editExercise: (item: Exercise) -> Unit,
+    private val showExercise: (item: Exercise) -> Unit,
     //private val editExercise: (isEdit: Boolean, exerciseToEdit: Exercise?) -> Unit,
 ) : RecyclerView.Adapter<ItemExerciseHolder>() {
 
@@ -31,20 +35,20 @@ class ExerciseListAdaptor(
     }
 
     override fun onBindViewHolder(holder: ItemExerciseHolder, position: Int) {
-        exercisesList.sortBy { it.category }
+        exercisesList.sortBy { it.exerciseRawData.category }
 
         Log.d("Sorting...",exercisesList.toString())
 
         val item = exercisesList[position]
 
-        if(position == 0 || exercisesList[position -1].category != item.category){
+        if(position == 0 || exercisesList[position -1].exerciseRawData.category != item.exerciseRawData.category){
             holder.category.visibility = View.VISIBLE
-            holder.category.text = item.category.name.replaceFirstChar { it.uppercase() }
+            holder.category.text = item.exerciseRawData.category.name.replaceFirstChar { it.uppercase() }
         }else{
             holder.category.visibility = View.GONE
         }
 
-        holder.exercise.text = item.name
+        holder.exercise.text = item.exerciseRawData.name
 
         if(!item.isImportant){
             holder.important.visibility = View.GONE
@@ -66,26 +70,18 @@ class ExerciseListAdaptor(
 
 
         holder.check.setOnClickListener {
-            item.isDone=true
-            activity.lifecycleScope.launch(Dispatchers.IO){
-                database.exerciseDao().updateAll(item)
-                activity.reloadDataFromDatabase()
-            }
+            finishExercise(item)
         }
 
         holder.edit.setOnClickListener {
-            editExercise(true, item)
+            editExercise(item)
         }
 
         holder.cancel.setOnClickListener {
-            activity.lifecycleScope.launch(Dispatchers.IO){
-                database.exerciseDao().delete(item)
-            }
-            exercisesList.removeAt(holder.adapterPosition)
-            notifyItemRemoved(holder.adapterPosition)
+            deleteExercise(item)
         }
         holder.itemView.setOnClickListener{
-            activity.setUpPopup(item)
+            showExercise(item)
         }
     }
 }

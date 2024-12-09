@@ -27,18 +27,22 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import ca.qc.bdeb.c5gm.exerdex.adaptors.SetListAdaptor
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
+import ca.qc.bdeb.c5gm.exerdex.data.ExerciseRaw
 import ca.qc.bdeb.c5gm.exerdex.data.MuscleCategory
 import ca.qc.bdeb.c5gm.exerdex.data.Set
 import ca.qc.bdeb.c5gm.exerdex.viewholders.ItemSetHolder
+import ca.qc.bdeb.c5gm.exerdex.viewmodels.SharedViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.File
 import java.util.Date
@@ -51,22 +55,25 @@ class AddEditExerciseActivity : AppCompatActivity() {
     private lateinit var setListAdapter: SetListAdaptor
     private lateinit var exerciseTitleView: TextView
     private lateinit var exerciseDescriptionView: TextView
+    private lateinit var exerciseCategoryView: TextView
     private lateinit var exerciseImportantView: ImageView
-    private lateinit var selectedCategory: MuscleCategory
-    private lateinit var pictureTake: ImageView
-    private lateinit var manipulatePicture: ImageView
+    private lateinit var exerciseImg: ImageView
     private lateinit var uriPic: Uri
     private lateinit var picTaken: ActivityResultLauncher<Uri>
     private lateinit var picSelected: ActivityResultLauncher<PickVisualMediaRequest>
+    private lateinit var exerciseRaw: ExerciseRaw
     private var pictureSet: Boolean = false
     private var exerciseImportant: Boolean = false
     private var setsList: MutableList<Set> = mutableListOf()
     private var isEditing: Boolean = false
     private var exerciseBeingEditedId: Int? = null
+    private var currentUser: String? = null
+
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_add_edit_exercise)
@@ -83,54 +90,16 @@ class AddEditExerciseActivity : AppCompatActivity() {
         supportActionBar?.setHomeAsUpIndicator(R.drawable.baseline_keyboard_return_24_wh)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        pictureTake = findViewById(R.id.pictureTakeId)
-        manipulatePicture = findViewById(R.id.AddRemovePicButton)
-
-        picTaken = registerForActivityResult(ActivityResultContracts.TakePicture()){ success ->
-            if(success){
-                pictureTake.setImageURI(uriPic)
-                manipulatePicture.setImageResource(R.drawable.baseline_cancel_24_wh)
-                pictureSet = true
-            }else{
-                Toast.makeText(this, "Échec de la prise de photo.", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        picSelected = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-            if (uri != null) {
-                // Save the selected image to a local file
-                val savedUri = saveSelectedImageToLocalFile(uri)
-                if (savedUri != null) {
-                    pictureTake.setImageURI(savedUri)
-                    uriPic = savedUri
-                    manipulatePicture.setImageResource(R.drawable.baseline_cancel_24_wh)
-                    pictureSet = true
-                } else {
-                    Toast.makeText(this, "Failed to save selected image.", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        manipulatePicture.setOnClickListener {
-            if(pictureSet){
-                pictureTake.setImageResource(R.drawable.baseline_photo_camera_24)
-                manipulatePicture.setImageResource(R.drawable.baseline_add_circle_24)
-                pictureSet = false
-                uriPic = Uri.EMPTY
-            }else{
-                showMenuImage()
-            }
-        }
+        exerciseImg = findViewById(R.id.exerciseImg)
 
         repsTextView = findViewById(R.id.newSetReps)
         weightTextView = findViewById(R.id.newSetWeight)
-        exerciseTitleView = findViewById(R.id.exerciseNameInput)
-        exerciseDescriptionView = findViewById(R.id.exerciseDescInput)
+        exerciseTitleView = findViewById(R.id.exerciseNameDecl)
+        exerciseDescriptionView = findViewById(R.id.exerciseDescDecl)
         setsRecyclerView = findViewById(R.id.setsRecyclerView)
+        exerciseCategoryView = findViewById(R.id.exerciseCategoryDecl)
         setListAdapter = SetListAdaptor(applicationContext, this, setsList)
         setsRecyclerView.adapter = setListAdapter
-        initializeCategorySpinnner()
-
 
         val addSetBtn: Button = findViewById(R.id.addSetBtn)
         addSetBtn.setOnClickListener{
@@ -146,70 +115,16 @@ class AddEditExerciseActivity : AppCompatActivity() {
                 exerciseImportantView.setImageResource(R.drawable.baseline_label_important_outline_24)
             }
         }
+        val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        currentUser = sharedPref.getString("currentUserId", null)
+
+        if (currentUser.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.user_id_unfound_toast), Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
         handleIncomingIntent(intent)
-    }
-
-    private fun showMenuImage(){
-        /*
-        * Source : https://www.digitalocean.com/community/tutorials/android-alert-dialog-using-kotlin
-        * */
-        val options = arrayOf(getString(R.string.take_a_photo), getString(R.string.choose_from_gallery))
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(getString(R.string.add_image))
-
-        builder.setItems(options) { dialog, which ->
-            when (which) {
-                0 -> {
-                    takePic()
-                }
-                1 -> {
-                    selectPic()
-                }
-            }
-        }
-
-        builder.setNegativeButton(R.string.cancel_word) { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        builder.show()
-    }
-
-    private fun takePic(){
-        uriPic = createUriPic()
-        picTaken.launch(uriPic)
-    }
-
-    private fun selectPic(){
-        picSelected.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-    }
-
-
-    private fun createUriPic(): Uri{
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val pictureFile: File = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "IMG_$timeStamp.jpg")
-        return FileProvider.getUriForFile(this, "ca.qc.bdeb.c5gm.photoapp", pictureFile)
-    }
-
-    // source: ChatGPT 4o
-    private fun saveSelectedImageToLocalFile(selectedImageUri: Uri): Uri? {
-        try {
-            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val pictureFile = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "IMG_$timeStamp.jpg")
-            val inputStream = contentResolver.openInputStream(selectedImageUri) ?: return null
-            val outputStream = pictureFile.outputStream()
-
-            inputStream.use { input ->
-                outputStream.use { output ->
-                    input.copyTo(output)
-                }
-            }
-
-            return FileProvider.getUriForFile(this, "ca.qc.bdeb.c5gm.photoapp", pictureFile)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return null
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -218,7 +133,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
     }
 
     private fun handleIncomingIntent(intent: Intent) {
-        var exerciseToEdit: Exercise? = Exercise("haha","haha",MuscleCategory.ABS, listOf(), isImportant = exerciseImportant)
+        var exerciseToEdit: Exercise? = null
         if (intent.hasExtra("isEdit")) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 isEditing = intent.getBooleanExtra("isEdit", false)
@@ -234,30 +149,35 @@ class AddEditExerciseActivity : AppCompatActivity() {
                 }
             }
         }
+        if (intent.hasExtra("exerciseRaw")) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                exerciseRaw = intent.getParcelableExtra("exerciseRaw", ExerciseRaw::class.java)!!
+                if (isEditing){
+                    exerciseToEdit = intent.getParcelableExtra("exerciseToEdit", Exercise::class.java)
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                exerciseToEdit = intent.getParcelableExtra("exerciseToEdit")
+            }
+            exerciseTitleView.text = exerciseRaw.name
+            exerciseDescriptionView.text = exerciseRaw.description
+            exerciseTitleView.isEnabled = false
+            exerciseDescriptionView.isEnabled = false
+            val categoryName = exerciseRaw.category.name.lowercase().replaceFirstChar { it.uppercase() }
+            exerciseCategoryView.text = categoryName
+            if (!exerciseRaw.imageUri.isNullOrEmpty()) {
+                uriPic = Uri.parse(exerciseRaw.imageUri)
+                exerciseImg.setImageURI(uriPic)
+                pictureSet = true
+            }
+        }
         if (isEditing && exerciseToEdit != null) {
             exerciseBeingEditedId = exerciseToEdit.exId
-            exerciseTitleView.text = exerciseToEdit.name
-            exerciseDescriptionView.text = exerciseToEdit.description
-
             exerciseImportant = exerciseToEdit.isImportant
             if(exerciseImportant){
                 exerciseImportantView.setImageResource(R.drawable.baseline_label_important_24)
             }else{
                 exerciseImportantView.setImageResource(R.drawable.baseline_label_important_outline_24)
-            }
-
-            if (!exerciseToEdit.imageUri.isNullOrEmpty()) {
-                uriPic = Uri.parse(exerciseToEdit.imageUri)
-                pictureTake.setImageURI(uriPic)
-                manipulatePicture.setImageResource(R.drawable.baseline_cancel_24_wh)
-                pictureSet = true
-            }
-
-            val spinner: Spinner = findViewById(R.id.muscleCategorySpinner)
-            val categoryName = exerciseToEdit.category.name.lowercase().replaceFirstChar { it.uppercase() }
-            val position = (spinner.adapter as ArrayAdapter<String>).getPosition(categoryName)
-            if (position >= 0) {
-                spinner.setSelection(position)
             }
             setsList.clear()
             setsList.addAll(exerciseToEdit.setList)
@@ -301,23 +221,33 @@ class AddEditExerciseActivity : AppCompatActivity() {
         weightTextView.text=""
     }
 
+
     private fun finalizeExercise(){
-        if (exerciseTitleView.text.toString().isBlank() or setsList.isEmpty()){
+        if (setsList.isEmpty()){
             Toast.makeText(this,getString(R.string.toast_new_exercise_missing_info_error), Toast.LENGTH_SHORT).show()
             return
         }
 
-        val newExercise: Exercise = Exercise(exerciseTitleView.text.toString(),
-            exerciseDescriptionView.text.toString(),
-            selectedCategory,
-            setsList,
+        Log.d("CurrentUserAdd",  "CurrentUser: ${currentUser}")
+        if (currentUser.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.user_id_unfound_toast), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val newExercise: Exercise = Exercise(
+            exerciseRawData = exerciseRaw,
+            exerciseRawId = exerciseRaw.exRawId,
+            setList =  setsList,
             isImportant = exerciseImportant,
-            imageUri = if (pictureSet) uriPic.toString() else null,
-            exId = exerciseBeingEditedId?: 0
+            exId = exerciseBeingEditedId?: 0,
+            userId = currentUser!!
             )
+
+        Log.d("New Exercise", "Create new exercise to the UserId : ${newExercise.userId}")
         val intent = Intent(this,MainActivity::class.java)
         intent.putExtra("exercise",newExercise)
         intent.putExtra("isEdit",isEditing)
+        intent.putExtra("currentUserId", currentUser)
         startActivity(intent)
     }
 
@@ -342,39 +272,6 @@ class AddEditExerciseActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun initializeCategorySpinnner(){
-        val categoryEnum: MuscleCategory
-        val spinner: Spinner = findViewById(R.id.muscleCategorySpinner)
-        val categoryValues = MuscleCategory.values()
-        val categoryStrings = categoryValues.map { it.name.lowercase().replaceFirstChar { c -> c.uppercase() } }
-        val adapter = object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categoryStrings) {
-            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                val view = super.getView(position, convertView, parent) as TextView
-                view.setTextColor(Color.WHITE)
-                return view
-            }
-
-            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-                val view = super.getDropDownView(position, convertView, parent) as TextView
-                view.setTextColor(Color.WHITE)
-                view.setBackgroundColor(Color.parseColor("#121212"))
-                return view
-            }
-        }
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = adapter
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                selectedCategory = MuscleCategory.valueOf(categoryStrings[position].uppercase())
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-
-            }
-        }
-        spinner.backgroundTintList = android.content.res.ColorStateList.valueOf(Color.WHITE)
     }
 }
 

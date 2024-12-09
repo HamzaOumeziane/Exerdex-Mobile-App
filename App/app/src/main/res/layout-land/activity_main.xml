@@ -8,6 +8,61 @@
     android:background="@color/background_secondary_dark"
     tools:context=".MainActivity">
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/AWExercisesToDoFragment"
+        android:name="ca.qc.bdeb.c5gm.exerdex.fragments.ExercisesToDoFragment"
+        android:layout_width="375dp"
+        android:layout_height="120dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/AWExercisesDoneFragment"
+        android:name="ca.qc.bdeb.c5gm.exerdex.fragments.ExerciesDoneFragment"
+        android:layout_width="375dp"
+        android:layout_height="120dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/AWExercisesToDoFragment" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/AWManagementFragment"
+        android:name="ca.qc.bdeb.c5gm.exerdex.fragments.ActiveWorkoutManagementFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/popupFragment"
+        android:name="ca.qc.bdeb.c5gm.exerdex.fragments.ExercisePopUp"
+        android:layout_width="400dp"
+        android:layout_height="200dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/AWManagementFragment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerAuthentication"
+        android:name="ca.qc.bdeb.c5gm.exerdex.fragments.HomePageFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerProfile"
+        android:name="ca.qc.bdeb.c5gm.exerdex.fragments.ProfileFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
     <include
         layout="@layout/toolbar_main"
         android:id="@+id/toolbar"
@@ -18,205 +73,5 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintHeight_percent="0.4"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleToDo"
-        app:layout_constraintWidth_percent="0.48" />
-
-    <TextView
-        android:id="@+id/titleToDo"
-        android:layout_width="0dp"
-        app:layout_constraintWidth_percent="0.48"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="?attr/colorPrimary"
-        android:padding="8dp"
-        android:text="To-Do Exercises"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
-
-    <TextView
-        android:id="@+id/titleDone"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="?attr/colorPrimary"
-        android:padding="8dp"
-        android:text="Done"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintWidth_percent="0.48" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/doneRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.4"
-        app:layout_constraintTop_toBottomOf="@+id/titleDone"
-        app:layout_constraintWidth_percent="0.48" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:contentDescription="Add new exercise to the to do list"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/baseline_add_24_wh" />
-
-    <TextView
-        android:id="@+id/workoutAnnouncer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:text="Workout name"
-        android:textColor="@color/text_primary_light"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/newWorkoutName"
-        app:layout_constraintStart_toStartOf="@+id/newWorkoutName" />
-
-    <EditText
-        android:id="@+id/newWorkoutName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:ems="10"
-        android:hint="Morning Pushday"
-        android:inputType="text"
-        android:text=""
-        android:textColor="@color/text_primary_light"
-        android:textColorHint="@color/text_secondary_light"
-        app:layout_constraintBottom_toBottomOf="@+id/archiveButton"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/archiveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="Finalize Workout"
-        app:layout_constraintBottom_toBottomOf="@+id/floatingActionBtn"
-        app:layout_constraintStart_toEndOf="@+id/newWorkoutName" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/popupLayer"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintHeight_percent="0.8"
-        app:layout_constraintWidth_percent="0.8"
-        android:background="@color/background_dark"
-
-        android:elevation="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/popupExoTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:padding="8dp"
-            android:text="ExerciseTitle"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/closePopupImg"
-            android:layout_width="62dp"
-            android:layout_height="40dp"
-            app:layout_constraintBottom_toBottomOf="@+id/popupExoTitle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/baseline_cancel_24_wh" />
-
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/popupScrollView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:fillViewport="true"
-            android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/popupExoTitle">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/popupConstraintLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/popupExoType"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/cardview_dark_background"
-                    android:padding="8dp"
-                    android:text="Chest Exercise"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/popupExoDesc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="@color/cardview_dark_background"
-                    android:padding="8dp"
-                    android:text="Osama Bin Laden was once considered the most wanted man in the world 🌍🔍. His elaborate hideouts 🏚️, meticulous planning 📅📝, and infamous beard 🧔 made him a household name 🏠📢. It’s said that he spent years living in the shadows 🌑, evading some of the most advanced intelligence agencies 🕵️‍♂️🛰️ on the planet. And yet, despite all the yapping about him 🗣️💬, he was ultimately found hiding in plain sight 👀🏡"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/popupExoType" />
-
-                <TextView
-                    android:id="@+id/popupExoSets"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="@color/cardview_dark_background"
-                    android:padding="8dp"
-                    android:text="Set 1: 185x6"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/popupExoDesc" />
-
-                <ImageView
-                    android:id="@+id/popupExoImg"
-                    android:layout_width="213dp"
-                    android:layout_height="288dp"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/popupExoSets"
-                    tools:srcCompat="@tools:sample/avatars" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.core.widget.NestedScrollView>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

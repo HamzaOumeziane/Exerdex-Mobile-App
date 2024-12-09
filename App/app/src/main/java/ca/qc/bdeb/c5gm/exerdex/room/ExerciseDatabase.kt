@@ -6,9 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ca.qc.bdeb.c5gm.exerdex.data.Exercise
+import ca.qc.bdeb.c5gm.exerdex.data.ExerciseRaw
 import ca.qc.bdeb.c5gm.exerdex.data.Workout
 
-@Database(entities = [Exercise::class, Workout::class],version = 6)
+@Database(entities = [Exercise::class, ExerciseRaw::class, Workout::class],version = 13)
 @TypeConverters(Converters::class)
 abstract class ExerciseDatabase: RoomDatabase(){
     abstract fun exerciseDao(): ExerciseDao

@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import ca.qc.bdeb.c5gm.exerdex.R
-import kotlin.math.log
 
 
 class HomePageFragment : Fragment() {
@@ -29,7 +28,7 @@ class HomePageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val signup: Button = view.findViewById(R.id.signUpButtonHome)
-        val login: Button = view.findViewById(R.id.loginButtonHome)
+        val login: Button = view.findViewById(R.id.loginButton)
 
         signup.setOnClickListener {
             parentFragmentManager.beginTransaction()

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="325dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/dialog_background"
+    android:padding="4dp">
+
+    <TextView
+        android:id="@+id/generateExosDecl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:text="@string/generate_dialog_title"
+        android:textColor="@color/text_primary_light"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/generateExosInfoDecl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="start|top"
+        android:maxLines="5"
+        android:text="@string/generate_dialog_disclaimer"
+        android:textColor="@color/text_secondary_light"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/generateExosDecl"
+        app:layout_constraintWidth_percent="0.75" />
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/generateExosInfoDecl" />
+
+    <EditText
+        android:id="@+id/generateExoPromptInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:ellipsize="end"
+        android:ems="20"
+        android:gravity="start|top"
+        android:hint="@string/generate_dialog_hint"
+        android:inputType="textMultiLine"
+        android:textColor="@color/text_primary_light"
+        android:textColorHint="@color/text_secondary_light"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/separator" />
+
+    <Button
+        android:id="@+id/sendPromptBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#212121"
+        android:text="@string/generate_dialog_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/generateExoPromptInput" />
+
+    <CheckBox
+        android:id="@+id/clearCurrentCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/generate_dialog_clear_option"
+        android:textColor="@color/text_primary_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sendPromptBtn" />
+
+    <ProgressBar
+        android:id="@+id/loadingSpinner"
+        android:layout_width="38dp"
+        android:layout_height="33dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/sendPromptBtn"
+        app:layout_constraintEnd_toEndOf="@+id/sendPromptBtn"
+        app:layout_constraintStart_toStartOf="@+id/sendPromptBtn"
+        app:layout_constraintTop_toTopOf="@+id/sendPromptBtn" />
+
+    <ImageView
+        android:id="@+id/doneCheckImg"
+        android:layout_width="38dp"
+        android:layout_height="33dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/sendPromptBtn"
+        app:layout_constraintEnd_toEndOf="@+id/sendPromptBtn"
+        app:layout_constraintStart_toStartOf="@+id/sendPromptBtn"
+        app:layout_constraintTop_toTopOf="@+id/sendPromptBtn"
+        app:srcCompat="@drawable/baseline_check_24_wh" />
+
+    <ImageView
+        android:id="@+id/errorImg"
+        android:layout_width="38dp"
+        android:layout_height="33dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/sendPromptBtn"
+        app:layout_constraintEnd_toEndOf="@+id/sendPromptBtn"
+        app:layout_constraintStart_toStartOf="@+id/sendPromptBtn"
+        app:layout_constraintTop_toTopOf="@+id/sendPromptBtn"
+        app:srcCompat="@drawable/baseline_error_24_wh" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

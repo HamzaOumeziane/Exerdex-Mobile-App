@@ -13,7 +13,9 @@ interface WorkoutDao {
     suspend fun delete(workout: Workout)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg workouts: Workout)
-    @Query("SELECT * FROM Workout")
-    suspend fun loadAllWorkouts(): MutableList<Workout>
+    //@Query("SELECT * FROM Workout")
+    //suspend fun loadAllWorkouts(): MutableList<Workout>
+    @Query("SELECT * FROM Workout WHERE userId = :userId")
+    suspend fun loadWorkoutsByUserId(userId: String): List<Workout>
 
 }

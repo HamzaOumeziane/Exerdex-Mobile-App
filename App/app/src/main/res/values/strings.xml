@@ -18,7 +18,7 @@
     <string name="add_image">Add Image</string>
     <string name="toast_new_set_missing_error">Please enter both reps and weight.</string>
     <string name="toast_new_set_invalid_input_error">Please enter valid numbers for reps and weight.</string>
-    <string name="toast_new_exercise_missing_info_error">Make sure to enter a title and at least one set!</string>
+    <string name="toast_new_exercise_missing_info_error">Enter at least one set!</string>
     <string name="toast_new_workout_missing_info_error">Enter a workout name and at least one done exercise.</string>
     <string name="info_title">Information</string>
     <string name="info_message">Authors: Hamza Oumeziane and Mohamad Atrash</string>
@@ -38,5 +38,32 @@
     <string name="login_google">Continue with Google</string>
     <string name="success_signup">Successful signup! Welcome </string>
     <string name="failed_signup">Sign-up failed.. Please try again.</string>
-
+    <string name="profile_title">Profile</string>
+    <string name="user_existed">A user with this email already exists.</string>
+    <string name="error_verification">Error occurred on the verification</string>
+    <string name="cases_empty">Fill all the cases</string>
+    <string name="edit">Editing</string>
+    <string name="new_edit">New edit...</string>
+    <string name="country">Country</string>
+    <string name="delete">Delete account</string>
+    <string name="logout">Log out</string>
+    <string name="value_empty">Value cannot be empty.</string>
+    <string name="quick_search_title">Quick Search</string>
+    <string name="add_exercise_dialog_title">Create Custom</string>
+    <string name="add_exercise_dialog_find">Find:</string>
+    <string name="generate_dialog_title">Generate an entire workout!</string>
+    <string name="generate_dialog_disclaimer">AI is only able to create workout plans from existing pre-made exercises. If unguessable, AI will default weights to 0.</string>
+    <string name="generate_dialog_hint">Generate me a high intensity low volume pushday workout. My bench PR is 255, for reference.</string>
+    <string name="generate_dialog_btn">Generate a workout!</string>
+    <string name="generate_dialog_clear_option">Clear current to-do exercises</string>
+    <string name="invalid_ai_prompt_toast">Please enter a valid prompt</string>
+    <string name="generate_no_preset_found_toast">No exercises found to add</string>
+    <string name="gemini_error_toast">Something went wrong with gemini...</string>
+    <string name="added_word">Added</string>
+    <string name="edited_word">Edited</string>
+    <string name="quick_search_too_short_toast">Make sure to enter an exercise name (min: 3 char)</string>
+    <string name="take_picture_error_toast">Failed to take picture</string>
+    <string name="save_image_error_toast">Failed to save selected image</string>
+    <string name="user_id_unfound_toast">User ID is not available. Please log in again.</string>
+    <string name="exercise_raw_missing_title_toast">Make sure to enter a title</string>
 </resources>

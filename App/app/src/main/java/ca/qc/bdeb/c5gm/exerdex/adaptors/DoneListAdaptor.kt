@@ -15,10 +15,8 @@ import kotlinx.coroutines.launch
 
 class DoneListAdaptor(
     val ctx: Context,
-    val activity: MainActivity,
-    val database: ExerciseDatabase,
-    val exercisesList: MutableList<Exercise>,
-    val doneList: MutableList<Exercise>,
+    var doneList: MutableList<Exercise>,
+    private val returnExercise: (item: Exercise) -> Unit,
 ) : RecyclerView.Adapter<ItemDoneHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemDoneHolder {
         val view = LayoutInflater.from(ctx).inflate(R.layout.exercise_done_item, parent, false)
@@ -31,15 +29,11 @@ class DoneListAdaptor(
 
     override fun onBindViewHolder(holder: ItemDoneHolder, position: Int) {
         val item = doneList[holder.adapterPosition]
-        holder.exercise.text = item.name
+        holder.exercise.text = item.exerciseRawData.name
 
         holder.comeback.setImageResource(R.drawable.baseline_loop_24)
         holder.comeback.setOnClickListener {
-            item.isDone = false
-            activity.lifecycleScope.launch(Dispatchers.IO){
-                database.exerciseDao().updateAll(item)
-                activity.reloadDataFromDatabase()
-            }
+            returnExercise(item)
         }
     }
 }
