@@ -224,7 +224,7 @@ class AddEditExerciseActivity : AppCompatActivity() {
 
     private fun finalizeExercise(){
         if (setsList.isEmpty()){
-            Toast.makeText(this,getString(R.string.toast_new_workout_missing_info_error), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,getString(R.string.toast_new_exercise_missing_info_error), Toast.LENGTH_SHORT).show()
             return
         }
 
